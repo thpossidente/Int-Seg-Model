@@ -80,16 +80,18 @@ trace.update <- function(input){ #changes weights based on temporal learning alg
 
 batch <- function(n.epochs){ #runs many groups(n.epochs) through trace update to train network
   pb <- txtProgressBar(min=0, max=n.epochs, style=3)
+  entropies.every.100.eopchs <- numeric(n.epochs / 100)
   for(i in 1:n.epochs){
     g <- select.input()
     if(i %% 100 == 0){
-      print(entropy.measure())
+      entropies.every.100.eopchs[i / 100] <- entropy.measure()
     }
     for(o in 1:nrow(g)){
       trace.update(g[o,])
     }
     setTxtProgressBar(pb, i)
   }
+  print(entropies.every.100.eopchs)
 }
 
 batch(n.epochs)  #run training batches and calc. entropy every 100 epochs
@@ -126,11 +128,13 @@ entropy.calc <- function(v){ #function to pass in matrix and get entropy
 
 
 entropy.measure <- function(){ #calculate average entropy of output activations for each group
-  output.storage <- output.storage()
+  outputs <- output.storage()
   entropy <- numeric(10)
   for(i in 1:10){
-    stability.one <- colSums(output.storage[((i-1) * 100 + 1):(i * 100),])
+    stability.one <- colSums(outputs[((i-1) * 100 + 1):(i * 100),])
     entropy[i] <- entropy.calc(stability.one)
   }
   return(mean(entropy))
 }
+
+
