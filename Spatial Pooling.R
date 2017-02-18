@@ -10,17 +10,19 @@ library("splitstackshape")
 alphabet.data <- cSplit(alphabet.data, "V1", ",", stripWhite = FALSE)
 names(alphabet.data) <- c('1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17')
 alphabet.data.n <- alphabet.data[,-1]
-alphabet.data.n <- matrix(alphabet.data, nrow=2000, ncol=16)
+alphabet.data.n <- data.matrix(alphabet.data.n)
 
-normalization.by.column <- function(alphabet.data){
-  for(j in 2:ncol(alphabet.data)){
-    for(i in 1:nrow(alphabet.data)){
-      alphabet.data[i,j] <<- (alphabet.data[i,j] - min(alphabet.data[,j])) / (max(alphabet.data[,j] / min(alphabet.data[,j])))
+normalization.by.column <- function(alphabet.data.n){
+  pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
+  for(j in 2:ncol(alphabet.data.n)){
+    for(i in 1:nrow(alphabet.data.n)){
+      alphabet.data.n[i,j] <<- (alphabet.data.n[i,j] - min(alphabet.data.n[,j])) / (max(alphabet.data.n[,j] / min(alphabet.data.n[,j])))
     }
   }
+    setTxtProgressBar(pb, i)
 }
 
-normalization.by.column(alphabet.data)
+normalization.by.column(alphabet.data.n)
 
 
 weights <- matrix(runif(n.inputs*n.outputs, min=0, max=1), nrow=n.inputs, ncol=n.outputs) #initialiize weights at random values between 1 and 0
@@ -50,12 +52,12 @@ heb.update <- function(input){
     }
   }
 }
-  
+
 
 batch <- function(){ 
-  pb <- txtProgressBar(min=0, max=nrow(alphabet.data), style=3)
-  for(i in 1:nrow(alphabet.data)){
-    vector <- alphabet.data[i,2:17]
+  pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
+  for(i in 1:nrow(alphabet.data.n)){
+    vector <- alphabet.data.n[i,2:17]
     heb.update(vector)
   }
     setTxtProgressBar(pb, i)
@@ -63,6 +65,6 @@ batch <- function(){
 
 batch()  #run training batches
 
-input <- alphabet.data[1,2:16]
+input <- alphabet.data.n[1,2:16]
 test.output <- forward.pass(test.input)
 test.change.weight <- learning.rate * outputs[1] * input[1]
