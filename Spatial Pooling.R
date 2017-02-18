@@ -12,17 +12,16 @@ names(alphabet.data) <- c('1','2','3','4','5','6','7','8','9','10','11','12','13
 alphabet.data.n <- alphabet.data[,-1]
 alphabet.data.n <- data.matrix(alphabet.data.n)
 
-normalization.by.column <- function(alphabet.data.n){
-  pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
-  for(j in 2:ncol(alphabet.data.n)){
+normalization.by.column <- function(alphabet.data.n){  #doesn't work because 0 is minimum value and can't divide by zero
+  alphabet.data.n.1 <- alphabet.data.n
+  for(j in 1:ncol(alphabet.data.n)){
+    pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
     for(i in 1:nrow(alphabet.data.n)){
-      alphabet.data.n[i,j] <<- (alphabet.data.n[i,j] - min(alphabet.data.n[,j])) / (max(alphabet.data.n[,j] / min(alphabet.data.n[,j])))
+      alphabet.data.n[i,j] <<- (alphabet.data.n.1[i,j] - min(alphabet.data.n.1[,j])) / (max(alphabet.data.n.1[,j] / min(alphabet.data.n.1[,j])))
     }
+      setTxtProgressBar(pb, i)
   }
-    setTxtProgressBar(pb, i)
 }
-
-normalization.by.column(alphabet.data.n)
 
 
 weights <- matrix(runif(n.inputs*n.outputs, min=0, max=1), nrow=n.inputs, ncol=n.outputs) #initialiize weights at random values between 1 and 0
@@ -31,7 +30,7 @@ sigmoid.activation <- function(x){
   return(1 / (1+exp(-x)))
 }
 
-
+?scale()
 forward.pass <- function(input){ #calculate output activations with "winner-takes-all" method
   outputs <- numeric(n.outputs)
   for(i in 1:n.outputs){
@@ -57,7 +56,7 @@ heb.update <- function(input){
 batch <- function(){ 
   pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
   for(i in 1:nrow(alphabet.data.n)){
-    vector <- alphabet.data.n[i,2:17]
+    vector <- alphabet.data.n[i,]
     heb.update(vector)
   }
     setTxtProgressBar(pb, i)
@@ -65,6 +64,6 @@ batch <- function(){
 
 batch()  #run training batches
 
-input <- alphabet.data.n[1,2:16]
+input <- alphabet.data.n[1,]
 test.output <- forward.pass(test.input)
 test.change.weight <- learning.rate * outputs[1] * input[1]
