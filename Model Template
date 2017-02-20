@@ -80,11 +80,11 @@ trace.update <- function(input){ #changes weights based on temporal learning alg
 
 batch <- function(n.epochs){ #runs many groups(n.epochs) through trace update to train network
   pb <- txtProgressBar(min=0, max=n.epochs, style=3)
-  entropies.every.100.eopchs <- numeric(n.epochs / 100)
+  entropies.every.100.epochs <- numeric(n.epochs / 100)
   for(i in 1:n.epochs){
     g <- select.input()
     if(i %% 100 == 0){
-      entropies.every.100.eopchs[i / 100] <- entropy.measure()
+      entropies.every.100.epochs[i / 100] <- entropy.measure()
     }
     for(o in 1:nrow(g)){
       trace.update(g[o,])

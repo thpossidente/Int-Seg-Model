@@ -2,14 +2,18 @@
 n.inputs <- 16
 n.hidden <- 100
 n.outputs <- 26
-learning.rate <- 0.2
+learning.rate <- 0.1
+n.training <- 1600
+n.test <- 400
 
-alphabet.data <- read.table("C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/letter-recognition-data.txt", header = F)
+
+alphabet.data <- read.table("C:/Users/research/Desktop/Int-Seg-Model/letter-recognition.data.txt", header = F)
 #install.packages("splitstackshape")
 library("splitstackshape")
 alphabet.data <- cSplit(alphabet.data, "V1", ",", stripWhite = FALSE)
 alphabet.data.n <- alphabet.data[,-1]
 alphabet.data.n <- data.matrix(alphabet.data.n)
+
 
 normalization.by.column <- function(alphabet.data.n){ # normalizes values (by column) to values between 0 and 1
   alphabet.data.n.1 <- alphabet.data.n
@@ -23,11 +27,14 @@ normalization.by.column <- function(alphabet.data.n){ # normalizes values (by co
 }
 normalization.by.column(alphabet.data.n)
 
+
 weights <- matrix(runif(n.inputs*n.outputs, min=0, max=1), nrow=n.inputs, ncol=n.outputs) #initialiize weights at random values between 1 and 0
+
 
 sigmoid.activation <- function(x){
   return(1 / (1+exp(-x)))
 }
+
 
 forward.pass <- function(input){ #calculate output activations with "winner-takes-all" method
   outputs <- numeric(n.outputs)
@@ -40,26 +47,81 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
 }
 
 
-heb.update <- function(input){
+heb.update <- function(input){ # Sanger's Generalization of the Hebbian Algorithm
   outputs <- forward.pass(input)
   for(i in 1:n.inputs){
     for(j in 1:n.outputs){
-      change.weight <- learning.rate * outputs[j] * input[i]
+      change.weight <- learning.rate * ((outputs[j] * input[i]) - (outputs[j] * (sum(weights[i,] * outputs[j]))))
       weights[i,j] <<- weights[i,j] + change.weight
+      if(weights[i,j] > 1){
+        weights[i,j] <<- 1
+      }
+      if(weights[i,j] < 0){
+        weights[i,j] <<- 0
+      }
     }
   }
 }
 
 
 batch <- function(){ 
-  pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
-  for(i in 1:nrow(alphabet.data.n)){
+  pb <- txtProgressBar(min=0, max=n.training, style=3)
+  for(i in 1:n.training){
     vector <- alphabet.data.n[i,]
     heb.update(vector)
   }
     setTxtProgressBar(pb, i)
+  print(colsums.function())
+  return(output.storage())
 }
 
 batch()  #run training batches
+test <- output.storage()
+colsums <- colsums.function()
+colsums
+
+
+
+## entropy testing functions ##
+
+output.storage <- function(){ #stores outputs 
+  outputs <- matrix(0, nrow = n.test, ncol = n.outputs)
+  for(i in 1601:2000){
+    one.output <- forward.pass(alphabet.data.n[i,])
+    outputs[i-1600,] <- one.output
+  }
+  return(outputs)
+}
+
+
+entropy.calc <- function(v){ #function to pass in matrix and get entropy
+  v <- v / sum(v)
+  e.sum <- 0
+  for(i in 1:length(v)){
+    if(v[i] != 0){
+      e.sum <- e.sum + -v[i] * log2(v[i])
+    }
+  }
+  return(e.sum)
+}
+
+
+
+colsums.function <- function(){ #calculate average entropy of output activations
+  outputs <- output.storage()
+  stability.one <- colSums(outputs)
+  return(stability.one)
+}
+
+
+entropy.measure <- function(){ #calculate average entropy of output activations for each group
+  outputs <- output.storage()
+  entropy <- numeric(10)
+  for(i in 1:10){
+    stability.one <- colSums(outputs[((i-1) * 100 + 1):(i * 100),])
+    entropy[i] <- entropy.calc(stability.one)
+  }
+  return(mean(entropy))
+}
 
 
