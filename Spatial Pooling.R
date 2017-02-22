@@ -6,7 +6,8 @@ learning.rate <- 0.1
 n.epochs <- 1000
 trace.hidden <- rep(0, times = n.hidden)
 trace.output <- rep(0, times = n.output)
-trace.param <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
+trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
+trace.param.output <- 0.2
 
 
 #install.packages('bmp')
@@ -41,7 +42,7 @@ trace.update <- function(input, input.hidden.weights, hidden.output.weights, tra
   
   hidden <- forward.pass(input)
   for(i in 1:n.hidden){
-    trace.hidden[i] <- (1 - trace.param) * trace.hidden[i]  + trace.param * hidden[i] 
+    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i]  + trace.param.hidden * hidden[i] 
     input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])  
   }
   return(list(trace.hidden=trace.hidden, trace.ouput=trace.output, input.hidden.weights=input.hidden.weights, hidden.output.weights=hidden.output.weights))
