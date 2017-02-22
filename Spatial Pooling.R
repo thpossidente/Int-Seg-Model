@@ -1,19 +1,16 @@
 
-n.inputs <- 16
-n.hidden <- 100
-n.outputs <- 26
+n.inputs <- 1600
+n.hidden <- 26
+n.outputs <- 50
 learning.rate <- 0.1
 n.training <- 1600
 n.test <- 400
 
 
-alphabet.data <- read.table("C:/Users/research/Desktop/Int-Seg-Model/letter-recognition.data.txt", header = F)
-#install.packages("splitstackshape")
-library("splitstackshape")
-alphabet.data <- cSplit(alphabet.data, "V1", ",", stripWhite = FALSE)
-alphabet.data.n <- alphabet.data[,-1]
-alphabet.data.n <- data.matrix(alphabet.data.n)
 
+#install.packages('readbitmap')
+library('readbitmap')
+A <- read.bitmap('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
 
 normalization.by.column <- function(alphabet.data.n){ # normalizes values (by column) to values between 0 and 1
   alphabet.data.n.1 <- alphabet.data.n
