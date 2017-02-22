@@ -1,31 +1,23 @@
 
-n.inputs <- 1600
+n.input <- 1600
 n.hidden <- 26
-n.outputs <- 50
+n.output <- 50
 learning.rate <- 0.1
-n.training <- 1600
-n.test <- 400
+n.epochs <- 1000
+trace.hidden <- rep(0, times = n.hidden)
+trace.output <- rep(0, times = n.output)
+trace.param <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
+
+
+#install.packages('bmp')
+library('bmp')
+is.bmp('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
+A <- read.bmp('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
 
 
 
-#install.packages('readbitmap')
-library('readbitmap')
-A <- read.bitmap('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
-
-normalization.by.column <- function(alphabet.data.n){ # normalizes values (by column) to values between 0 and 1
-  alphabet.data.n.1 <- alphabet.data.n
-  for(j in 1:ncol(alphabet.data.n)){
-    pb <- txtProgressBar(min=0, max=nrow(alphabet.data.n), style=3)
-    for(i in 1:nrow(alphabet.data.n)){
-      alphabet.data.n[i,j] <<- (alphabet.data.n.1[i,j] - min(alphabet.data.n.1[,j])) / (max(alphabet.data.n.1[,j] - min(alphabet.data.n.1[,j])))
-    }
-      setTxtProgressBar(pb, i)
-  }
-}
-normalization.by.column(alphabet.data.n)
-
-
-weights <- matrix(runif(n.inputs*n.outputs, min=0, max=1), nrow=n.inputs, ncol=n.outputs) #initialiize weights at random values between 1 and 0
+input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 1 and 0
+hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
 
 
 sigmoid.activation <- function(x){
@@ -34,55 +26,52 @@ sigmoid.activation <- function(x){
 
 
 forward.pass <- function(input){ #calculate output activations with "winner-takes-all" method
-  outputs <- numeric(n.outputs)
-  for(i in 1:n.outputs){
-    outputs[i] <- sigmoid.activation(sum(input * weights[,i]))
+  
+  hidden <- numeric(n.hidden)
+  for(i in 1:n.output){
+    hidden[i] <- sigmoid.activation(sum(input * weights[,i]))
   }
-  outputs[which.max(outputs)] <- 1
-  outputs[outputs != max(outputs)] <- 0
-  return(outputs)
+  hidden[which.max(outputs)] <- 1
+  hidden[outputs != max(outputs)] <- 0
+  return(hidden)
 }
 
 
-heb.update <- function(input){ # Sanger's Generalization of the Hebbian Algorithm
-  outputs <- forward.pass(input)
-  for(i in 1:n.inputs){
-    for(j in 1:n.outputs){
-      change.weight <- learning.rate * ((outputs[j] * input[i]) - (outputs[j] * (sum(weights[i,] * outputs[j]))))
-      weights[i,j] <<- weights[i,j] + change.weight
-      if(weights[i,j] > 1){
-        weights[i,j] <<- 1
-      }
-      if(weights[i,j] < 0){
-        weights[i,j] <<- 0
-      }
-    }
+trace.update <- function(input, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output){ 
+  
+  hidden <- forward.pass(input)
+  for(i in 1:n.hidden){
+    trace.hidden[i] <- (1 - trace.param) * trace.hidden[i]  + trace.param * hidden[i] 
+    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])  
   }
+  return(list(trace.hidden=trace.hidden, trace.ouput=trace.output, input.hidden.weights=input.hidden.weights, hidden.output.weights=hidden.output.weights))
 }
 
 
-batch <- function(){ 
+batch <- function(n.epochs){ 
   pb <- txtProgressBar(min=0, max=n.training, style=3)
-  for(i in 1:n.training){
-    vector <- alphabet.data.n[i,]
-    heb.update(vector)
+  for(i in 1:n.epochs){
+    letter <- alphabet[sample(1:26,1,replace=T),]
+    results <- trace.update(letter, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
+    input.hidden.weights <- results$input.hidden.weights
+    hidden.output.weights <- results$hidden.output.weights
   }
     setTxtProgressBar(pb, i)
   print(colsums.function())
   return(output.storage())
 }
 
-batch()  #run training batches
+batch(n.epochs)  #run training batches
 test <- output.storage()
 colsums <- colsums.function()
 colsums
-
+?sample
 
 
 ## entropy testing functions ##
 
 output.storage <- function(){ #stores outputs 
-  outputs <- matrix(0, nrow = n.test, ncol = n.outputs)
+  outputs <- matrix(0, nrow = n.test, ncol = n.output)
   for(i in 1601:2000){
     one.output <- forward.pass(alphabet.data.n[i,])
     outputs[i-1600,] <- one.output
