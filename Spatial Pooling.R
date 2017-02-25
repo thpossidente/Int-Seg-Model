@@ -4,18 +4,45 @@ n.hidden <- 26
 n.output <- 50
 learning.rate <- 0.1
 n.epochs <- 1000
+n.test <- 26
 trace.hidden <- rep(0, times = n.hidden)
 trace.output <- rep(0, times = n.output)
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.2
 
 
-#install.packages('bmp')
-library('bmp')
-is.bmp('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
-A <- read.bmp('C:/Users/research/Documents/GitHub/Int-Seg-Model/Int-Seg-Model/Alphabet/A.bmp')
+#install.packages('png')
+library('png')
+#install.packages('abind')
+library('abind')
 
-
+alphabet <- list(
+  a <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/A.png')[,,1,drop=F], drop=3),
+  b <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/B.png')[,,1,drop=F], drop=3),
+  c <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/C.png')[,,1,drop=F], drop=3),
+  d <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/D.png')[,,1,drop=F], drop=3),
+  e <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/E.png')[,,1,drop=F], drop=3),
+  f <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/F.png')[,,1,drop=F], drop=3),
+  g <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/G.png')[,,1,drop=F], drop=3),
+  h <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/H.png')[,,1,drop=F], drop=3),
+  i <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/I.png')[,,1,drop=F], drop=3),
+  j <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/J.png')[,,1,drop=F], drop=3),
+  k <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/K.png')[,,1,drop=F], drop=3),
+  l <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/L.png')[,,1,drop=F], drop=3),
+  m <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/M.png')[,,1,drop=F], drop=3),
+  n <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/N.png')[,,1,drop=F], drop=3),
+  o <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/O.png')[,,1,drop=F], drop=3),
+  p <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/P.png')[,,1,drop=F], drop=3),
+  q <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Q.png')[,,1,drop=F], drop=3),
+  r <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/R.png')[,,1,drop=F], drop=3),
+  s <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/S.png')[,,1,drop=F], drop=3),
+  t <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/T.png')[,,1,drop=F], drop=3),
+  u <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/U.png')[,,1,drop=F], drop=3),
+  v <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/V.png')[,,1,drop=F], drop=3),
+  w <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/W.png')[,,1,drop=F], drop=3),
+  x <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/X.png')[,,1,drop=F], drop=3),
+  y <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Y.png')[,,1,drop=F], drop=3),
+  z <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Z.png')[,,1,drop=F], drop=3))
 
 input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 1 and 0
 hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
@@ -29,11 +56,11 @@ sigmoid.activation <- function(x){
 forward.pass <- function(input){ #calculate output activations with "winner-takes-all" method
   
   hidden <- numeric(n.hidden)
-  for(i in 1:n.output){
-    hidden[i] <- sigmoid.activation(sum(input * weights[,i]))
+  for(i in 1:n.hidden){
+    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]))
   }
-  hidden[which.max(outputs)] <- 1
-  hidden[outputs != max(outputs)] <- 0
+  hidden[which.max(hidden)] <- 1
+  hidden[hidden != max(hidden)] <- 0
   return(hidden)
 }
 
@@ -50,32 +77,28 @@ trace.update <- function(input, input.hidden.weights, hidden.output.weights, tra
 
 
 batch <- function(n.epochs){ 
-  pb <- txtProgressBar(min=0, max=n.training, style=3)
   for(i in 1:n.epochs){
-    letter <- alphabet[sample(1:26,1,replace=T),]
+    letter <- alphabet[[sample(1:26,1, replace = T)]]
     results <- trace.update(letter, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
     input.hidden.weights <- results$input.hidden.weights
     hidden.output.weights <- results$hidden.output.weights
   }
-    setTxtProgressBar(pb, i)
-  print(colsums.function())
   return(output.storage())
 }
 
 batch(n.epochs)  #run training batches
 test <- output.storage()
-colsums <- colsums.function()
-colsums
-?sample
+
+
 
 
 ## entropy testing functions ##
 
 output.storage <- function(){ #stores outputs 
-  outputs <- matrix(0, nrow = n.test, ncol = n.output)
-  for(i in 1601:2000){
-    one.output <- forward.pass(alphabet.data.n[i,])
-    outputs[i-1600,] <- one.output
+  outputs <- matrix(0, nrow = n.test, ncol = n.hidden)
+  for(i in 1:26){
+    one.output <- forward.pass(alphabet[[i]])
+    outputs[i,] <- one.output
   }
   return(outputs)
 }
