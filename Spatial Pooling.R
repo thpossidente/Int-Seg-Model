@@ -135,6 +135,22 @@ batch <- function(n.epochs){
   return(output.storage())
 }
 
+
+#batch <- function(n.epochs){ 
+  
+  #for(i in 1:n.epochs){
+    #word <- words[[sample(1:50,1, replace = T)]]
+    #for(b in 1:(length(word)/n.input)){
+      #letter[b] <- word[,1 + (1 + ((b-1) * n.input)):(b*n.input)]
+      #results <- trace.update(letter[b], input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
+      #results <- trace.update(letter[b], input.hidden.weights, trace.hidden)
+      #input.hidden.weights <- results$input.hidden.weights
+      #hidden.output.weights <- results$hidden.output.weights
+    #}
+  #}
+  #return(output.storage())
+#}
+
 batch(n.epochs)  #run training batches
 test <- output.storage()
 
@@ -182,5 +198,6 @@ entropy.measure <- function(){ #calculate average entropy of output activations 
   }
   return(mean(entropy))
 }
+
 
 
