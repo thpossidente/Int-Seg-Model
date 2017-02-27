@@ -16,33 +16,33 @@ library('png')
 library('abind')
 
 alphabet <- list(
-  a <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/A.png')[,,1,drop=F], drop=3),
-  b <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/B.png')[,,1,drop=F], drop=3),
-  c <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/C.png')[,,1,drop=F], drop=3),
-  d <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/D.png')[,,1,drop=F], drop=3),
-  e <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/E.png')[,,1,drop=F], drop=3),
-  f <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/F.png')[,,1,drop=F], drop=3),
-  g <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/G.png')[,,1,drop=F], drop=3),
-  h <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/H.png')[,,1,drop=F], drop=3),
-  i <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/I.png')[,,1,drop=F], drop=3),
-  j <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/J.png')[,,1,drop=F], drop=3),
-  k <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/K.png')[,,1,drop=F], drop=3),
-  l <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/L.png')[,,1,drop=F], drop=3),
-  m <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/M.png')[,,1,drop=F], drop=3),
-  n <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/N.png')[,,1,drop=F], drop=3),
-  o <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/O.png')[,,1,drop=F], drop=3),
-  p <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/P.png')[,,1,drop=F], drop=3),
-  q <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Q.png')[,,1,drop=F], drop=3),
-  r <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/R.png')[,,1,drop=F], drop=3),
-  s <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/S.png')[,,1,drop=F], drop=3),
-  t <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/T.png')[,,1,drop=F], drop=3),
-  u <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/U.png')[,,1,drop=F], drop=3),
-  v <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/V.png')[,,1,drop=F], drop=3),
-  w <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/W.png')[,,1,drop=F], drop=3),
-  x <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/X.png')[,,1,drop=F], drop=3),
-  y <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Y.png')[,,1,drop=F], drop=3),
-  z <- adrop(readPNG('C:/Users/research/Documents/GitHub/Int-Seg-Model/AlphabetPNG/Z.png')[,,1,drop=F], drop=3))
-
+  a <- as.vector(t(1-adrop(readPNG('AlphabetPNG/A.png')[,,1,drop=F], drop=3))),
+  b <- as.vector(t(1-adrop(readPNG('AlphabetPNG/B.png')[,,1,drop=F], drop=3))),
+  c <- as.vector(t(1-adrop(readPNG('AlphabetPNG/C.png')[,,1,drop=F], drop=3))),
+  d <- as.vector(t(1-adrop(readPNG('AlphabetPNG/D.png')[,,1,drop=F], drop=3))),
+  e <- as.vector(t(1-adrop(readPNG('AlphabetPNG/E.png')[,,1,drop=F], drop=3))),
+  f <- as.vector(t(1-adrop(readPNG('AlphabetPNG/F.png')[,,1,drop=F], drop=3))),
+  g <- as.vector(t(1-adrop(readPNG('AlphabetPNG/G.png')[,,1,drop=F], drop=3))),
+  h <- as.vector(t(1-adrop(readPNG('AlphabetPNG/H.png')[,,1,drop=F], drop=3))),
+  i <- as.vector(t(1-adrop(readPNG('AlphabetPNG/I.png')[,,1,drop=F], drop=3))),
+  j <- as.vector(t(1-adrop(readPNG('AlphabetPNG/J.png')[,,1,drop=F], drop=3))),
+  k <- as.vector(t(1-adrop(readPNG('AlphabetPNG/K.png')[,,1,drop=F], drop=3))),
+  l <- as.vector(t(1-adrop(readPNG('AlphabetPNG/L.png')[,,1,drop=F], drop=3))),
+  m <- as.vector(t(1-adrop(readPNG('AlphabetPNG/M.png')[,,1,drop=F], drop=3))),
+  n <- as.vector(t(1-adrop(readPNG('AlphabetPNG/N.png')[,,1,drop=F], drop=3))),
+  o <- as.vector(t(1-adrop(readPNG('AlphabetPNG/O.png')[,,1,drop=F], drop=3))),
+  p <- as.vector(t(1-adrop(readPNG('AlphabetPNG/P.png')[,,1,drop=F], drop=3))),
+  q <- as.vector(t(1-adrop(readPNG('AlphabetPNG/Q.png')[,,1,drop=F], drop=3))),
+  r <- as.vector(t(1-adrop(readPNG('AlphabetPNG/R.png')[,,1,drop=F], drop=3))),
+  s <- as.vector(t(1-adrop(readPNG('AlphabetPNG/S.png')[,,1,drop=F], drop=3))),
+  t <- as.vector(t(1-adrop(readPNG('AlphabetPNG/T.png')[,,1,drop=F], drop=3))),
+  u <- as.vector(t(1-adrop(readPNG('AlphabetPNG/U.png')[,,1,drop=F], drop=3))),
+  v <- as.vector(t(1-adrop(readPNG('AlphabetPNG/V.png')[,,1,drop=F], drop=3))),
+  w <- as.vector(t(1-adrop(readPNG('AlphabetPNG/W.png')[,,1,drop=F], drop=3))),
+  x <- as.vector(t(1-adrop(readPNG('AlphabetPNG/X.png')[,,1,drop=F], drop=3))),
+  y <- as.vector(t(1-adrop(readPNG('AlphabetPNG/Y.png')[,,1,drop=F], drop=3))),
+  z <- as.vector(t(1-adrop(readPNG('AlphabetPNG/Z.png')[,,1,drop=F], drop=3)))
+)
 
 words <- list(
   cat <- cbind(c,a,t), bow <- cbind(b,o,w),
@@ -134,14 +134,13 @@ batch <- function(n.epochs){
   }
   return(output.storage())
 }
-
-
+word <- words[[sample(1:50,1, replace=T)]]
 #batch <- function(n.epochs){ 
   
   #for(i in 1:n.epochs){
     #word <- words[[sample(1:50,1, replace = T)]]
     #for(b in 1:(length(word)/n.input)){
-      #letter[b] <- word[,1 + (1 + ((b-1) * n.input)):(b*n.input)]
+      #letter[b] <- word[b]
       #results <- trace.update(letter[b], input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
       #results <- trace.update(letter[b], input.hidden.weights, trace.hidden)
       #input.hidden.weights <- results$input.hidden.weights
