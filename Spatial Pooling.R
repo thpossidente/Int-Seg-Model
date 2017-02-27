@@ -134,7 +134,8 @@ batch <- function(n.epochs){
   }
   return(output.storage())
 }
-word <- words[[sample(1:50,1, replace=T)]]
+
+
 #batch <- function(n.epochs){ 
   
   #for(i in 1:n.epochs){
