@@ -1,8 +1,8 @@
 n.input <- 1600
 n.hidden <- 26
 n.output <- 50
-learning.rate <- 0.1
-n.epochs <- 500
+learning.rate <- 0.05
+n.epochs <- 2000
 n.test <- 26
 trace.hidden <- rep(0, times = n.hidden)
 trace.output <- rep(0, times = n.output)
@@ -153,10 +153,11 @@ batch <- function(n.epochs){
   #return(output.storage())
 #}
 
-input.hidden.weights <- batch(n.epochs)  #run training batches
-test <- output.storage()
-weight.images()
-test
+input.hidden.weights <- batch(n.epochs)  #run training batches and save weights to global envirn.
+weight.images() #connection weight visualization by row (26). Letters will appear rotated 180 degrees.
+
+
+
 
 ## output storage func. and weight image generation ##
 
