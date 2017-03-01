@@ -2,7 +2,7 @@ n.input <- 1600
 n.hidden <- 26
 n.output <- 50
 learning.rate <- 0.1
-n.epochs <- 1000
+n.epochs <- 500
 n.test <- 26
 trace.hidden <- rep(0, times = n.hidden)
 trace.output <- rep(0, times = n.output)
@@ -74,8 +74,8 @@ words <- list(
 
 
 
-input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 1 and 0
-hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
+input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 0 and 0.1
+hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output)
 
 
 sigmoid.activation <- function(x){
@@ -101,6 +101,7 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
   #return(list(hidden=hidden, output=output))
 }
 
+
 trace.update <- function(input, input.hidden.weights, trace.hidden){
   #trace.update <- function(input, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output){ 
   
@@ -110,10 +111,10 @@ trace.update <- function(input, input.hidden.weights, trace.hidden){
   #output <- forward.pass.results$output
   
   for(i in 1:n.hidden){
-    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i]  + trace.param.hidden * hidden[i] 
+    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
     input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])  
   }
-  return(list(trace.hidden=trace.hidden, input.hidden.weights=input.hidden.weights))
+  return(list(trace.hidden = trace.hidden, input.hidden.weights = input.hidden.weights))
   
   #for(b in 1:n.output){
   #  trace.output <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
@@ -130,9 +131,10 @@ batch <- function(n.epochs){
     #results <- trace.update(letter, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
     results <- trace.update(letter, input.hidden.weights, trace.hidden)
     input.hidden.weights <- results$input.hidden.weights
+    trace.hidden <- results$trace.hidden
     #hidden.output.weights <- results$hidden.output.weights
   }
-  return(output.storage())
+  return(input.hidden.weights)
 }
 
 
@@ -141,7 +143,7 @@ batch <- function(n.epochs){
   #for(i in 1:n.epochs){
     #word <- words[[sample(1:50,1, replace = T)]]
     #for(b in 1:(length(word)/n.input)){
-      #letter[b] <- word[b]
+      #letter[b] <- word[,b]
       #results <- trace.update(letter[b], input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
       #results <- trace.update(letter[b], input.hidden.weights, trace.hidden)
       #input.hidden.weights <- results$input.hidden.weights
@@ -151,13 +153,12 @@ batch <- function(n.epochs){
   #return(output.storage())
 #}
 
-batch(n.epochs)  #run training batches
+input.hidden.weights <- batch(n.epochs)  #run training batches
 test <- output.storage()
+weight.images()
+test
 
-
-
-
-## entropy testing functions ##
+## output storage func. and weight image generation ##
 
 output.storage <- function(){ #stores outputs 
   hidden.outputs <- matrix(0, nrow = n.test, ncol = n.hidden)
@@ -168,36 +169,9 @@ output.storage <- function(){ #stores outputs
   return(hidden.outputs)
 }
 
-
-entropy.calc <- function(v){ #function to pass in matrix and get entropy
-  v <- v / sum(v)
-  e.sum <- 0
-  for(i in 1:length(v)){
-    if(v[i] != 0){
-      e.sum <- e.sum + -v[i] * log2(v[i])
-    }
-  }
-  return(e.sum)
+weight.images <- function(){
+  return(
+    for(i in 1:26){
+    image(matrix(input.hidden.weights[,i], nrow = 40))
+  })
 }
-
-
-
-colsums.function <- function(){ #calculate average entropy of output activations
-  outputs <- output.storage()
-  stability.one <- colSums(outputs)
-  return(stability.one)
-}
-
-
-entropy.measure <- function(){ #calculate average entropy of output activations for each group
-  outputs <- output.storage()
-  entropy <- numeric(10)
-  for(i in 1:10){
-    stability.one <- colSums(outputs[((i-1) * 100 + 1):(i * 100),])
-    entropy[i] <- entropy.calc(stability.one)
-  }
-  return(mean(entropy))
-}
-
-
-
