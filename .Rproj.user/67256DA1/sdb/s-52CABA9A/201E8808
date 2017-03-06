@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "word.list <- list('cat', 'sip', 'zen', 'rub', 'fox', 'vow', 'quo', 'the', 'dug', 'yak', 'jaw', 'lax', 'sin', 'yap', 'ply', 'tom', 'any', 'she', 'axe', 'elm', 'gag', 'jay', 'apt', 'lit', 'hue', 'bow', 'rad', 'two', 'vex', 'wry', 'zag', 'fry', 'pew', 'keg', 'tax', 'who', 'til', 'mud', 'orb', 'cry', 'coy', 'jot', 'gig', 'icy', 'owl', 'nun', 'rye', 'sty', 'why', 'use')\n\nletter.stats <- data.frame(row.names = c('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'), 'Frequency'=0, 'Position 1'=0, 'Position 2'=0, 'Position 3'=0)\n?data.frame\nfor(i in 1:length(word.list)){\n  if('a' in i){\n    \n  }\n}\n\n",
+    "created" : 1488824037737.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "2319327732",
+    "id" : "201E8808",
+    "lastKnownWriteTime" : 3833180308419998817,
+    "last_content_update" : 1488825412464,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

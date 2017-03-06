@@ -75,8 +75,11 @@ words <- list(
 
 
 input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 0 and 0.05
+hidden.bias.weights <- matrix(runif(n.hidden, min=0, max=0.05), nrow=n.hidden, ncol=1)
 hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output)
+output.bias.weights <- matrix(runif(n.output, min=0,max=0.05), nrow=n.output, ncol=1)
 learning.curve <- matrix(0, nrow = n.epochs/100, ncol = 26) #initializes learning data matrix
+
 
 sigmoid.activation <- function(x){
   return(1 / (1+exp(-x)))
@@ -90,7 +93,7 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
   
   hidden <- numeric(n.hidden)
   for(i in 1:n.hidden){
-    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]))
+    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i] + (1 * hidden.bias.weights[i,1])))
   }
   
   hidden[which.max(hidden)] <- 1
@@ -99,7 +102,7 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
 
   #output <- numeric(n.output)
   #for(b in 1:n.output){
-  #  output[b] <- sigmoid.activation(sum(hidden * hidden.output.weights[,b]))
+  #  output[b] <- sigmoid.activation(sum(hidden * hidden.output.weights[,b] + (1 + output.bias[b,1])))
   #}
   #output[which.max(output)] <- 1
   #output[output != max(output)] <- 0
@@ -107,7 +110,7 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
 }
 
 
-trace.update <- function(input, input.hidden.weights, trace.hidden){
+trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights){
   #trace.update <- function(input, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output){ 
   
   hidden <- forward.pass(input)
@@ -117,15 +120,17 @@ trace.update <- function(input, input.hidden.weights, trace.hidden){
   
   for(i in 1:n.hidden){
     trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
-    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])  
+    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])
+    hidden.bias.weights[i,1] <- hidden.bias.weights[i,1] + learning.rate * trace.hidden[i] * (1 - hidden.bias.weights[i,1])
   }
-  return(list(trace.hidden = trace.hidden, input.hidden.weights = input.hidden.weights))
+  return(list(trace.hidden = trace.hidden, input.hidden.weights = input.hidden.weights, hidden.bias.weights=hidden.bias.weights))
   
   #for(b in 1:n.output){
   #  trace.output <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
   #  hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate * trace.output[i] * (hidden - hidden.output.weights[,b])
+  #  output.bias.weights[b,] <- learning.rate * trace.output[b] * output.bias.weights[b,]
   #}
-  #return(list(trace.hidden=trace.hidden, trace.ouput=trace.output, input.hidden.weights=input.hidden.weights, hidden.output.weights=hidden.output.weights))
+  #return(list(trace.hidden=trace.hidden, trace.ouput=trace.output, input.hidden.weights=input.hidden.weights, hidden.output.weights=hidden.output.weights, hidden.bias.weights=hidden.bias.weights, output.bias.weights=output.bias.weights))
 }
 
 
@@ -133,15 +138,16 @@ batch <- function(n.epochs){
   for(i in 1:n.epochs){
     letter <- alphabet[[sample(1:26,1, replace = T)]]
     #results <- trace.update(letter, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output)
-    results <- trace.update(letter, input.hidden.weights, trace.hidden)
+    results <- trace.update(letter, input.hidden.weights, trace.hidden, hidden.bias.weights)
     input.hidden.weights <- results$input.hidden.weights
     trace.hidden <- results$trace.hidden
+    hidden.bias.weights <- results$hidden.bias.weights
     #hidden.output.weights <- results$hidden.output.weights
     if(i %% 100 == 0){
       learning.curve[i / 100,] <- learning.measure(input.hidden.weights)
     }  
   }
-  return(list(input.hidden.weights=input.hidden.weights, learning.curve=learning.curve))
+  return(list(input.hidden.weights=input.hidden.weights, learning.curve=learning.curve, hidden.bias.weights=hidden.bias.weights))
 }
 
 
@@ -161,7 +167,8 @@ batch <- function(n.epochs){
 #}
 
 results <- batch(n.epochs) #run training batches
-input.hidden.weights <- results$input.hidden.weights #save weights to global envirn.
+input.hidden.weights <- results$input.hidden.weights#save weights to global envirn.
+hidden.bias.weights <- results$hidden.bias.weights
 learning.curve <- results$learning.curve #save learning data to global envirn.
 weight.images() #connection weight visualization by row (26). Letters will appear rotated 180 degrees.
 display.learning.curves() #visualize learning by plotting weight similarity to alphabet input every 100 epochs
