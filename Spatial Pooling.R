@@ -2,12 +2,14 @@ n.input <- 1600
 n.hidden <- 26
 n.output <- 50
 learning.rate <- 0.05
-n.epochs <- 5000
+n.epochs <- 1000
 n.test <- 26
 trace.hidden <- rep(0, times = n.hidden)
 trace.output <- rep(0, times = n.output)
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.2
+hidden.bias.param.minus <- 0.01
+hidden.bias.param.plus <- 0.005
 
 
 #install.packages('png')
@@ -75,9 +77,9 @@ words <- list(
 
 
 input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 0 and 0.05
-hidden.bias.weights <- matrix(runif(n.hidden, min=0, max=0.05), nrow=n.hidden, ncol=1)
+hidden.bias.weights <- matrix(0, nrow=n.hidden, ncol=1)
 hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output)
-output.bias.weights <- matrix(runif(n.output, min=0,max=0.05), nrow=n.output, ncol=1)
+output.bias.weights <- matrix(0, nrow=n.output, ncol=1)
 learning.curve <- matrix(0, nrow = n.epochs/100, ncol = 26) #initializes learning data matrix
 
 
@@ -93,7 +95,7 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
   
   hidden <- numeric(n.hidden)
   for(i in 1:n.hidden){
-    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i] + (1 * hidden.bias.weights[i,1])))
+    hidden[i] <- sigmoid.activation(sum((input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
   }
   
   hidden[which.max(hidden)] <- 1
@@ -111,9 +113,25 @@ forward.pass <- function(input){ #calculate output activations with "winner-take
 
 
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights){
-  #trace.update <- function(input, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output){ 
+#trace.update <- function(input, input.hidden.weights, hidden.output.weights, trace.hidden, trace.output){ 
   
   hidden <- forward.pass(input)
+  
+  for(h in 1:n.hidden){
+    if(hidden[h] == 1){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus
+    }
+    if(hidden[h] == 0){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
+    }
+    if(hidden.bias.weights[h,1] > 2){
+      hidden.bias.weights[h,1] <- 2
+    }
+    if(hidden.bias.weights[h,1] < -2){
+      hidden.bias.weights[h,1] <- -2
+    }
+  }
+  
   #forward.pass.results <- forward.pass(input)
   #hidden <- forward.pass.results$hidden
   #output <- forward.pass.results$output
@@ -121,14 +139,12 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
   for(i in 1:n.hidden){
     trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
     input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])
-    hidden.bias.weights[i,1] <- hidden.bias.weights[i,1] + learning.rate * trace.hidden[i] * (1 - hidden.bias.weights[i,1])
   }
   return(list(trace.hidden = trace.hidden, input.hidden.weights = input.hidden.weights, hidden.bias.weights=hidden.bias.weights))
   
   #for(b in 1:n.output){
   #  trace.output <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
   #  hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate * trace.output[i] * (hidden - hidden.output.weights[,b])
-  #  output.bias.weights[b,] <- learning.rate * trace.output[b] * output.bias.weights[b,]
   #}
   #return(list(trace.hidden=trace.hidden, trace.ouput=trace.output, input.hidden.weights=input.hidden.weights, hidden.output.weights=hidden.output.weights, hidden.bias.weights=hidden.bias.weights, output.bias.weights=output.bias.weights))
 }
