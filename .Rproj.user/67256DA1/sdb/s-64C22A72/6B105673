@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1489005650134.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6B105673",
+    "lastKnownWriteTime" : 2314885530279477248,
+    "last_content_update" : 1489005650134,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "6F03A5F4",
+        "caption" : "learning.curve",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=learning.curve&cache_key=6F03A5F4",
+        "displayedObservations" : 250,
+        "environment" : "",
+        "object" : "learning.curve",
+        "preview" : 0,
+        "totalObservations" : 250,
+        "variables" : 26
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}
