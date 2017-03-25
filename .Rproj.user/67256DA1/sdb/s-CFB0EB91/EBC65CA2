@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "just.words <- list(\n  'cat', 'bow','sip', 'rad','zen', 'two','rub', 'vex','fox', 'wry','vow', 'zag','quo', 'fry','the', 'pew','dug', 'keg','yak', 'tax',\n  'jaw', 'who','lax', 'til','sin', 'mud','yap', 'orb','ply', 'cry','tom', 'coy','any', 'jot','she', 'gig','axe', 'icy','elm', 'owl',\n  'gag', 'nun','jay', 'rye','apt', 'sty','lit', 'why','hue', 'use'\n)\n\nrowname <- list('a','b','c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z')\ncolname <- list('freq', 'freq.pos.1', 'freq.pos.2', 'freq.pos.3')\nletter.statistics <- matrix(0, nrow = 26, ncol = 4, dimnames = list(rowname, colname)) \n\n\n\nfor(i in 1:26){\n  for(j in 1:length(just.words)){\n    for(k in 1:nchar(just.words[[j]])){\n      if(rowname[[i]] == substr(just.words[[j]], k, k)){\n        letter.statistics[i,1] <- letter.statistics[i,1] + 1\n        letter.statistics[i,k+1] <- letter.statistics[i, k+1] + 1\n      }\n    }\n  }\n}\n\n\n\n\n",
+    "created" : 1490476876057.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3044904530",
+    "id" : "EBC65CA2",
+    "lastKnownWriteTime" : 1490476867,
+    "last_content_update" : 1490476867,
+    "path" : "~/GitHub/Int-Seg-Model/Descriptive.Letter.Stats.R",
+    "project_path" : "Descriptive.Letter.Stats.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
