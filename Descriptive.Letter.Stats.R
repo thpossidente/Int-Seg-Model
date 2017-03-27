@@ -21,6 +21,6 @@ for(i in 1:26){
   }
 }
 
-
+print(letter.statistics)
 
 
