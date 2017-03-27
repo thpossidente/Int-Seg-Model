@@ -121,7 +121,7 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
       hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
     }
     if(hidden.bias.weights[h,1] < 0){
-       hidden.bias.weights[h,1] <- 0
+      hidden.bias.weights[h,1] <- 0
     }
   }
   
@@ -176,7 +176,7 @@ trace.update.2 <- function(input, input.hidden.weights, trace.hidden, hidden.bia
       hidden.bias.weights[h,1] <- 0
     }
   }
-
+  
   for(i in 1:n.hidden){
     trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
     input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])
@@ -328,8 +328,8 @@ output.storage <- function(){ #stores outputs
 weight.images <- function(){
   return(
     for(i in 1:26){
-    image(matrix(input.hidden.weights[,i], nrow = 40))
-  })
+      image(matrix(input.hidden.weights[,i], nrow = 40))
+    })
 }
 
 image(results$hidden.win.tracker)
