@@ -4,8 +4,6 @@ n.output <- 50
 learning.rate <- 0.05
 n.epochs <- 5000
 n.test <- 26
-trace.hidden <- rep(0, times = n.hidden)
-trace.output <- rep(0, times = n.output)
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.2
 hidden.bias.param.minus <- 1
@@ -206,7 +204,7 @@ trace.update.2 <- function(input, input.hidden.weights, trace.hidden, hidden.bia
     hidden = hidden,
     input.hidden.weights=input.hidden.weights, 
     hidden.bias.weights=hidden.bias.weights,
-    trace.ouput=trace.output,
+    trace.output=trace.output,
     output=output,
     hidden.output.weights=hidden.output.weights,
     output.bias.weights=output.bias.weights))
@@ -277,6 +275,8 @@ batch.2 <- function(n.epochs){
   hidden.bias.weights <- matrix(0, nrow=n.hidden, ncol=1)
   hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output)
   output.bias.weights <- matrix(0, nrow=n.output, ncol=1)
+  trace.hidden <- rep(0, times = n.hidden)
+  trace.output <- rep(0, times = n.output)
   
   # tracking learning #
   learning.curve <- matrix(0, nrow = n.epochs/100, ncol = n.hidden) #initializes learning data matrix
