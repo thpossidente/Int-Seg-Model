@@ -2,10 +2,10 @@ n.input <- 1600
 n.hidden <- 26
 n.output <- 50
 learning.rate <- 0.05
-n.epochs <- 10000
+n.epochs <- 5000
 n.test <- 26
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.15
+trace.param.output <- 0.2
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.05
 output.bias.param.minus <- 1
@@ -46,16 +46,31 @@ alphabet <- list(
 )
 
 words <- list(
-  abc <- cbind(a,b,c),
-  def <- cbind(d,e,f),
-  ghi <- cbind(g,h,i),
-  jkl <- cbind(j,k,l),
-  mno <- cbind(m,n,o),
-  pqr <- cbind(p,q,r), 
-  stu <- cbind(s,t,u), 
-  vwx <- cbind(v,w,x), 
-  yz <- cbind(y,z)
-  
+  cat <- cbind(c,a,t), bow <- cbind(b,o,w),
+  sip <- cbind(s,i,p), rad <- cbind(r,a,d),
+  zen <- cbind(z,e,n), two <- cbind(t,w,o),
+  rub <- cbind(r,u,b), vex <- cbind(v,e,x),
+  fox <- cbind(f,o,x), wry <- cbind(w,r,y),
+  vow <- cbind(v,o,w), zag <- cbind(z,a,g),
+  quo <- cbind(q,u,o), fry <- cbind(f,r,y),
+  the <- cbind(t,h,e), pew <- cbind(p,e,w),
+  dug <- cbind(d,u,g), keg <- cbind(k,e,w),
+  yak <- cbind(y,a,k), tax <- cbind(t,a,x),
+  jaw <- cbind(j,a,w), who <- cbind(w,h,o),
+  lax <- cbind(l,a,x), til <- cbind(t,i,l),
+  sin <- cbind(s,i,n), mud <- cbind(m,u,d),
+  yap <- cbind(y,a,p), orb <- cbind(o,r,b),
+  ply <- cbind(p,l,y), cry <- cbind(c,r,y),
+  tom <- cbind(t,o,m), coy <- cbind(c,o,y),
+  any <- cbind(a,n,y), jot <- cbind(j,o,t),
+  she <- cbind(s,h,e), gig <- cbind(g,i,g),
+  axe <- cbind(a,x,e), icy <- cbind(i,c,y),
+  elm <- cbind(e,l,m), owl <- cbind(o,w,l),
+  gag <- cbind(g,a,g), nun <- cbind(n,u,n),
+  jay <- cbind(j,a,y), rye <- cbind(r,y,e),
+  apt <- cbind(a,p,t), sty <- cbind(s,t,y),
+  lit <- cbind(l,i,t), why <- cbind(w,h,y),
+  hue <- cbind(h,u,e), use <- cbind(u,s,e)
 )
 
 sigmoid.activation <- function(x){
@@ -270,10 +285,9 @@ batch.2 <- function(n.epochs){
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   for(i in 1:n.epochs){
-    word <- words[[sample(1:9,1, replace = T)]]
+    word <- words[[sample(1:50,1, replace = T)]]
     for(b in 1:(length(word)/n.input)){
       letter <- word[,b]
-      #letter <- noise.in.letter(letter)
       results <- trace.update.2(letter, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights)
       input.hidden.weights <- results$input.hidden.weights
       hidden.output.weights <- results$hidden.output.weights
@@ -285,7 +299,6 @@ batch.2 <- function(n.epochs){
       setTxtProgressBar(pb, i)
     }
   }
-  temp.layer.activations(input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights)
   return(list(
     input.hidden.weights=input.hidden.weights,
     hidden.output.weights=hidden.output.weights
@@ -296,7 +309,6 @@ batch.2 <- function(n.epochs){
 
 
 results <- batch.2(n.epochs) #run training batches
-
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 
 
@@ -321,24 +333,3 @@ weight.images <- function(){
 }
 
 image(results$hidden.win.tracker)
-
-temp.layer.activations <- function(input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
-  storing.activations <- matrix(0, nrow=26, ncol=50)
-  for(i in 1:length(words)){
-    word <- words[[i]]
-    for(j in 1:(length(word)/n.input)){
-      letter <- word[,j]
-      act.results <- trace.update.2(letter, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights)
-      storing.activations[((i-1)*3)+j,] <- act.results$output
-    }
-  }
-  image(storing.activations)
-  print(storing.activations)
-}
-
-noise.in.letter <- function(letter){
-  for(i in 1:(0.05*n.input)){
-    letter[(sample(1:1600,1,replace=T))] <- 1
-  }
-  return(letter)
-}
