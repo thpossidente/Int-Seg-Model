@@ -1,15 +1,15 @@
 n.input <- 1600
 n.hidden <- 26
-n.output <- 50
+n.output <- 20
 learning.rate <- 0.05
 n.epochs <- 10000
 n.test <- 26
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.15
+trace.param.output <- 0.2
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.05
 output.bias.param.minus <- 1
-output.bias.param.plus <- 0.05
+output.bias.param.plus <- 0.45
 
 #install.packages('png')
 library('png')
@@ -273,7 +273,7 @@ batch.2 <- function(n.epochs){
     word <- words[[sample(1:9,1, replace = T)]]
     for(b in 1:(length(word)/n.input)){
       letter <- word[,b]
-      #letter <- noise.in.letter(letter)
+      letter <- noise.in.letter(letter)
       results <- trace.update.2(letter, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights)
       input.hidden.weights <- results$input.hidden.weights
       hidden.output.weights <- results$hidden.output.weights
@@ -282,36 +282,32 @@ batch.2 <- function(n.epochs){
       hidden.output.weights <- results$hidden.output.weights
       trace.output <- results$trace.output
       output.bias.weights <- results$output.bias.weights
+      hidden.bias.weights <- results$hidden.bias.weights
+      hidden.win.tracker[i,] <- results$hidden
+      if(i %% 100 == 0){
+        learning.curve[i / 100,] <- learning.measure(input.hidden.weights)
+        bias.tracker[i / 100,] <- as.vector(hidden.bias.weights)
+      }
       setTxtProgressBar(pb, i)
     }
   }
+  
   temp.layer.activations(input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights)
+  
   return(list(
     input.hidden.weights=input.hidden.weights,
-    hidden.output.weights=hidden.output.weights
+    hidden.output.weights=hidden.output.weights,
+    learning.curve=learning.curve, 
+    bias.tracker=bias.tracker,
+    hidden.bias.weights=hidden.bias.weights,
+    hidden.win.tracker = hidden.win.tracker
   ))
 }
 
 
 
+## weight/activation image generation and noise func. ##
 
-results <- batch.2(n.epochs) #run training batches
-
-display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
-
-
-
-
-## output storage func. and weight image generation ##
-
-output.storage <- function(){ #stores outputs 
-  hidden.outputs <- matrix(0, nrow = n.test, ncol = n.hidden)
-  for(i in 1:26){
-    one.hidden <- forward.pass(alphabet[[i]])
-    hidden.outputs[i,] <- one.hidden
-  }
-  return(hidden.outputs)
-}
 
 weight.images <- function(){
   return(
@@ -320,10 +316,9 @@ weight.images <- function(){
     })
 }
 
-image(results$hidden.win.tracker)
 
 temp.layer.activations <- function(input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
-  storing.activations <- matrix(0, nrow=26, ncol=50)
+  storing.activations <- matrix(0, nrow=n.hidden, ncol=n.output)
   for(i in 1:length(words)){
     word <- words[[i]]
     for(j in 1:(length(word)/n.input)){
@@ -336,9 +331,18 @@ temp.layer.activations <- function(input.hidden.weights, trace.hidden, hidden.bi
   print(storing.activations)
 }
 
+
 noise.in.letter <- function(letter){
-  for(i in 1:(0.05*n.input)){
+  for(i in 1:(0.1*n.input)){
     letter[(sample(1:1600,1,replace=T))] <- 1
   }
   return(letter)
 }
+
+
+## RUN ##
+
+results <- batch.2(n.epochs) #run training batches
+
+display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
+
