@@ -5,11 +5,11 @@ learning.rate <- 0.05
 n.epochs <- 10000
 n.test <- 26
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.2
+trace.param.output <- 0.1
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.05
 output.bias.param.minus <- 1
-output.bias.param.plus <- 0.45
+output.bias.param.plus <- 0.60
 
 #install.packages('png')
 library('png')
@@ -81,6 +81,7 @@ forward.pass.2 <- function(input, input.hidden.weights, hidden.bias.weights, hid
   for(i in 1:n.hidden){
     hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])
   }
+  #
   hidden[hidden != max(hidden)] <- 0
   hidden[which.max(hidden)] <- 1
   
@@ -218,6 +219,12 @@ display.learning.curves <- function(results){
   }
 }
 
+display.output.bias.tracker <- function(results){
+  for(i in 1:n.output){
+    plot(results$output.bias.tracker[,i], main=paste('Node', i))
+  }
+}
+
 
 batch <- function(n.epochs){
   
@@ -266,6 +273,7 @@ batch.2 <- function(n.epochs){
   # tracking learning #
   learning.curve <- matrix(0, nrow = n.epochs/100, ncol = n.hidden) #initializes learning data matrix
   bias.tracker <- matrix(0, nrow = n.epochs/100, ncol = n.hidden) #initializes learning data matrix
+  output.bias.tracker <- matrix(0, nrow = n.epochs/100, ncol= n.output)
   hidden.win.tracker <- matrix(0, nrow=n.epochs, ncol= n.hidden)
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -287,6 +295,7 @@ batch.2 <- function(n.epochs){
       if(i %% 100 == 0){
         learning.curve[i / 100,] <- learning.measure(input.hidden.weights)
         bias.tracker[i / 100,] <- as.vector(hidden.bias.weights)
+        output.bias.tracker[i / 100] <- as.vector(output.bias.weights)
       }
       setTxtProgressBar(pb, i)
     }
@@ -299,6 +308,7 @@ batch.2 <- function(n.epochs){
     hidden.output.weights=hidden.output.weights,
     learning.curve=learning.curve, 
     bias.tracker=bias.tracker,
+    output.bias.tracker=output.bias.tracker,
     hidden.bias.weights=hidden.bias.weights,
     hidden.win.tracker = hidden.win.tracker
   ))
@@ -345,4 +355,4 @@ noise.in.letter <- function(letter){
 results <- batch.2(n.epochs) #run training batches
 
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
-
+display.output.bias.tracker(results)
