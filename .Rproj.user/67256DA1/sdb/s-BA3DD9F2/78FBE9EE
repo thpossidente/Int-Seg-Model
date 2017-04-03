@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\ndata <- read.table(\"C:/Users/research/Desktop/BBTKTestData/TTLandAudio30min.txt\", header=F, fill = T, col.names = c(\"TTL Onset\", \"TTL Offset\", \"TTL Duration\", \"Mic Onset\", \"Mic Offset\", \"Mic Duration\"), dec='.', skip=1)\ndata$TTL.Onset <- as.numeric(gsub(',', '', data$TTL.Onset))\ndata$TTL.Offset <- as.numeric(gsub(',', '', data$TTL.Offset))\ndata$TTL.Duration <- as.numeric(gsub(',', '', data$TTL.Duration))\ndata$Mic.Onset <- as.numeric(gsub(',', '', data$Mic.Onset))\ndata$Mic.Offset <- as.numeric(gsub(',', '', data$Mic.Offset))\ndata$TMic.Duration <- as.numeric(gsub(',', '', data$Mic.Duration))\n\nif(data$TTL.Onset[1] - data$Mic.Onset[1] > 0){\n  for(i in 1:nrow(data)){\n    data$Delay[i] <- data$Mic.Onset[i + 1] - data$TTL.Onset[i]\n  }\n} else{\n  for(h in 1:nrow(data)){\n    data$Delay[h] <- data$Mic.Onset[h] - data$TTL.Onset[h]\n  }\n}\n\nhist(data$Delay, main = \"Frequency Distribution of Time Offset Between TTL and Mic Sensor\", xlab = \"Offest Times (ms)\", breaks = 15, xlim=c(45,75))\nhist(data$Delay, main = \"Porbability Density of Time Offset Between TTL and Mic Sensor\", xlab = \"Offest Times (ms)\", breaks = 15, prob = T, xlim=c(45,75))\nlines(density(data$Delay, na.rm=T))\n\n\n",
+    "created" : 1491186189310.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "537438472",
+    "id" : "78FBE9EE",
+    "lastKnownWriteTime" : 1491192205,
+    "last_content_update" : 1491192205462,
+    "path" : "C:/Users/research/Desktop/BBTKTestData/TTL-Timing-Research/Audio Offset Visualization.R",
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

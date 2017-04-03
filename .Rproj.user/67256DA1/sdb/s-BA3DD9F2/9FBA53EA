@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "\ndata <- read.table(\"C:/Users/research/Desktop/BBTKTestData/TTLandOptic30sec.txt\", header=F, fill = T, col.names = c(\"Opto Onset\", \"Opto Offset\", \"Opto Duration\", \"TTL Onset\", \"TTL Offset\", \"TTL Duration\"), dec='.', skip=1)\ndata$Opto.Onset <- as.numeric(gsub(',', '', data$Opto.Onset))\ndata$Opto.Offset <- as.numeric(gsub(',', '', data$Opto.Offset))\ndata$Opto.Duration <- as.numeric(gsub(',', '', data$Opto.Duration))\ndata$TTL.Onset <- as.numeric(gsub(',', '', data$TTL.Onset))\ndata$TTL.Offset <- as.numeric(gsub(',', '', data$TTL.Offset))\ndata$TTL.Duration <- as.numeric(gsub(',', '', data$TTL.Duration))\n\nif(data$TTL.Onset[1] - data$Opto.Onset[1] > 0){\n  for(i in 1:nrow(data)){\n    data$Delay[i] <- data$Opto.Onset[i + 1] - data$TTL.Onset[i]\n  }\n} else{\n    for(h in 1:nrow(data)){\n      data$Delay[h] <- data$Opto.Onset[h] - data$TTL.Onset[h]\n    }\n}\n\nhist(data$Delay, main = \"Frequency Distribution of Time Offset Between TTL and Opto Sensor\", xlab = \"Offest Times (ms)\", breaks = 15, xlim=c(45,75))\nhist(data$Delay, main = \"Porbability Density of Time Offset Between TTL and Opto Sensor\", xlab = \"Offest Times (ms)\", breaks = 15, prob = T, xlim=c(45,75))\nlines(density(data$Delay, na.rm=T))\n\n\n",
+    "created" : 1491186182733.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "358877209",
+    "id" : "9FBA53EA",
+    "lastKnownWriteTime" : 1491186164,
+    "last_content_update" : 1491186187620,
+    "path" : "C:/Users/research/Desktop/BBTKTestData/TTL-Timing-Research/Timing Offset Visualization",
+    "project_path" : null,
+    "properties" : {
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

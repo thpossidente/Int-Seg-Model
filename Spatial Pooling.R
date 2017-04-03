@@ -3,13 +3,12 @@ n.hidden <- 26
 n.output <- 20
 learning.rate <- 0.05
 n.epochs <- 10000
-n.test <- 26
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.1
+trace.param.output <- 0.2
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.05
 output.bias.param.minus <- 1
-output.bias.param.plus <- 0.60
+output.bias.param.plus <- 0.50
 
 #install.packages('png')
 library('png')
@@ -78,19 +77,45 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights){ #cal
 forward.pass.2 <- function(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights){ #calculate output activations with "winner-takes-all" method
   
   hidden <- numeric(n.hidden)
+  
   for(i in 1:n.hidden){
     hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])
   }
-  #
-  hidden[hidden != max(hidden)] <- 0
-  hidden[which.max(hidden)] <- 1
+  
+  for(c in 1:ceiling(0.1*n.hidden)){
+    hidden[which.max(hidden)] <- -1
+  }
+  
+  for(j in 1:n.hidden){
+   if(hidden[j] == -1){
+     hidden[j] = 1
+   } else{
+     hidden[j] = 0
+   }
+  }
+  
+  #hidden[hidden != max(hidden)] <- 0
+  #hidden[which.max(hidden)] <- 1
   
   output <- numeric(n.output)
   for(b in 1:n.output){
     output[b] <- sigmoid.activation(sum(hidden * hidden.output.weights[,b] +  output.bias.weights[b,1]))
   }
-  output[output != max(output)] <- 0
-  output[which.max(output)] <- 1
+  
+  for(h in 1:ceiling(0.1*n.output)){
+    output[which.max(output)] <- -1
+  }
+  
+  for(k in 1:n.output){
+    if(output[k] == -1){
+      output[k] = 1
+    } else{
+      output[k] = 0
+    }
+  }
+  
+  #output[output != max(output)] <- 0
+  #output[which.max(output)] <- 1
   return(list(hidden=hidden, output=output))
 }
 
@@ -295,7 +320,7 @@ batch.2 <- function(n.epochs){
       if(i %% 100 == 0){
         learning.curve[i / 100,] <- learning.measure(input.hidden.weights)
         bias.tracker[i / 100,] <- as.vector(hidden.bias.weights)
-        output.bias.tracker[i / 100] <- as.vector(output.bias.weights)
+        output.bias.tracker[i / 100,] <- as.vector(output.bias.weights)
       }
       setTxtProgressBar(pb, i)
     }
