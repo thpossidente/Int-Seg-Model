@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "n.input <- 1600\nn.hidden <- 26\nn.output <- 20\nlearning.rate <- 0.05\nn.epochs <- 10000\ntrace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account\ntrace.param.output <- 0.2\nhidden.bias.param.minus <- 1\nhidden.bias.param.plus <- 0.05\noutput.bias.param.minus <- 1\noutput.bias.param.plus <- 0.05\n\nsource('Load Letters.R')\nsource('Visualize Output.R')\nsource('multi-layer-network.R')\n\n## RUN ##\n\nresults <- batch(n.epochs) #run training batches\n\ndisplay.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs\ndisplay.output.bias.tracker(results)\n\n",
+    "created" : 1491236623555.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3698173809",
+    "id" : "43A1EF78",
+    "lastKnownWriteTime" : 1491248777,
+    "last_content_update" : 1491248777348,
+    "path" : "~/GitHub/Int-Seg-Model/Spatial Pooling.R",
+    "project_path" : "Spatial Pooling.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

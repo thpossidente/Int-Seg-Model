@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "display.learning.curves <- function(results){\n  for(i in 1:n.hidden){\n    layout(matrix(1:4, nrow=2))\n    plot(results$history$learning.curve[,i], main=paste(\"Node\",i))\n    plot(results$history$bias.tracker[,i])\n    image(matrix(results$network$input.hidden.weights[,i], nrow = 40))\n  }\n}\n\ndisplay.output.bias.tracker <- function(results){\n  for(i in 1:n.output){\n    plot(results$history$output.bias.tracker[,i], main=paste('Node', i))\n  }\n}\n\ntest.word.continuity <- function(network, words){\n  \n  n.letters <- 0\n  for(i in 1:length(words)){\n    n.letters <- n.letters + ncol(words[[i]])\n  }\n  \n  input.matrix <- matrix(0, ncol=n.input, nrow=n.letters)\n  r <- 1\n  for(i in 1:length(words)){\n    for(j in 1:ncol(words[[i]])){\n      input.matrix[r,] <- words[[i]][,j]\n      r <- r + 1\n    }\n  }\n  \n  temp.layer.activations(network, input.matrix)\n} \n \n\ntemp.layer.activations <- function(network, input.matrix){\n  \n  storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)\n  \n  for(i in 1:nrow(input.matrix)){\n    act.results <- forward.pass(input.matrix[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)\n    storing.activations[i,] <- act.results$output\n  }\n  \n  image(storing.activations)\n  print(storing.activations)\n}\n",
+    "created" : 1491245527581.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2569674951",
+    "id" : "7475DC0E",
+    "lastKnownWriteTime" : 1491248216,
+    "last_content_update" : 1491248216637,
+    "path" : "~/GitHub/Int-Seg-Model/Visualize Output.R",
+    "project_path" : "Visualize Output.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

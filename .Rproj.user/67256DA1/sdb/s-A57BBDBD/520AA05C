@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "\nforward.pass <- function(input, input.hidden.weights, hidden.bias.weights){ #calculate output activations with \"winner-takes-all\" method\n  \n  hidden <- numeric(n.hidden)\n  for(i in 1:n.hidden){\n    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])\n  }\n  hidden[hidden != max(hidden)] <- 0\n  hidden[which.max(hidden)] <- 1\n  return(hidden)\n}\n\n\n\ntrace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights){\n  \n  hidden <- forward.pass(input, input.hidden.weights, hidden.bias.weights)\n  \n  for(h in 1:n.hidden){\n    if(hidden[h] == 1){\n      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus\n    }\n    if(hidden[h] == 0){\n      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus\n    }\n    if(hidden.bias.weights[h,1] < 0){\n      hidden.bias.weights[h,1] <- 0\n    }\n  }\n  \n  for(i in 1:n.hidden){\n    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] \n    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])\n  }\n  \n  return(list(\n    trace.hidden = trace.hidden,\n    hidden = hidden,\n    input.hidden.weights = input.hidden.weights, \n    hidden.bias.weights = hidden.bias.weights\n  ))\n}\n\n\nbatch <- function(n.epochs){\n  \n  # network properties #\n  input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden) #initialiize weights at random values between 0 and 0.05\n  hidden.bias.weights <- matrix(0, nrow=n.hidden, ncol=1)\n  \n  # tracking learning #\n  learning.curve <- matrix(0, nrow = n.epochs/100, ncol = n.hidden) #initializes learning data matrix\n  bias.tracker <- matrix(0, nrow = n.epochs/100, ncol = n.hidden) #initializes learning data matrix\n  hidden.win.tracker <- matrix(0, nrow=n.epochs, ncol= n.hidden)\n  \n  pb <- txtProgressBar(min=1, max=n.epochs,style=3)\n  for(i in 1:n.epochs){\n    letter <- alphabet[[sample(1:26,1, replace = T)]]\n    results <- trace.update(letter, input.hidden.weights, trace.hidden, hidden.bias.weights)\n    input.hidden.weights <- results$input.hidden.weights\n    trace.hidden <- results$trace.hidden\n    hidden.bias.weights <- results$hidden.bias.weights\n    hidden.win.tracker[i,] <- results$hidden\n    if(i %% 100 == 0){\n      learning.curve[i / 100,] <- learning.measure(input.hidden.weights)\n      bias.tracker[i / 100,] <- as.vector(hidden.bias.weights)\n    }\n    setTxtProgressBar(pb, i)\n  }\n  return(list(\n    input.hidden.weights=input.hidden.weights, \n    learning.curve=learning.curve, \n    bias.tracker=bias.tracker,\n    hidden.bias.weights=hidden.bias.weights,\n    hidden.win.tracker = hidden.win.tracker\n  ))\n}\n",
+    "created" : 1491245694406.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "590937701",
+    "id" : "520AA05C",
+    "lastKnownWriteTime" : 1491245770,
+    "last_content_update" : 1491245770453,
+    "path" : "~/GitHub/Int-Seg-Model/Old Network Archive.R",
+    "project_path" : "Old Network Archive.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
