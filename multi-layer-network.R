@@ -89,7 +89,7 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
   
   for(i in 1:n.hidden){
     trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
-    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate * trace.hidden[i] * (input - input.hidden.weights[,i])
+    input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate.hidden * trace.hidden[i] * (input - input.hidden.weights[,i])
   }
   
   for(j in 1:n.output){
@@ -106,7 +106,7 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
   
   for(b in 1:n.output){
     trace.output[b] <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
-    hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate * trace.output[b] * (hidden - hidden.output.weights[,b])
+    hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate.output * trace.output[b] * (hidden - hidden.output.weights[,b])
   }
   
   return(list(
@@ -120,16 +120,18 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
     output.bias.weights=output.bias.weights))
 }
 
-batch <- function(n.epochs){
+batch <- function(n.epochs, network=NA){
   # network properties #
-  network <- list(
-    input.hidden.weights = matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden), #initialiize weights at random values between 0 and 0.05
-    hidden.bias.weights = matrix(0, nrow=n.hidden, ncol=1),
-    hidden.output.weights = matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output),
-    output.bias.weights = matrix(0, nrow=n.output, ncol=1),
-    trace.hidden = rep(0, times = n.hidden),
-    trace.output = rep(0, times = n.output)
-  )
+  if(is.na(network)){
+    network <- list(
+      input.hidden.weights = matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden), #initialiize weights at random values between 0 and 0.05
+      hidden.bias.weights = matrix(0, nrow=n.hidden, ncol=1),
+      hidden.output.weights = matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output),
+      output.bias.weights = matrix(0, nrow=n.output, ncol=1),
+      trace.hidden = rep(0, times = n.hidden),
+      trace.output = rep(0, times = n.output)
+    )
+  }
  
   # tracking learning #
   history <- list(
@@ -142,6 +144,13 @@ batch <- function(n.epochs){
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   for(i in 1:n.epochs){
     word <- words[[sample(1:9,1, replace = T)]]
+    
+    if(i %% 100 == 0){
+      history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
+      history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
+      history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
+    }
+    
     for(b in 1:(length(word)/n.input)){
       
       # get input vector
@@ -161,11 +170,7 @@ batch <- function(n.epochs){
       
       # update learning history
       history$hidden.win.tracker[i,] <- results$hidden
-      if(i %% 100 == 0){
-        history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
-        history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
-        history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
-      }
+      
       setTxtProgressBar(pb, i)
     }
   }

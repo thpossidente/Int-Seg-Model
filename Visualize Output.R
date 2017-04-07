@@ -3,7 +3,7 @@ display.learning.curves <- function(results){
     layout(matrix(1:4, nrow=2))
     plot(results$history$learning.curve[,i], main=paste("Node",i))
     plot(results$history$bias.tracker[,i])
-    image(matrix(results$network$input.hidden.weights[,i], nrow = 40))
+    image(t(apply(matrix(results$network$input.hidden.weights[,i], nrow = 40),1,rev)))
   }
 }
 
@@ -42,6 +42,17 @@ temp.layer.activations <- function(network, input.matrix){
     storing.activations[i,] <- act.results$output
   }
   
-  image(storing.activations)
+  output.results <- data.frame(letter=numeric(),output=numeric())
+  for(i in 1:nrow(storing.activations)){
+    output.results <- rbind(output.results, c(letter=i, output=which.max(storing.activations[i,])))
+  }
+  colnames(output.results) <- c("letter", "output")
+  
+  g <- ggplot(output.results, aes(x=letter, y=output)) + 
+    geom_point()+
+    ylim(1,20)+
+    theme_bw()
+  print(g)
+  #image(storing.activations)
   print(storing.activations)
 }
