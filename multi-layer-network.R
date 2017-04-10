@@ -32,40 +32,40 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
     hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])
   }
   
-  #for(c in 1:ceiling(0.1*n.hidden)){
-  #  hidden[which.max(hidden)] <- -1
-  #}
+  for(c in 1:ceiling(0.1*n.hidden)){
+    hidden[which.max(hidden)] <- -1
+  }
   
-  #for(j in 1:n.hidden){
-  # if(hidden[j] == -1){
-  #   hidden[j] = 1
-  # } else{
-  #   hidden[j] = 0
-  # }
-  #}
+  for(j in 1:n.hidden){
+   if(hidden[j] == -1){
+     hidden[j] = 1
+   } else{
+     hidden[j] = 0
+   }
+  }
   
-  hidden[hidden != max(hidden)] <- 0
-  hidden[which.max(hidden)] <- 1
+  #hidden[hidden != max(hidden)] <- 0
+  #hidden[which.max(hidden)] <- 1
   
   output <- numeric(n.output)
   for(b in 1:n.output){
     output[b] <- sigmoid.activation(sum(hidden * hidden.output.weights[,b] +  output.bias.weights[b,1]))
   }
   
-  #for(h in 1:ceiling(0.1*n.output)){
-  #  output[which.max(output)] <- -1
-  #}
+  for(h in 1:ceiling(0.1*n.output)){
+    output[which.max(output)] <- -1
+  }
   
-  #for(k in 1:n.output){
-  #  if(output[k] == -1){
-  #    output[k] = 1
-  #  } else{
-  #    output[k] = 0
-  #  }
-  #}
+  for(k in 1:n.output){
+    if(output[k] == -1){
+      output[k] = 1
+    } else{
+      output[k] = 0
+    }
+  }
   
-  output[output != max(output)] <- 0
-  output[which.max(output)] <- 1
+  #output[output != max(output)] <- 0
+  #output[which.max(output)] <- 1
   return(list(hidden=hidden, output=output))
 }
 
