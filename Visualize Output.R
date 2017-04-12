@@ -50,7 +50,7 @@ temp.layer.activations <- function(network, input.matrix){
   
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
-    ylim(1,20)+
+    ylim(1,50)+
     theme_bw()
   print(g)
   #image(storing.activations)

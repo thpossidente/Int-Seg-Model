@@ -32,7 +32,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
     hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])
   }
   
-  for(c in 1:ceiling(0.1*n.hidden)){
+  for(c in 1:ceiling(0.05*n.hidden)){
     hidden[which.max(hidden)] <- -1
   }
   
