@@ -3,9 +3,9 @@ library(ggplot2)
 n.input <- 1600
 n.hidden <- 100
 n.output <- 30
-learning.rate.hidden <- 0.1
+learning.rate.hidden <- 0.2
 learning.rate.output <- 0.3
-n.epochs <- 100000
+n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.6
 hidden.bias.param.minus <- 2
@@ -13,6 +13,10 @@ hidden.bias.param.plus <- 0.1
 output.bias.param.minus <- 0
 output.bias.param.plus <- 0
 sparseness.percent <- 0.25
+num.inputs.generated <- 50
+integration.parameter <- 1 # if 1: temporal pattern of input for one system, random pattern for other system. 
+                           # if 0: temporal patterns of input for both systems are correlated (consistently co-occur)
+                           # if 0.5: inputs for each system consistently co-occur
 
 source('Load Letters.R')
 source('Visualize Output.R')

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "## Generating Inputs ##\n\n\nrandom.inputs <- function(){\n  one.zero <- c(0,1)\n  input.list <- vector('list', num.inputs.generated)\n  for(i in 1:num.inputs.generated){\n    input.list[[i]] <- c(sample(one.zero, n.input/2, replace = TRUE, c(0.9, 0.1)))\n  }\n  \n  grouped.inputs <- vector('list', num.inputs.generated/5)\n  for(h in 1:(num.inputs.generated/5)){\n    grouped.inputs[[h]] <- list(input.list[[]]) ## how to group?\n  }\n  \n  return(input.list)\n}\n\ninput.generation <- function(integration.parameter){\n  input.list <- random.inputs()\n  if(integration.parameter == 0){ #System 1 gets temporal pattern of ?? inputs in order. System 2 gets random input everyt ime\n    inputs <- vector('list', n.epochs)\n    for(i in 1:n.epochs){\n      for(h in 1:5){\n        inputs[[h]] <- c(input.list[[]], input.list[[sample(1:num.inputs.generated,1, replace = TRUE)]])\n      }\n    }\n    return(inputs)\n  }\n  \n  if(integration.parameter == 1){\n    \n  }\n}\n\n",
+    "created" : 1492351119556.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "640199485",
+    "id" : "F8AB438",
+    "lastKnownWriteTime" : 1492356609,
+    "last_content_update" : 1492356609701,
+    "path" : "~/GitHub/Int-Seg-Model/Input Generation.R",
+    "project_path" : "Input Generation.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
