@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "library(ggplot2)\n\nn.input <- 1600\nn.hidden <- 100\nn.output <- 30\nlearning.rate.hidden <- 0.1\nlearning.rate.output <- 0.3\nn.epochs <- 100000\ntrace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account\ntrace.param.output <- 0.6\nhidden.bias.param.minus <- 2\nhidden.bias.param.plus <- 0.1\noutput.bias.param.minus <- 0\noutput.bias.param.plus <- 0\nsparseness.percent <- 0.25\n\nsource('Load Letters.R')\nsource('Visualize Output.R')\nsource('multi-layer-network.R')\n\n## RUN ##\n\nresults <- batch(n.epochs) #run training batches\n\ndisplay.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs\ndisplay.output.bias.tracker(results)\ntest.word.continuity(results$network, words)\n\nresults$network$hidden.output.weights\n\nresults$network$hidden.bias.weights\n\n#results <- batch(n.epochs, network = results$network)\n",
+    "created" : 1492301103942.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2943606519",
+    "id" : "84DB80B5",
+    "lastKnownWriteTime" : 1492311502,
+    "last_content_update" : 1492311502671,
+    "path" : "~/GitHub/Int-Seg-Model/Spatial Pooling.R",
+    "project_path" : "Spatial Pooling.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

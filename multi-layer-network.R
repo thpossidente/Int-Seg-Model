@@ -29,7 +29,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
   hidden <- numeric(n.hidden)
   
   for(i in 1:n.hidden){
-    hidden[i] <- sigmoid.activation(sum(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1])
+    hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
   }
   
   for(c in 1:ceiling(0.05*n.hidden)){
@@ -49,7 +49,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
   
   output <- numeric(n.output)
   for(b in 1:n.output){
-    output[b] <- sigmoid.activation(sum(hidden * hidden.output.weights[,b] +  output.bias.weights[b,1]))
+    output[b] <- sigmoid.activation(sum(na.omit(hidden * hidden.output.weights[,b] +  output.bias.weights[b,1])))
   }
   
   for(h in 1:ceiling(0.1*n.output)){
@@ -131,8 +131,15 @@ batch <- function(n.epochs, network=NA){
       trace.hidden = rep(0, times = n.hidden),
       trace.output = rep(0, times = n.output)
     )
+    for(h in 1:(sparseness.percent*(n.input * n.hidden))){
+      network[[1]][sample(1:n.input, 1, replace=TRUE), sample(1:n.hidden, 1, replace=TRUE)] <- NA
+    }
+    
+    for(g in 1:(sparseness.percent*(n.hidden*n.output))){
+      network[[3]][sample(1:n.hidden, 1, replace=TRUE), sample(1:n.output, 1, replace=TRUE)] <- NA
+    }
   }
- 
+  
   # tracking learning #
   history <- list(
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
