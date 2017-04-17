@@ -5,18 +5,18 @@ n.hidden <- 100
 n.output <- 30
 learning.rate.hidden <- 0.2
 learning.rate.output <- 0.3
-n.epochs <- 10000
+n.epochs <- 5000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.6
 hidden.bias.param.minus <- 2
-hidden.bias.param.plus <- 0.1
+hidden.bias.param.plus <- 0.002
 output.bias.param.minus <- 0
 output.bias.param.plus <- 0
-sparseness.percent <- 0.25
+sparseness.percent <- 0.8
 num.inputs.generated <- 50
 integration.parameter <- 1 
-input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. 
-                           # if 0: temporal patterns of input for both systems are correlated (consistently co-occur)
+input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
+                           # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
                            # if 0.5: inputs for each system consistently co-occur
 
 source('Load Letters.R')
@@ -30,6 +30,7 @@ results <- batch(n.epochs) #run training batches
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
+visualize.letter.activations(results$network, l)
 
 results$network$hidden.output.weights
 

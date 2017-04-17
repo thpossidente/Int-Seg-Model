@@ -42,3 +42,11 @@ input.generation <- function(input.gen.parameter){
     
   }
 }
+
+
+### simple example of dependency
+
+# (1, 3) -> (5, 7)
+# (1, 4) -> (6, 8)
+# (2, 3) -> (5, 8)
+# (2, 4) -> (6, 7)
