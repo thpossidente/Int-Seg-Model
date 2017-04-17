@@ -14,7 +14,8 @@ output.bias.param.minus <- 0
 output.bias.param.plus <- 0
 sparseness.percent <- 0.25
 num.inputs.generated <- 50
-integration.parameter <- 1 # if 1: temporal pattern of input for one system, random pattern for other system. 
+integration.parameter <- 1 
+input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. 
                            # if 0: temporal patterns of input for both systems are correlated (consistently co-occur)
                            # if 0.5: inputs for each system consistently co-occur
 

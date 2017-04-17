@@ -8,28 +8,37 @@ random.inputs <- function(){
     input.list[[i]] <- c(sample(one.zero, n.input/2, replace = TRUE, c(0.9, 0.1)))
   }
   
-  grouped.inputs <- vector('list', num.inputs.generated/5)
-  for(h in 1:(num.inputs.generated/5)){
-    grouped.inputs[[h]] <- list(input.list[[]]) ## how to group?
+  grouped.inputs <- vector('list', (num.inputs.generated/5))
+  counter <- -1
+  for(b in 1:(num.inputs.generated/5)){
+    counter <- counter + 1
+    grouped.inputs[[b]] <- list(input.list[[(counter*5)+1]],
+                                input.list[[(counter*5)+2]],
+                                input.list[[(counter*5)+3]],
+                                input.list[[(counter*5)+4]],
+                                input.list[[(counter*5)+5]]
+                                )
   }
-  
-  return(input.list)
+  return(list(input.list, grouped.inputs))
 }
 
-input.generation <- function(integration.parameter){
-  input.list <- random.inputs()
-  if(integration.parameter == 0){ #System 1 gets temporal pattern of ?? inputs in order. System 2 gets random input everyt ime
-    inputs <- vector('list', n.epochs)
-    for(i in 1:n.epochs){
+input.generation <- function(input.gen.parameter){
+  results.random.inputs <- random.inputs()
+  input.list <- results.random.inputs[1]
+  grouped.inputs <- results.random.inputs[2]
+  
+  if(input.gen.parameter == 0){ #System 1 gets temporal patterns of 5 inputs in order. System 2 gets random input every time
+    inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
+    for(i in 1:n.epochs/5){
+      random.group <- grouped.inputs[[1]][[sample(1:(num.inputs.generated/5),1,replace=T)]]
       for(h in 1:5){
-        inputs[[h]] <- c(input.list[[]], input.list[[sample(1:num.inputs.generated,1, replace = TRUE)]])
+        inputs[i+h-1,] <- c(random.group[[h]], input.list[[1]][[sample(1:num.inputs.generated,1, replace = TRUE)]])
       }
     }
-    return(inputs)
+    return(inputs) ##inputs data not quite right
   }
   
-  if(integration.parameter == 1){
+  if(input.gen.parameter == 1){
     
   }
 }
-
