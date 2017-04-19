@@ -31,7 +31,7 @@ test.word.continuity <- function(network, words){
   
   temp.layer.activations(network, input.matrix)
 } 
- 
+
 
 temp.layer.activations <- function(network, input.matrix){
   
@@ -50,13 +50,54 @@ temp.layer.activations <- function(network, input.matrix){
   }
   colnames(output.results) <- c("letter", "output")
   
+  counter = 0
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[1:9]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[1:9])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[10:18]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[10:18])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[19:27]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[19:27])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[28:36]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[28:36])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[37:45]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[37:45])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[46:54]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[46:54])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[55:63]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[55:63])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[64:72]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[64:72])))
+  for(n in 1:30){
+    counter <- counter + sum(c(output.results$output[73:78]) == n)
+  }
+  counter <- counter - length(unique(c(output.results$output[73:78])))  
+
+  
+  
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
     ylim(1,50)+
     theme_bw()
   print(g)
-  #image(storing.activations)
+  
   print(storing.activations)
+  sprintf("Number of same nodes activated in groups of three letters: %i", counter)
 }
 
 visualize.letter.activations <- function(network, input){
