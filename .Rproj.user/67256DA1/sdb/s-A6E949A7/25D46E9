@@ -1,14 +1,14 @@
 {
     "collab_server" : "",
     "contents" : "library(ggplot2)\n\nn.input <- 1600\nn.hidden <- 100\nn.output <- 30\nlearning.rate.hidden <- 0.2\nlearning.rate.output <- 0.05\nn.epochs <- 5000\ntrace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account\ntrace.param.output <- 0.5\nhidden.bias.param.minus <- 2\nhidden.bias.param.plus <- 0.0005\noutput.bias.param.minus <- 0\noutput.bias.param.plus <- 0\nsparseness.percent <- 0.8\nnum.inputs.generated <- 50\nintegration.parameter <- 1 \ninput.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) \n                           # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs\n                           # if 0.5: inputs for each system consistently co-occur\n\nsource('Load Letters.R')\nsource('Visualize Output.R')\nsource('multi-layer-network.R')\n\n## RUN ##\n\nresults <- batch(n.epochs) #run training batches\n\ndisplay.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs\ndisplay.output.bias.tracker(results)\ntest.word.continuity(results$network, words)\nvisualize.letter.activations(results$network, n)\n\nresults$network$hidden.output.weights\n\nresults$network$hidden.bias.weights\n\n#results <- batch(n.epochs, network = results$network)\n",
-    "created" : 1492957225671.000,
+    "created" : 1492961185076.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
     "hash" : "2923489930",
-    "id" : "6F098412",
+    "id" : "25D46E9",
     "lastKnownWriteTime" : 1492961826,
-    "last_content_update" : 1492961826344,
+    "last_content_update" : 1492961826,
     "path" : "~/GitHub/Int-Seg-Model/Spatial Pooling.R",
     "project_path" : "Spatial Pooling.R",
     "properties" : {
