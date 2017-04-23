@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "## Generating Inputs ##\n\n\nrandom.inputs <- function(){\n  one.zero <- c(0,1)\n  input.list <- vector('list', num.inputs.generated)\n  for(i in 1:num.inputs.generated){\n    input.list[[i]] <- c(sample(one.zero, n.input/2, replace = TRUE, c(0.9, 0.1)))\n  }\n  \n  grouped.inputs <- vector('list', (num.inputs.generated/5))\n  counter <- -1\n  for(b in 1:(num.inputs.generated/5)){\n    counter <- counter + 1\n    grouped.inputs[[b]] <- list(input.list[[(counter*5)+1]],\n                                input.list[[(counter*5)+2]],\n                                input.list[[(counter*5)+3]],\n                                input.list[[(counter*5)+4]],\n                                input.list[[(counter*5)+5]]\n                                )\n  }\n  return(list(input.list, grouped.inputs))\n}\n\ninput.generation <- function(input.gen.parameter){\n  results.random.inputs <- random.inputs()\n  input.list <- results.random.inputs[1]\n  grouped.inputs <- results.random.inputs[2]\n  \n  if(input.gen.parameter == 1){ #System 1 gets temporal patterns of 5 inputs in order. System 2 gets random input every time\n    inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)\n    for(i in 0:((n.epochs/5)-1)){\n      random.group <- grouped.inputs[[1]][[sample(1:(num.inputs.generated/5),1,replace=T)]]\n      for(h in 1:5){\n        inputs[(i*5)+h,] <- c(random.group[[h]], input.list[[1]][[sample(1:num.inputs.generated,1, replace = TRUE)]])\n      }\n    }\n    return(inputs) \n  }\n  \n  if(input.gen.parameter == 0.5){ #not grouped temporally???\n    inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)\n    paired.inputs <- matrix(NA, nrow = num.inputs.generated, ncol = n.input)\n    new.input.list1 <- input.list\n    new.input.list2 <- input.list\n    for(b in 1:num.inputs.generated){\n      random1 <- sample(1:length(new.input.list1), 1, replace=T)\n      random2 <- sample(1:length(new.input.list2), 1, replace=T)\n      paired.inputs[b,] <- c(new.input.list1[[1]][[random1]], new.input.list2[[1]][[random2]])\n      new.input.list1[[1]][[random1]] <- NULL\n      new.input.list2[[1]][[random2]] <- NULL\n    }\n    for(c in 1:n.epochs){\n      #group paired inputs into groups of 5 then present in groups of 5\n    }\n    return(inputs)\n  }\n  \n  if(input.gen.parameter == 0){\n    inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)\n    \n  }\n}\n\n\n### simple example of dependency\n\n# (1, 3) -> (5, 7)\n# (1, 4) -> (6, 8)\n# (2, 3) -> (5, 8)\n# (2, 4) -> (6, 7)",
+    "created" : 1492957315501.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3682993738",
+    "id" : "AFAC2003",
+    "lastKnownWriteTime" : 1492961068,
+    "last_content_update" : 1492961068956,
+    "path" : "~/GitHub/Int-Seg-Model/Input Generation.R",
+    "project_path" : "Input Generation.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

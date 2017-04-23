@@ -35,10 +35,10 @@ input.generation <- function(input.gen.parameter){
         inputs[(i*5)+h,] <- c(random.group[[h]], input.list[[1]][[sample(1:num.inputs.generated,1, replace = TRUE)]])
       }
     }
-    return(inputs) ##inputs data not quite right
+    return(inputs) 
   }
   
-  if(input.gen.parameter == 0.5){
+  if(input.gen.parameter == 0.5){ #not grouped temporally???
     inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
     paired.inputs <- matrix(NA, nrow = num.inputs.generated, ncol = n.input)
     new.input.list1 <- input.list
@@ -51,12 +51,13 @@ input.generation <- function(input.gen.parameter){
       new.input.list2[[1]][[random2]] <- NULL
     }
     for(c in 1:n.epochs){
-      inputs[c,] <- paired.inputs[sample(1:num.inputs.generated,1, replace=T),]
+      #group paired inputs into groups of 5 then present in groups of 5
     }
-    retutrn(inputs)
+    return(inputs)
   }
   
   if(input.gen.parameter == 0){
+    inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
     
   }
 }
