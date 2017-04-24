@@ -4,8 +4,8 @@ n.input <- 1600
 n.hidden <- 100
 n.output <- 30
 learning.rate.hidden <- 0.2
-learning.rate.output <- 0.05
-n.epochs <- 5000
+learning.rate.output <- 0.005
+n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.5
 hidden.bias.param.minus <- 2
@@ -30,10 +30,10 @@ results <- batch(n.epochs) #run training batches
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
-visualize.letter.activations(results$network, n)
+visualize.letter.activations(results$network, g)
 
 results$network$hidden.output.weights
 
-results$network$hidden.bias.weights
+results$network$output.bias.weights
 
 #results <- batch(n.epochs, network = results$network)

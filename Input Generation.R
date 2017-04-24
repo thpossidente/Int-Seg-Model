@@ -38,7 +38,7 @@ input.generation <- function(input.gen.parameter){
     return(inputs) 
   }
   
-  if(input.gen.parameter == 0.5){ #not grouped temporally???
+  if(input.gen.parameter == 0.5){ #each system 1 input is always paired with the same system 2 input.
     inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
     paired.inputs <- matrix(NA, nrow = num.inputs.generated, ncol = n.input)
     new.input.list1 <- input.list
@@ -50,15 +50,48 @@ input.generation <- function(input.gen.parameter){
       new.input.list1[[1]][[random1]] <- NULL
       new.input.list2[[1]][[random2]] <- NULL
     }
-    for(c in 1:n.epochs){
-      #group paired inputs into groups of 5 then present in groups of 5
+    counter <- -1
+    grouped.paired.inputs <- vector('list', (num.inputs.generated/5))
+    for(c in 1:(num.inputs.generated/5)){
+      counter <- counter + 1
+      grouped.paired.inputs[[c]] <- list(paired.inputs[((counter*5)+1),],
+                                    paired.inputs[((counter*5)+2),],
+                                    paired.inputs[((counter*5)+3),],
+                                    paired.inputs[((counter*5)+4),],
+                                    paired.inputs[((counter*5)+5),])
+    }
+    for(t in 0:((n.epochs/5)-1)){
+      random.group <- grouped.paired.inputs[[sample(1:(num.inputs.generated/5),1,replace=T)]]
+      for(e in 1:5){
+      inputs[(t*5)+e,] <- random.group[[e]]
+      }
     }
     return(inputs)
   }
   
   if(input.gen.parameter == 0){
     inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
-    
+    paired.inputs <- matrix(NA, nrow = num.inputs.generated, ncol = n.input)
+    new.input.list1 <- input.list
+    new.input.list2 <- input.list
+    for(b in 1:num.inputs.generated){
+      random1 <- sample(1:length(new.input.list1), 1, replace=T)
+      random2 <- sample(1:length(new.input.list2), 1, replace=T)
+      paired.inputs[b,] <- c(new.input.list1[[1]][[random1]], new.input.list2[[1]][[random2]])
+      new.input.list1[[1]][[random1]] <- NULL
+      new.input.list2[[1]][[random2]] <- NULL
+    }
+    random.num.1 <- sample(1:(num.inputs.generated),1,replace = T)
+    random.num.2 <- sample(1:(num.inputs.generated),1,replace = T)
+    added <- random.num.1 + random.num.2
+    if(added > 50){
+      added <- added %% 50
+      if(added == 0){
+        added <- 1
+      }
+    ###run in groups of 2 where first input is random (from random.num.1 and 2) and second input is parired.inputs[added,]
+    ###will groups of 2 work?  
+    }
   }
 }
 
