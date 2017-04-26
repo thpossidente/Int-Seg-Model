@@ -69,7 +69,7 @@ input.generation <- function(input.gen.parameter){
     return(inputs)
   }
   
-  if(input.gen.parameter == 0){
+  if(input.gen.parameter == 0){ #Second input depends on both systems' first input 
     inputs <- matrix(NA, nrow=n.epochs, ncol=n.input)
     paired.inputs <- matrix(NA, nrow = num.inputs.generated, ncol = n.input)
     new.input.list1 <- input.list
@@ -81,19 +81,22 @@ input.generation <- function(input.gen.parameter){
       new.input.list1[[1]][[random1]] <- NULL
       new.input.list2[[1]][[random2]] <- NULL
     }
-    random.num.1 <- sample(1:(num.inputs.generated),1,replace = T)
-    random.num.2 <- sample(1:(num.inputs.generated),1,replace = T)
-    added <- random.num.1 + random.num.2
-    if(added > 50){
-      added <- added %% 50
-      if(added == 0){
-        added <- 1
+    for(h in seq(1, n.epochs, 2)){
+      random.num.1 <- sample(1:(num.inputs.generated),1,replace = T)
+      random.num.2 <- sample(1:(num.inputs.generated),1,replace = T)
+      added <- random.num.1 + random.num.2
+      if(added > 50){
+        added <- added %% 50
+        if(added == 0){
+          added <- 1
+        }
       }
-    ###run in groups of 2 where first input is random (from random.num.1 and 2) and second input is parired.inputs[added,]
-    ###will groups of 2 work?  
+      inputs[h,] <- c(input.list[[1]][[random.num.1]], input.list[[1]][[random.num.2]]) ## will pairs of just 2 work for learning?
+      inputs[h+1,] <- paired.inputs[added,]
+    }
     }
   }
-}
+
 
 
 ### simple example of dependency

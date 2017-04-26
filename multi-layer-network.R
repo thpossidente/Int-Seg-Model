@@ -32,7 +32,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
     hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
   }
   
-  for(c in 1:ceiling(0.05*n.hidden)){
+  for(c in 1:ceiling(percent.act.input*n.hidden)){
     hidden[which.max(hidden)] <- -1
   }
   
@@ -52,7 +52,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
     output[b] <- sigmoid.activation(sum(na.omit(hidden * hidden.output.weights[,b] +  output.bias.weights[b,1])))
   }
   
-  for(h in 1:ceiling(0.1*n.output)){
+  for(h in 1:ceiling(percent.act.output*n.output)){
     output[which.max(output)] <- -1
   }
   
@@ -122,11 +122,45 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
 
 batch <- function(n.epochs, network=NA){
   # network properties #
+  pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
+  pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
+  
+  for(input in 1:(n.input/2)){
+    for(hidden in (n.hidden/2 + 1):n.hidden){
+      if(runif(1) > integration.parameter){
+        pre.input.hidden.weights[input,hidden] <- NA
+      }
+    }
+  }
+  for(input in (n.input/2 + 1):n.input){
+    for(hidden in 1:(n.hidden/2)){
+      if(runif(1) > integration.parameter){
+        pre.input.hidden.weights[input,hidden] <- NA
+      }
+    }
+  }
+  
+  for(hidden in 1:(n.hidden/2)){
+    for(output in (n.output/2 + 1):n.output){
+      if(runif(1) > integration.parameter){
+        pre.hidden.output.weights[hidden,output] <- NA
+      }
+    }
+  }
+  
+  for(hidden in (n.hidden/2 + 1):n.hidden){
+    for(output in 1:(n.output/2)){
+      if(runif(1) > integration.parameter){
+        pre.hidden.output.weights[hidden,output] <- NA
+      }
+    }
+  }
+  
   if(is.na(network)){
     network <- list(
-      input.hidden.weights = matrix(runif(n.input*n.hidden, min=0, max=0.05), nrow=n.input, ncol=n.hidden), #initialiize weights at random values between 0 and 0.05
+      input.hidden.weights = pre.input.hidden.weights,
       hidden.bias.weights = matrix(0, nrow=n.hidden, ncol=1),
-      hidden.output.weights = matrix(runif(n.hidden*n.output, min=0, max=0.05), nrow=n.hidden, ncol=n.output),
+      hidden.output.weights = pre.hidden.output.weights,
       output.bias.weights = matrix(0, nrow=n.output, ncol=1),
       trace.hidden = rep(0, times = n.hidden),
       trace.output = rep(0, times = n.output)

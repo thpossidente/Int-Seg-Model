@@ -52,8 +52,8 @@ temp.layer.activations <- function(network, input.matrix){
   
   ## accuracy measurement ##
   n <- 1
-  g <- (n.output/10) * 3
-  g. <- (n.output/10) * 3
+  g <- (n.output*percent.act.output) * 3
+  g. <- (n.output/percent.act.output) * 3
   
   counter <- 0
   for(h in 1:n.output){
@@ -113,11 +113,11 @@ temp.layer.activations <- function(network, input.matrix){
   g <- g + g.
   
   for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:(g-(n.output/10))]) == h)
+    counter <- counter + sum(c(output.results$output[n:(g-(n.output*(percent.act.output)))]) == h)
   }
-  counter <- counter - length(unique(c(output.results$output[n:(g-(n.output/10))])))
+  counter <- counter - length(unique(c(output.results$output[n:(g-(n.output*(percent.act.output)))])))
   
-  percentage <- counter/(((n.output/10)*2*26) - (n.output/10))
+  percentage <- counter/(((n.output*(percent.act.output))*2*26) - (n.output*(percent.act.output)))
   ###
   
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
