@@ -165,7 +165,7 @@ batch <- function(n.epochs, network=NA){
       trace.hidden = rep(0, times = n.hidden),
       trace.output = rep(0, times = n.output)
     )
-    for(h in 1:(sparseness.percent*(n.input * n.hidden))){
+    for(h in 1:(sparseness.percent*(n.input * n.hidden))){ ## work on correct implementation of sparseness with split network
       network[[1]][sample(1:n.input, 1, replace=TRUE), sample(1:n.hidden, 1, replace=TRUE)] <- NA
     }
     
@@ -179,7 +179,10 @@ batch <- function(n.epochs, network=NA){
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
     bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
     output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
-    hidden.win.tracker = matrix(0, nrow=n.epochs, ncol= n.hidden)
+    hidden.win.tracker = matrix(0, nrow=n.epochs, ncol= n.hidden),
+    hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
+    hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
+    hidden.stability.tracking = update.hidden.layer.stability(letters, network) 
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -190,6 +193,9 @@ batch <- function(n.epochs, network=NA){
       history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
       history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
       history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
+      history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
+      history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
+      history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
     }
     
     for(b in 1:(length(word)/n.input)){

@@ -1,3 +1,5 @@
+library(dplyr)
+
 display.learning.curves <- function(results){
   for(i in 1:n.hidden){
     layout(matrix(1:4, nrow=2))
@@ -142,7 +144,68 @@ visualize.letter.activations <- function(network, input){
     image(t(apply(matrix(network$input.hidden.weights[,act], nrow = 40),1,rev)))
   }
   all.active.nodes <- network$input.hidden.weights[,active.nodes]
-  m.fun <- function(x) { return(mean(x, na.rm=T)) }
-  average.weights <- apply(all.active.nodes, 1, m.fun)
+  average.weights <- calculate.mean.weights(all.active.nodes)
   image(t(apply(matrix(average.weights, nrow = 40),1,rev)))
+}
+
+calculate.mean.weights <- function(active.nodes){
+  m.fun <- function(x) { return(mean(x, na.rm=T)) }
+  average.weights <- apply(active.nodes, 1, m.fun)
+  return(average.weights)
+}
+
+hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
+  result <- forward.pass(letter, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  active.nodes <- which(result$hidden == max(result$hidden))
+  all.active.nodes <- network$input.hidden.weights[,active.nodes]
+  average.weights <- calculate.mean.weights(all.active.nodes)
+  if(!all(is.na(comparison.letter))){
+    similarity <- sum(abs(comparison.letter - average.weights), na.rm = T)
+  } else {
+    similarity <- sum(abs(letter - average.weights), na.rm = T)
+  }
+  return(similarity)
+}
+
+batch.hidden.layer.learning <- function(letters, network){
+  result <- data.frame(input=names(letters), similarity=NA)
+  for(i in 1:nrow(result)){
+    result[i,"similarity"] <- hidden.layer.similarity(letters[[names(letters)[i]]], network)
+  }
+  return(result)
+}
+
+visualize.hidden.layer.learning <- function(history){
+  plotting.data <- expand.grid(letter=names(letters), time=1:nrow(history$hidden.letter.similarity.tracking))
+  plotting.data$similarity <- mapply(function(l, t){
+    return(history$hidden.letter.similarity.tracking[t,which(names(letters)==l)])
+  }, plotting.data$letter, plotting.data$time)
+  summary.data <- plotting.data %>% group_by(time) %>% summarize(mean.similarity = mean(similarity))
+  ggplot(plotting.data, aes(x=time, y=similarity, color = letter))+ geom_line() + 
+    geom_line(data=summary.data, aes(x=time, y=mean.similarity, color=NA), size=2)
+}
+
+hidden.layer.stability <- function(letter, input, network, history){
+  result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  active.nodes <- which(result$hidden == max(result$hidden))
+  previous.active.nodes <- history$hidden.stability.tracking[[letter]]
+  change <- length(active.nodes) - sum(active.nodes %in% previous.active.nodes)
+  return(change)
+}
+
+batch.hidden.layer.stability <- function(letters, network, history){
+  result <- data.frame(input=names(letters), stability=NA)
+  for(i in 1:nrow(result)){
+    result[i,"stability"] <- hidden.layer.stability(names(letters)[i], letters[[names(letters)[i]]], network, history)
+  }
+  return(result$stability)
+}
+
+update.hidden.layer.stability <- function(letters, network){
+  tracker <- sapply(names(letters), function(x){
+    result <- forward.pass(letters[[x]], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    active.nodes <- which(result$hidden == max(result$hidden))
+    return(active.nodes)
+  }, USE.NAMES = T, simplify=FALSE)
+  return(tracker)
 }
