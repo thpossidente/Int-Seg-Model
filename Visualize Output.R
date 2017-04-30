@@ -55,7 +55,7 @@ temp.layer.activations <- function(network, input.matrix){
   ## accuracy measurement ##
   n <- 1
   g <- (n.output*percent.act.output) * 3
-  g. <- (n.output/percent.act.output) * 3
+  g. <- (n.output*percent.act.output) * 3
   
   counter <- 0
   for(h in 1:n.output){
@@ -121,7 +121,7 @@ temp.layer.activations <- function(network, input.matrix){
   
   percentage <- counter/(((n.output*(percent.act.output))*2*26) - (n.output*(percent.act.output)))
   ###
-  
+
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
     ylim(1,50)+
@@ -129,7 +129,7 @@ temp.layer.activations <- function(network, input.matrix){
   print(g)
   
   print(storing.activations)
-  sprintf("Percent paired: %f", percentage)
+  print(percentage)
 }
 
 visualize.letter.activations <- function(network, input){

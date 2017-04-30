@@ -187,8 +187,8 @@ batch <- function(n.epochs, network=NA){
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   for(i in 1:n.epochs){
-    word <- words[[sample(1:9,1, replace = T)]]
-    
+    word <- words[[sample(1:n.words,1, replace = T)]]
+
     if(i %% 100 == 0){
       history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
       history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)

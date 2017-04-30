@@ -71,5 +71,4 @@ words <- list(
   stu <- cbind(s,t,u), 
   vwx <- cbind(v,w,x), 
   yz <- cbind(y,z)
-  
 )
