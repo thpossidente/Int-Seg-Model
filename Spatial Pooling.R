@@ -3,16 +3,16 @@ library(ggplot2)
 n.input <- 1600
 n.hidden <- 100
 n.output <- 30
-learning.rate.hidden <- 0.025
+learning.rate.hidden <- 0.01
 learning.rate.output <- 0.2
-n.epochs <- 5000
+n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.5
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0
 output.bias.param.plus <- 0
-sparseness.percent <- 0.75
+sparseness.percent <- 0
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
 percent.act.input <- 0.05
@@ -34,9 +34,9 @@ visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
-visualize.letter.activations(results$network, u)
+visualize.letter.activations(results$network, h)
 
-results$history$hidden.stability[30:50,]
+results$history$hidden.stability[75:100,]
 
 results$network$hidden.output.weights
 

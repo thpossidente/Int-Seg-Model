@@ -103,9 +103,9 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
       output.bias.weights[j,1] <- 0
     }
   }
-  
+
   for(b in 1:n.output){
-    trace.output[b] <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
+    trace.output[b] <- ((1 - trace.param.output) * output[b]) + trace.param.output * trace.output[b]
     hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate.output * trace.output[b] * (hidden - hidden.output.weights[,b])
   }
   
@@ -207,13 +207,12 @@ batch <- function(n.epochs, network=NA){
       # update network properties
       results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       network$input.hidden.weights <- results$input.hidden.weights
-      network$hidden.output.weights <- results$hidden.output.weights
       network$trace.hidden <- results$trace.hidden
       network$hidden.bias.weights <- results$hidden.bias.weights
-      network$hidden.output.weights <- results$hidden.output.weights
       network$trace.output <- results$trace.output
       network$output.bias.weights <- results$output.bias.weights
-      network$hidden.bias.weights <- results$hidden.bias.weights
+      network$hidden.output.weights <- results$hidden.output.weights
+      
       
       # update learning history
       history$hidden.win.tracker[i,] <- results$hidden
