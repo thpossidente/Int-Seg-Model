@@ -12,7 +12,7 @@ hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0
 output.bias.param.plus <- 0
-sparseness.percent <- 0
+sparseness.percent <- 0.50
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
 percent.act.input <- 0.05
@@ -34,7 +34,7 @@ visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
-visualize.letter.activations(results$network, h)
+visualize.letter.activations(results$network, r)
 
 results$history$hidden.stability[75:100,]
 

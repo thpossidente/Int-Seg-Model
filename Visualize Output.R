@@ -119,7 +119,7 @@ temp.layer.activations <- function(network, input.matrix){
   }
   counter <- counter - length(unique(c(output.results$output[n:(g-(n.output*(percent.act.output)))])))
   
-  percentage <- counter/(((n.output*(percent.act.output))*2*26) - (n.output*(percent.act.output)))
+  percentage <- counter/(((n.output*(percent.act.output))*2*8.5))
   ###
 
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
