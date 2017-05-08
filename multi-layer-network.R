@@ -187,8 +187,9 @@ batch <- function(n.epochs, network=NA){
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   for(i in 1:n.epochs){
+    
     word <- words[[sample(1:n.words,1, replace = T)]]
-
+    
     if(i %% 100 == 0){
       history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
       history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
@@ -201,11 +202,14 @@ batch <- function(n.epochs, network=NA){
     for(b in 1:(length(word)/n.input)){
       
       # get input vector
+      
       letter <- word[,b]
       letter <- noise.in.letter(letter)
       
       # update network properties
+      
       results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      
       network$input.hidden.weights <- results$input.hidden.weights
       network$trace.hidden <- results$trace.hidden
       network$hidden.bias.weights <- results$hidden.bias.weights
@@ -213,14 +217,15 @@ batch <- function(n.epochs, network=NA){
       network$output.bias.weights <- results$output.bias.weights
       network$hidden.output.weights <- results$hidden.output.weights
       
-      
-      # update learning history
-      history$hidden.win.tracker[i,] <- results$hidden
-      
-      setTxtProgressBar(pb, i)
+    
     }
+
+    # update learning history
+    history$hidden.win.tracker[i,] <- results$hidden
+    setTxtProgressBar(pb, i)
+    
   }
-  test.word.continuity(network, words)
+  
   return(list(
     history=history,
     network=network
