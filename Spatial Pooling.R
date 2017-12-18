@@ -1,3 +1,4 @@
+#install.packages('ggplot2')
 library(ggplot2)
 
 n.input <- 1600
@@ -34,7 +35,7 @@ visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
-visualize.letter.activations(results$network, o)
+visualize.letter.activations(results$network, l)
 
 results$history$hidden.stability[75:100,]
 
