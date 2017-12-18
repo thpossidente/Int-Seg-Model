@@ -3,6 +3,7 @@ library(dplyr)
 #install.packages("magrittr")
 library(magrittr)
 
+
 display.learning.curves <- function(results){
   for(i in 1:n.hidden){
     layout(matrix(1:4, nrow=2))
@@ -183,7 +184,6 @@ visualize.hidden.layer.learning <- function(history){
   plotting.data$similarity <- mapply(function(l, t){
     return(history$hidden.letter.similarity.tracking[t,which(names(letters)==l)])
   }, plotting.data$letter, plotting.data$time)
-  library(dplyr)
   summary.data <- plotting.data %>% group_by(time) %>% summarize(mean.similarity = mean(similarity))
   ggplot(plotting.data, aes(x=time, y=similarity, color = letter))+ geom_line() + 
     geom_line(data=summary.data, aes(x=time, y=mean.similarity, color=NA), size=2)+
