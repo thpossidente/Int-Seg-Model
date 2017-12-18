@@ -32,7 +32,7 @@ source('multi-layer-network.R')
 results <- batch(n.epochs) #run training batches
 
 visualize.hidden.layer.learning(results$history)
-display.learning.curves(results) #visualize learning by plotting weight similarity to alphabet input every 100 epochs
+display.learning.curves(results) 
 display.output.bias.tracker(results)
 test.word.continuity(results$network, words)
 visualize.letter.activations(results$network, l)
