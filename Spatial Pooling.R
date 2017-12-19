@@ -6,7 +6,7 @@ n.hidden <- 100
 n.output <- 30
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.01
-n.epochs <- 5000
+n.epochs <- 10000
 trace.param.hidden <- 0.75 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.75
 hidden.bias.param.minus <- 2
@@ -34,13 +34,7 @@ results <- batch(n.epochs) #run training batches
 visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) 
 display.output.bias.tracker(results)
-test.word.continuity(results$network, words)
 visualize.letter.activations(results$network, l)
+visualize.output.act.match()
 
-results$history$hidden.stability[75:100,]
 
-results$network$hidden.output.weights
-
-results$network$output.bias.weights
-
-#results <- batch(n.epochs, network = results$network)

@@ -179,6 +179,7 @@ batch <- function(n.epochs, network=NA){
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
     bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
     output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
+    output.match.tracker <- rep(0, times = n.epochs/100),
     hidden.win.tracker = matrix(0, nrow=n.epochs, ncol= n.hidden),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
@@ -197,6 +198,7 @@ batch <- function(n.epochs, network=NA){
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
       history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
+      history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
     }
     
     for(b in 1:(length(word)/n.input)){

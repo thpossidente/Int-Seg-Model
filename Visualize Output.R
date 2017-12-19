@@ -77,9 +77,8 @@ temp.layer.activations <- function(network, input.matrix){
     geom_point()+
     ylim(1,50)+
     theme_bw()
-  print(g)
   
-  cat('Number of activation matches:', num.matches, '\n', 'Percentage of activation matches:',  percentage*100)
+  return(percentage*100)
 }
 
 visualize.letter.activations <- function(network, input){
@@ -159,4 +158,9 @@ update.hidden.layer.stability <- function(letters, network){
     return(active.nodes)
   }, USE.NAMES = T, simplify=FALSE)
   return(tracker)
+}
+
+visualize.output.act.match <- function(){
+  plot(results$history$output.match.tracker, ylim = range(0, 100), type='o', ann = F)
+  title(xlab = 'Time', ylab = 'Percentage of activation matches')
 }
