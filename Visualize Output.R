@@ -57,73 +57,20 @@ temp.layer.activations <- function(network, input.matrix){
   colnames(output.results) <- c("letter", "output")
   
   ## accuracy measurement ##
-  n <- 1
-  g <- (n.output*percent.act.output) * 3
-  g. <- (n.output*percent.act.output) * 3
-  
-  counter <- 0
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
+  counter <- 1
+  num.matches <- 0
+  act.per.word <- ceiling(length(output.results$output)/(n.output*percent.act.output*3))
+  for(b in seq(from = act.per.word, to = length(output.results$output) + act.per.word, by = act.per.word)){
+    freq <- rle(sort(output.results$output[counter:b]))
+    counter <- counter + 9 
+    for(h in 1:length(freq$lengths)){
+      if(freq$lengths[h] > 1){
+        num.matches = num.matches + freq$lengths[h]
+      }
+    }
   }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
   
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:g]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:g])))
-  n <- g + 1
-  g <- g + g.
-  
-  for(h in 1:n.output){
-    counter <- counter + sum(c(output.results$output[n:(g-(n.output*(percent.act.output)))]) == h)
-  }
-  counter <- counter - length(unique(c(output.results$output[n:(g-(n.output*(percent.act.output)))])))
-  
-  percentage <- counter/(((n.output*(percent.act.output))*2*8.5))
+  percentage <- num.matches/78
   ###
 
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
@@ -132,8 +79,7 @@ temp.layer.activations <- function(network, input.matrix){
     theme_bw()
   print(g)
   
-  print(storing.activations)
-  print(percentage)
+  cat('Number of activation matches:', num.matches, '\n', 'Percentage of activation matches:',  percentage*100)
 }
 
 visualize.letter.activations <- function(network, input){
