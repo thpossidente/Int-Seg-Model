@@ -105,7 +105,7 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
   }
 
   for(b in 1:n.output){
-    trace.output[b] <- ((1 - trace.param.output) * output[b]) + trace.param.output * trace.output[b]
+    trace.output[b] <- (1 - trace.param.output) * trace.output[b] + trace.param.output * output[b]
     hidden.output.weights[,b] <- hidden.output.weights[,b] + learning.rate.output * trace.output[b] * (hidden - hidden.output.weights[,b])
   }
   
@@ -191,7 +191,7 @@ batch <- function(n.epochs, network=NA){
     
     word <- words[[sample(1:n.words,1, replace = T)]]
     
-    if(i %% 100 == 0){
+    if(i == 2 || i %% 100 == 0){
       history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
       history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
       history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
