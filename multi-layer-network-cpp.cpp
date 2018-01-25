@@ -12,6 +12,7 @@ using namespace Rcpp;
 //
 
 // [[Rcpp::export]]
+
 NumericVector timesTwo(NumericVector x) {
   return x * 2;
 }
@@ -20,6 +21,7 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   
   NumericVector hidden;
   for(int i=0; i<hidden.length(); i++){
+    hidden[i] += hiddenBiasWeights[i,1]
     for(int j=0; j<input.length(); j++){
       if(inputToHiddenWeights[j,i] != NAN) {
         hidden[i] += input[j] * inputToHiddenWeights[j,i];
@@ -27,6 +29,9 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
     }
   }
   
+  for(int, c=0; i<){
+    
+  }
 }
 
 // You can include R code blocks in C++ files processed with sourceCpp
@@ -35,5 +40,5 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
 //
 
 /*** R
-timesTwo(42)
+
 */
