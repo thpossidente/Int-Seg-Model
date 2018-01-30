@@ -8,11 +8,11 @@ learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.1 #0.75
+trace.param.output <- 0.25 #0.75
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 1 #0
-output.bias.param.plus <- 0.0005 #0
+output.bias.param.minus <- 0 #0
+output.bias.param.plus <- 0 #0
 sparseness.percent <- 0.75
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -36,7 +36,7 @@ display.learning.curves(results)
 display.output.bias.tracker(results)
 visualize.letter.activations(results$network, s)
 visualize.output.act.match()
-temp.layer.many.activations(network, words)
+n <- temp.layer.many.activations(network, words)
 
 network <- results$network
 

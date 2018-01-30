@@ -13,11 +13,6 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 
-NumericVector timesTwo(NumericVector x) {
-  return x * 2;
-}
-
-
 
 List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector outputBiasWeights){
   
@@ -28,7 +23,7 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   for(int i=0; i<n_hidden; i++){
     hidden[i] += hiddenBiasWeights[i,1];
     for(int j=0; j<input.length(); j++){
-      if(inputToHiddenWeights[j,i] != NAN) {
+      if(inputToHiddenWeights[j,i] != R_NaN) {
         hidden[i] += input[j] * inputToHiddenWeights[j,i];
       }
     }
@@ -38,7 +33,7 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   int percentActInput = env["percent.act.input"];
   int number = ceil(percentActInput * n_hidden);
   for(int c=0; c<number; c++){
-    largest = max_element(hidden.begin(), hidden.end());
+    largest = which_max(hidden);
     hidden[largest] = -1;
   }
   
@@ -55,7 +50,7 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   for(int z=0; z<n_output; z++){
     output[z] += outputBiasWeights[z,1];
     for(int h=0; h<n_hidden; h++){
-      if(hiddenToOutputWeights[h,z] != NAN) {
+      if(hiddenToOutputWeights[h,z] != R_NaN) {
         output[h] += hidden[h] * hiddenToOutputWeights[h,z];
       }
     }
@@ -65,7 +60,7 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   int percentActOutput = env["percent.act.output"];
   int number1 = ceil(percentActOutput * n_output);
   for(int k=0; k<number1; k++){
-    largest1 = max_element(output.begin(), output.end());
+    largest1 = which_max(output);
     output[largest1] = -1;
   }
   
@@ -77,7 +72,8 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
     }
   }
   
-  return()
+  List retrn = List::create(Named("hidden") = hidden,_["output"] = output); 
+  return(retrn);
 }
 
 // You can include R code blocks in C++ files processed with sourceCpp
