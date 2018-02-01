@@ -1,6 +1,10 @@
 #install.packages('ggplot2')
 library(ggplot2)
 
+source('Load Letters.R')
+source('Visualize Output.R')
+source('multi-layer-network.R')
+
 n.input <- 1600
 n.hidden <- 100
 n.output <- 30
@@ -8,11 +12,7 @@ learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-<<<<<<< HEAD
 trace.param.output <- 0.75 #0.75
-=======
-trace.param.output <- 0.25 #0.75
->>>>>>> 7923fd98601a8a6bfa1abcb63249f6769f39ebf0
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
@@ -27,10 +27,6 @@ input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, rando
                          # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
                          # if 0.5: inputs for each system consistently co-occur
 
-source('Load Letters.R')
-source('Visualize Output.R')
-source('multi-layer-network.R')
-
 ## RUN ##
 
 results <- batch(n.epochs) #run training batches
@@ -40,7 +36,8 @@ display.learning.curves(results)
 display.output.bias.tracker(results)
 visualize.letter.activations(results$network, s)
 visualize.output.act.match()
-n <- temp.layer.many.activations(network, words)
+temp.layer.activations.many <- temp.layer.many.activations(network, words)
+output.trace.track <- results$history$output.trace.tracker
 
 network <- results$network
 

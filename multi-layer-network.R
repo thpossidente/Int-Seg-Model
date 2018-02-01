@@ -73,6 +73,7 @@ trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.
   
   forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
   #forward.pass.results <- Rcpp::sourceCpp("forwardPassCpp.cpp")
+  hidden <- forward.pass.results$hidden
   output <- forward.pass.results$output
   
   for(h in 1:n.hidden){
@@ -175,15 +176,15 @@ batch <- function(n.epochs, network=NA){
   }
   
   # tracking learning #
-  history <- list(
-    learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
-    bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
+  history <- list(               #initializes learning data matrices
+    learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
+    bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
     output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
     output.match.tracker <- rep(0, times = n.epochs/100),
-    hidden.win.tracker = matrix(0, nrow=n.epochs, ncol= n.hidden),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    hidden.stability.tracking = update.hidden.layer.stability(letters, network) 
+    hidden.stability.tracking = update.hidden.layer.stability(letters, network),
+    output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -199,6 +200,7 @@ batch <- function(n.epochs, network=NA){
       history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
       history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
+      history$output.trace.tracker[i / 100, ] <- network$trace.output
     }
     
     for(b in 1:(length(word)/n.input)){
@@ -223,7 +225,6 @@ batch <- function(n.epochs, network=NA){
     }
 
     # update learning history
-    #history$hidden.win.tracker[i,] <- results$hidden
     setTxtProgressBar(pb, i)
     
   }
