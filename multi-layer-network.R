@@ -223,7 +223,7 @@ batch <- function(n.epochs, network=NA){
     }
 
     # update learning history
-    history$hidden.win.tracker[i,] <- results$hidden
+    #history$hidden.win.tracker[i,] <- results$hidden
     setTxtProgressBar(pb, i)
     
   }
