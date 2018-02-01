@@ -72,7 +72,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
   forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  hidden <- forward.pass.results$hidden
+  #forward.pass.results <- Rcpp::sourceCpp("forwardPassCpp.cpp")
   output <- forward.pass.results$output
   
   for(h in 1:n.hidden){

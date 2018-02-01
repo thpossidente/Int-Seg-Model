@@ -13,11 +13,37 @@ display.learning.curves <- function(results){
   }
 }
 
+
 display.output.bias.tracker <- function(results){
   for(i in 1:n.output){
     plot(results$history$output.bias.tracker[,i], main=paste('Node', i))
   }
 }
+
+
+temp.layer.many.activations <- function(network, words){
+  
+  input.matrix1 <- matrix(0, ncol=n.input, nrow <- length(alphabet) * 5) #5 passes through all words
+  r <- 1
+  for(k in 1:5){
+    for(p in 1:length(words)){
+      for(j in 1:ncol(words[[p]])){
+        input.matrix1[r,] <- words[[p]][,j]
+        r <- r + 1
+      }
+    }
+  }
+  
+  storing.activations <- matrix(0, nrow=nrow(input.matrix1), ncol=n.output)
+  
+  for(i in 1:nrow(input.matrix1)){
+    act.results <- forward.pass(input.matrix1[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    storing.activations[i,] <- act.results$output
+  }
+  return(storing.activations)
+  
+}
+
 
 test.word.continuity <- function(network, words){
   
@@ -81,6 +107,7 @@ temp.layer.activations <- function(network, input.matrix){
   return(percentage*100)
 }
 
+
 visualize.letter.activations <- function(network, input){
   result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
@@ -97,11 +124,13 @@ visualize.letter.activations <- function(network, input){
   image(t(apply(matrix(average.weights, nrow = 40),1,rev)))
 }
 
+
 calculate.mean.weights <- function(active.nodes){
   m.fun <- function(x) { return(mean(x, na.rm=T)) }
   average.weights <- apply(active.nodes, 1, m.fun)
   return(average.weights)
 }
+
 
 hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
   result <- forward.pass(letter, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
@@ -116,6 +145,7 @@ hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
   return(similarity)
 }
 
+
 batch.hidden.layer.learning <- function(letters, network){
   result <- data.frame(input=names(letters), similarity=NA)
   for(i in 1:nrow(result)){
@@ -123,6 +153,7 @@ batch.hidden.layer.learning <- function(letters, network){
   }
   return(result)
 }
+
 
 visualize.hidden.layer.learning <- function(history){
   plotting.data <- expand.grid(letter=names(letters), time=1:nrow(history$hidden.letter.similarity.tracking))
@@ -135,6 +166,7 @@ visualize.hidden.layer.learning <- function(history){
     labs(x='time', y='difference between network representation and input letter')
 }
 
+
 hidden.layer.stability <- function(letter, input, network, history){
   result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
@@ -142,6 +174,7 @@ hidden.layer.stability <- function(letter, input, network, history){
   change <- length(active.nodes) - sum(active.nodes %in% previous.active.nodes)
   return(change)
 }
+
 
 batch.hidden.layer.stability <- function(letters, network, history){
   result <- data.frame(input=names(letters), stability=NA)
@@ -151,6 +184,7 @@ batch.hidden.layer.stability <- function(letters, network, history){
   return(result$stability)
 }
 
+
 update.hidden.layer.stability <- function(letters, network){
   tracker <- sapply(names(letters), function(x){
     result <- forward.pass(letters[[x]], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
@@ -159,6 +193,7 @@ update.hidden.layer.stability <- function(letters, network){
   }, USE.NAMES = T, simplify=FALSE)
   return(tracker)
 }
+
 
 visualize.output.act.match <- function(){
   plot(results$history$output.match.tracker, ylim = range(0, 100), type='o', ann = F)

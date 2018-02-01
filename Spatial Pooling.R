@@ -8,11 +8,15 @@ learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
+<<<<<<< HEAD
 trace.param.output <- 0.75 #0.75
+=======
+trace.param.output <- 0.25 #0.75
+>>>>>>> 7923fd98601a8a6bfa1abcb63249f6769f39ebf0
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 1 #0
-output.bias.param.plus <- 0.0005 #0
+output.bias.param.minus <- 0 #0
+output.bias.param.plus <- 0 #0
 sparseness.percent <- 0.75
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -20,8 +24,8 @@ percent.act.input <- 0.05
 percent.act.output <- 0.1
 n.words <- length(words)
 input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
-                           # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
-                           # if 0.5: inputs for each system consistently co-occur
+                         # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
+                         # if 0.5: inputs for each system consistently co-occur
 
 source('Load Letters.R')
 source('Visualize Output.R')
@@ -34,9 +38,9 @@ results <- batch(n.epochs) #run training batches
 visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) 
 display.output.bias.tracker(results)
-visualize.letter.activations(results$network, l)
+visualize.letter.activations(results$network, s)
 visualize.output.act.match()
+n <- temp.layer.many.activations(network, words)
 
 network <- results$network
-
 
