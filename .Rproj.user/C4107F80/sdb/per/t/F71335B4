@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#include <Rcpp.h>\nusing namespace Rcpp;\n\n// This is a simple example of exporting a C++ function to R. You can\n// source this function into an R session using the Rcpp::sourceCpp \n// function (or via the Source button on the editor toolbar). Learn\n// more about Rcpp at:\n//\n//   http://www.rcpp.org/\n//   http://adv-r.had.co.nz/Rcpp.html\n//   http://gallery.rcpp.org/\n//\n\n// [[Rcpp::export]]\n\n\nList forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector outputBiasWeights){\n  \n  Environment env = Environment::global_env();\n  \n  NumericVector hidden;\n  int n_hidden = env[\"n.hidden\"];\n  for(int i=0; i<n_hidden; i++){\n    hidden[i] += hiddenBiasWeights[i,1];\n    for(int j=0; j<input.length(); j++){\n      if(inputToHiddenWeights[j,i] != R_NaN) {\n        hidden[i] += input[j] * inputToHiddenWeights[j,i];\n      }\n    }\n  }\n  \n  int largest;\n  int percentActInput = env[\"percent.act.input\"];\n  int number = ceil(percentActInput * n_hidden);\n  for(int c=0; c<number; c++){\n    largest = which_max(hidden);\n    hidden[largest] = -1;\n  }\n  \n  for(int x=0; x<n_hidden; x++){\n    if(hidden[x] == -1){\n      hidden[x] = 1;\n    } else{\n      hidden[x] = 0;\n    }\n  }\n  \n  NumericVector output;\n  int n_output = env[\"n.output\"];\n  for(int z=0; z<n_output; z++){\n    output[z] += outputBiasWeights[z,1];\n    for(int h=0; h<n_hidden; h++){\n      if(hiddenToOutputWeights[h,z] != R_NaN) {\n        output[h] += hidden[h] * hiddenToOutputWeights[h,z];\n      }\n    }\n  }\n  \n  int largest1;\n  int percentActOutput = env[\"percent.act.output\"];\n  int number1 = ceil(percentActOutput * n_output);\n  for(int k=0; k<number1; k++){\n    largest1 = which_max(output);\n    output[largest1] = -1;\n  }\n  \n  for(int d=0; d<n_output; d++){\n    if(output[d] == -1){\n      output[d] = 1;\n    } else{\n      output[d] = 0;\n    }\n  }\n  \n  List retrn = List::create(Named(\"hidden\") = hidden,_[\"output\"] = output); \n  return(retrn);\n}\n\n// You can include R code blocks in C++ files processed with sourceCpp\n// (useful for testing and development). The R code will be automatically \n// run after the compilation.\n//\n\n/*** R\n\n*/\n",
+    "created" : 1517501872341.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1845775216",
+    "id" : "F71335B4",
+    "lastKnownWriteTime" : 1517501711,
+    "last_content_update" : 1517501711,
+    "path" : "C:/Users/Tom/Desktop/GitHub/Int-Seg-Model/forwardPassCpp.cpp",
+    "project_path" : "forwardPassCpp.cpp",
+    "properties" : {
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "cpp"
+}

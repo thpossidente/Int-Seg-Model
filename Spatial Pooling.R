@@ -8,11 +8,8 @@ learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-<<<<<<< HEAD
 trace.param.output <- 0.75 #0.75
-=======
 trace.param.output <- 0.25 #0.75
->>>>>>> 7923fd98601a8a6bfa1abcb63249f6769f39ebf0
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
