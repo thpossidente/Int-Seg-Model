@@ -1,0 +1,29 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1517937866391.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3B4E7D7F",
+    "lastKnownWriteTime" : 7311982587276193125,
+    "last_content_update" : 1517937866391,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "AB0D32B",
+        "caption" : "temp.layer.activations.many",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=temp.layer.activations.many&cache_key=AB0D32B",
+        "displayedObservations" : 130,
+        "environment" : "",
+        "object" : "temp.layer.activations.many",
+        "preview" : 0,
+        "totalObservations" : 130,
+        "variables" : 30
+    },
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

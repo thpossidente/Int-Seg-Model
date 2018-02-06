@@ -37,9 +37,8 @@ display.output.bias.tracker(results)
 visualize.letter.activations(results$network, s)
 visualize.output.act.match()
 temp.layer.activations.many <- temp.layer.many.activations(network, words)
-output.trace.track <- results$history$output.trace.tracker
-n <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$trace.output.tracker
 
 network <- results$network
 
+plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,9], type = "b")
