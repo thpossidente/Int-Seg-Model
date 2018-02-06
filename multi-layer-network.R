@@ -184,7 +184,11 @@ batch <- function(n.epochs, network=NA){
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability.tracking = update.hidden.layer.stability(letters, network),
+<<<<<<< HEAD
     output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
+=======
+    trace.output.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
+>>>>>>> origin/master
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -200,7 +204,11 @@ batch <- function(n.epochs, network=NA){
       history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
       history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
+<<<<<<< HEAD
       history$output.trace.tracker[i / 100, ] <- network$trace.output
+=======
+      history$trace.output.tracker[i/100,] <- network$trace.output
+>>>>>>> origin/master
     }
     
     for(b in 1:(length(word)/n.input)){
