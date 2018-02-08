@@ -72,7 +72,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
   forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  #forward.pass.results <- Rcpp::sourceCpp("forwardPassCpp.cpp")
+  
   hidden <- forward.pass.results$hidden
   output <- forward.pass.results$output
   
@@ -214,7 +214,9 @@ batch <- function(n.epochs, network=NA){
       
       # update network properties
       
-      results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      #results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      Rcpp::sourceCpp("forwardPassCpp.cpp")
+      results <- traceUpdate(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       
       network$input.hidden.weights <- results$input.hidden.weights
       network$trace.hidden <- results$trace.hidden
