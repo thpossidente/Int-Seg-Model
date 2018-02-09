@@ -76,11 +76,13 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   return(retrn);
 }
 
+// [[Rcpp::export]]
+
 List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector traceHidden, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector traceOutput, NumericMatrix outputBiasWeights){
   
   Environment env = Environment::global_env();
   
-  List forwardPassResults = forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector outputBiasWeights);
+  List forwardPassResults = forwardPass(input, inputToHiddenWeights, hiddenBiasWeights, hiddenToOutputWeights, outputBiasWeights);
   
   NumericVector hidden = forwardPassResults[0];
   NumericVector output = forwardPassResults[1];
@@ -125,8 +127,8 @@ List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   int traceParamOutput = env["trace.param.output"];
   int learningRateOutput = env["learning.rate.output"];
   for(int h=0; h<n_output; h++){
-    traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h]
-    hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h))
+    traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
+    hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
   }
   
   List retrn = List::create(Named("traceHidden") = traceHidden,
@@ -136,12 +138,17 @@ List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
                             _["traceOutput"] = traceOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
-                            _["outputBiasWeights"] = outputBiasWeights)
-    return(retrn)
+                            _["outputBiasWeights"] = outputBiasWeights);
+    return(retrn);
 }
 
-
-
+//List batch(int n_epochs, ??){
+  
+//  Environment env = Environment::global_env();
+  
+//  NumericMatrix pre_input_hidden_weights()
+//  NumericMatrix pre_hidden_output_weights = 
+//}
 
 // You can include R code blocks in C++ files processed with sourceCpp
 // (useful for testing and development). The R code will be automatically 

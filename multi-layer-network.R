@@ -72,7 +72,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
   forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  #forward.pass.results <- Rcpp::sourceCpp("forwardPassCpp.cpp")
+  
   hidden <- forward.pass.results$hidden
   output <- forward.pass.results$output
   
@@ -176,15 +176,15 @@ batch <- function(n.epochs, network=NA){
   }
   
   # tracking learning #
-  history <- list(
-    learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
-    bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), #initializes learning data matrix
+  history <- list(               #initializes learning data matrices
+    learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
+    bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
     output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
     output.match.tracker <- rep(0, times = n.epochs/100),
-    hidden.win.tracker = matrix(0, nrow=n.epochs, ncol= n.hidden),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     hidden.stability.tracking = update.hidden.layer.stability(letters, network),
+    output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output),
     trace.output.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
   )
   
@@ -201,6 +201,7 @@ batch <- function(n.epochs, network=NA){
       history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
       history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
+      history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$trace.output.tracker[i/100,] <- network$trace.output
     }
     
@@ -213,7 +214,9 @@ batch <- function(n.epochs, network=NA){
       
       # update network properties
       
-      results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      #results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      Rcpp::sourceCpp("forwardPassCpp.cpp")
+      results <- traceUpdate(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       
       network$input.hidden.weights <- results$input.hidden.weights
       network$trace.hidden <- results$trace.hidden
@@ -226,7 +229,6 @@ batch <- function(n.epochs, network=NA){
     }
 
     # update learning history
-    #history$hidden.win.tracker[i,] <- results$hidden
     setTxtProgressBar(pb, i)
     
   }
