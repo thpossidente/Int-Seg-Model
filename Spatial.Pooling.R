@@ -12,11 +12,8 @@ learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-<<<<<<< HEAD:Spatial Pooling.R
 trace.param.output <- 0.25 #0.75
-=======
 trace.param.output <- 0.75 #0.75
->>>>>>> dc079ba76e04b220b2300b091f8fa7d3af15cd18:Spatial.Pooling.R
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
