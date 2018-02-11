@@ -14,15 +14,14 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 
 
-List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
+List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
   
-  Environment env = Environment::global_env();
   
-  NumericVector hidden;
-  int n_hidden = env["n.hidden"];
+  
+  NumericVector hidden(n_hidden);
   for(int i=0; i<n_hidden; i++){
     hidden[i] += hiddenBiasWeights(i,0);
-    for(int j=0; j<input.length(); j++){
+    for(int j=0; j<input.size(); j++){
       if(inputToHiddenWeights(j,i) != R_NaN) {
         hidden[i] += input[j] * inputToHiddenWeights(j,i);
       }
@@ -30,12 +29,12 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   }
   
   int largest;
-  int percentActInput = env["percent.act.input"];
   int number = ceil(percentActInput * n_hidden);
   for(int c=0; c<number; c++){
     largest = which_max(hidden);
     hidden[largest] = -1;
   }
+  
   
   for(int x=0; x<n_hidden; x++){
     if(hidden[x] == -1){
@@ -44,9 +43,8 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
       hidden[x] = 0;
     }
   }
-  
+
   NumericVector output;
-  int n_output = env["n.output"];
   for(int z=0; z<n_output; z++){
     output[z] += outputBiasWeights(z,0);
     for(int h=0; h<n_hidden; h++){
@@ -57,7 +55,6 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
   }
   
   int largest1;
-  int percentActOutput = env["percent.act.output"];
   int number1 = ceil(percentActOutput * n_output);
   for(int k=0; k<number1; k++){
     largest1 = which_max(output);
@@ -78,18 +75,14 @@ List forwardPass(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
 
 // [[Rcpp::export]]
 
-List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector traceHidden, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector traceOutput, NumericMatrix outputBiasWeights){
+List traceUpdate(int traceParamHidden, int traceParamOutput, int learningRateHidden, int learningRateOutput, int outputBiasParamPlus, int outputBiasParamMinus, int hiddenBiasParamMinus, int hiddenBiasParamPlus, int percentActInput, int percentActOutput, int n_output, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector traceHidden, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector traceOutput, NumericMatrix outputBiasWeights){
   
-  Environment env = Environment::global_env();
-  
-  List forwardPassResults = forwardPass(input, inputToHiddenWeights, hiddenBiasWeights, hiddenToOutputWeights, outputBiasWeights);
+  List forwardPassResults = forwardPass(n_output, percentActInput, percentActOutput, n_hidden, input, inputToHiddenWeights, hiddenBiasWeights, hiddenToOutputWeights, outputBiasWeights);
   
   NumericVector hidden = forwardPassResults[0];
   NumericVector output = forwardPassResults[1];
   
-  int n_hidden = env["n.hidden"];
-  int hiddenBiasParamMinus = env["hidden.bias.param.minus"];
-  int hiddenBiasParamPlus = env["hidden.bias.param.plus"];
+
   for(int x=0; x<n_hidden; x++){
     if(hidden[x] == 1){
       hiddenBiasWeights(x,0) = hiddenBiasWeights(x,0) - hiddenBiasParamMinus;
@@ -102,16 +95,12 @@ List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
     }
   }
   
-  int traceParamHidden = env["trace.param.hidden"];
-  int learningRateHidden = env["learning.rate.hidden"];
+    
   for(int i=0; i<n_hidden; i++){
     traceHidden[i] = (1 - traceParamHidden) * traceHidden[i] + traceParamHidden * hidden[i];
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
   
-  int n_output = env["n.output"];
-  int outputBiasParamMinus = env["output.bias.param.minus"];
-  int outputBiasParamPlus = env["output.bias.param.plus"];
   for(int b=0; b<n_output; b++){
     if(output[b] == 1){
       outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -124,8 +113,6 @@ List traceUpdate(NumericVector input, NumericMatrix inputToHiddenWeights, Numeri
     }
   }
   
-  int traceParamOutput = env["trace.param.output"];
-  int learningRateOutput = env["learning.rate.output"];
   for(int h=0; h<n_output; h++){
     traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));

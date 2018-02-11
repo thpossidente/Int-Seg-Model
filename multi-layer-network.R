@@ -1,4 +1,6 @@
 
+Rcpp::sourceCpp("forwardPassCpp.cpp")
+
 sigmoid.activation <- function(x){
   #return(1 / (1+exp(-x)))
   return(x)
@@ -215,8 +217,7 @@ batch <- function(n.epochs, network=NA){
       # update network properties
       
       #results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
-      Rcpp::sourceCpp("forwardPassCpp.cpp")
-      results <- traceUpdate(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      results <- traceUpdate(trace.param.hidden, trace.param.output, learning.rate.hidden, learning.rate.output, output.bias.param.plus, output.bias.param.minus, hidden.bias.param.plus, hidden.bias.param.minus, percent.act.input, percent.act.output, n.output, n.hidden, letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       
       network$input.hidden.weights <- results$input.hidden.weights
       network$trace.hidden <- results$trace.hidden
