@@ -13,15 +13,25 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 
+NumericVector test(int n_hidden, NumericVector hiddenBiasWeights, NumericVector input, NumericVector inputToHiddenWeights){
+  NumericVector hidden(n_hidden);
+  
+  for(int i=0; i<(n_hidden-1); i++){
+    hidden[i] += sum(na_omit(input * inputToHiddenWeights(_,i) + hiddenBiasWeights(i,0)));
+  }
+  Rcout << hidden;
+  return hidden;
+}
+
+// [[Rcpp::export]]
 
 List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
   
   
-  
   NumericVector hidden(n_hidden);
-  for(int i=0; i<n_hidden; i++){
+  for(int i=0; i<(n_hidden-1); i++){
     hidden[i] += hiddenBiasWeights(i,0);
-    for(int j=0; j<input.size(); j++){
+    for(int j=0; j<(input.size()-1); j++){
       if(inputToHiddenWeights(j,i) != R_NaN) {
         hidden[i] += input[j] * inputToHiddenWeights(j,i);
       }
@@ -30,13 +40,13 @@ List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_
   
   int largest;
   int number = ceil(percentActInput * n_hidden);
-  for(int c=0; c<number; c++){
+  for(int c=0; c<(number-1); c++){
     largest = which_max(hidden);
     hidden[largest] = -1;
   }
   
   
-  for(int x=0; x<n_hidden; x++){
+  for(int x=0; x<(n_hidden-1); x++){
     if(hidden[x] == -1){
       hidden[x] = 1;
     } else{
@@ -45,9 +55,9 @@ List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_
   }
 
   NumericVector output;
-  for(int z=0; z<n_output; z++){
+  for(int z=0; z<(n_output-1); z++){
     output[z] += outputBiasWeights(z,0);
-    for(int h=0; h<n_hidden; h++){
+    for(int h=0; h<(n_hidden-1); h++){
       if(hiddenToOutputWeights(h,z) != R_NaN) {
         output[h] += hidden[h] * hiddenToOutputWeights(h,z);
       }
@@ -56,12 +66,12 @@ List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_
   
   int largest1;
   int number1 = ceil(percentActOutput * n_output);
-  for(int k=0; k<number1; k++){
+  for(int k=0; k<(number1-1); k++){
     largest1 = which_max(output);
     output[largest1] = -1;
   }
   
-  for(int d=0; d<n_output; d++){
+  for(int d=0; d<(n_output-1); d++){
     if(output[d] == -1){
       output[d] = 1;
     } else{
@@ -83,7 +93,7 @@ List traceUpdate(int traceParamHidden, int traceParamOutput, int learningRateHid
   NumericVector output = forwardPassResults[1];
   
 
-  for(int x=0; x<n_hidden; x++){
+  for(int x=0; x<(n_hidden-1); x++){
     if(hidden[x] == 1){
       hiddenBiasWeights(x,0) = hiddenBiasWeights(x,0) - hiddenBiasParamMinus;
     }
@@ -96,12 +106,12 @@ List traceUpdate(int traceParamHidden, int traceParamOutput, int learningRateHid
   }
   
     
-  for(int i=0; i<n_hidden; i++){
+  for(int i=0; i<(n_hidden-1); i++){
     traceHidden[i] = (1 - traceParamHidden) * traceHidden[i] + traceParamHidden * hidden[i];
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
   
-  for(int b=0; b<n_output; b++){
+  for(int b=0; b<(n_output-1); b++){
     if(output[b] == 1){
       outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
     }
@@ -113,7 +123,7 @@ List traceUpdate(int traceParamHidden, int traceParamOutput, int learningRateHid
     }
   }
   
-  for(int h=0; h<n_output; h++){
+  for(int h=0; h<(n_output-1); h++){
     traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
   }

@@ -28,16 +28,19 @@ learning.measure <- function(input.hidden.weights){
 
 forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights){ #calculate output activations with "winner-takes-all" method
   
-  hidden <- numeric(n.hidden)
-  
-  for(i in 1:n.hidden){
-    hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
-  }
+  # hidden <- numeric(n.hidden)
+  # 
+  # for(i in 1:n.hidden){
+  #   hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
+  # }
+
+  hidden <- test(n.hidden, hidden.bias.weights, input, input.hidden.weights)
+  print(hidden)
   
   for(c in 1:ceiling(percent.act.input*n.hidden)){
     hidden[which.max(hidden)] <- -1
   }
-  
+
   for(j in 1:n.hidden){
    if(hidden[j] == -1){
      hidden[j] = 1
@@ -46,8 +49,6 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
    }
   }
   
-  #hidden[hidden != max(hidden)] <- 0
-  #hidden[which.max(hidden)] <- 1
   
   output <- numeric(n.output)
   for(b in 1:n.output){
@@ -74,6 +75,7 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
   forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
+  #forward.pass.results <- forwardPass(n.input, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
   
   hidden <- forward.pass.results$hidden
   output <- forward.pass.results$output
@@ -216,8 +218,8 @@ batch <- function(n.epochs, network=NA){
       
       # update network properties
       
-      #results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
-      results <- traceUpdate(trace.param.hidden, trace.param.output, learning.rate.hidden, learning.rate.output, output.bias.param.plus, output.bias.param.minus, hidden.bias.param.plus, hidden.bias.param.minus, percent.act.input, percent.act.output, n.output, n.hidden, letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      #results <- traceUpdate(trace.param.hidden, trace.param.output, learning.rate.hidden, learning.rate.output, output.bias.param.plus, output.bias.param.minus, hidden.bias.param.plus, hidden.bias.param.minus, percent.act.input, percent.act.output, n.output, n.hidden, letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       
       network$input.hidden.weights <- results$input.hidden.weights
       network$trace.hidden <- results$trace.hidden
