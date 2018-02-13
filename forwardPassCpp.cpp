@@ -13,40 +13,50 @@ using namespace Rcpp;
 
 // [[Rcpp::export]]
 
-NumericVector test(int n_hidden, NumericVector hiddenBiasWeights, NumericVector input, NumericVector inputToHiddenWeights){
+NumericVector test(int n_hidden, NumericMatrix hiddenBiasWeights, NumericVector input, NumericMatrix inputToHiddenWeights, float percentActInput){
+ 
   NumericVector hidden(n_hidden);
-  
-  for(int i=0; i<(n_hidden-1); i++){
+  for(int i=0; i<(n_hidden); i++){
     hidden[i] += sum(na_omit(input * inputToHiddenWeights(_,i) + hiddenBiasWeights(i,0)));
   }
-  Rcout << hidden;
+  
+  int largest;
+  int number = percentActInput * n_hidden;
+  for(int c=0; c<(number); c++){
+    largest = which_max(hidden);
+    hidden[largest] = -1;
+  }
+  
+  for(int x=0; x<(n_hidden); x++){
+    if(hidden[x] == -1){
+      hidden[x] = 1;
+    } else{
+      hidden[x] = 0;
+    }
+  }
+  
+
   return hidden;
 }
 
 // [[Rcpp::export]]
 
-List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
-  
+List forwardPass(int n_output, float percentActInput, float percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
   
   NumericVector hidden(n_hidden);
-  for(int i=0; i<(n_hidden-1); i++){
-    hidden[i] += hiddenBiasWeights(i,0);
-    for(int j=0; j<(input.size()-1); j++){
-      if(inputToHiddenWeights(j,i) != R_NaN) {
-        hidden[i] += input[j] * inputToHiddenWeights(j,i);
-      }
-    }
+  for(int i=0; i<(n_hidden); i++){
+    hidden[i] += sum(na_omit(input * inputToHiddenWeights(_,i) + hiddenBiasWeights(i,0)));
   }
   
   int largest;
   int number = ceil(percentActInput * n_hidden);
-  for(int c=0; c<(number-1); c++){
+  for(int c=0; c<(number); c++){
     largest = which_max(hidden);
     hidden[largest] = -1;
   }
   
   
-  for(int x=0; x<(n_hidden-1); x++){
+  for(int x=0; x<(n_hidden); x++){
     if(hidden[x] == -1){
       hidden[x] = 1;
     } else{
@@ -54,24 +64,19 @@ List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_
     }
   }
 
-  NumericVector output;
-  for(int z=0; z<(n_output-1); z++){
-    output[z] += outputBiasWeights(z,0);
-    for(int h=0; h<(n_hidden-1); h++){
-      if(hiddenToOutputWeights(h,z) != R_NaN) {
-        output[h] += hidden[h] * hiddenToOutputWeights(h,z);
-      }
-    }
+  NumericVector output(n_output);
+  for(int i=0; i<(n_output); i++){
+    output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
   }
   
   int largest1;
   int number1 = ceil(percentActOutput * n_output);
-  for(int k=0; k<(number1-1); k++){
+  for(int k=0; k<(number1); k++){
     largest1 = which_max(output);
     output[largest1] = -1;
   }
   
-  for(int d=0; d<(n_output-1); d++){
+  for(int d=0; d<(n_output); d++){
     if(output[d] == -1){
       output[d] = 1;
     } else{
@@ -85,7 +90,7 @@ List forwardPass(int n_output, int percentActInput, int percentActOutput, int n_
 
 // [[Rcpp::export]]
 
-List traceUpdate(int traceParamHidden, int traceParamOutput, int learningRateHidden, int learningRateOutput, int outputBiasParamPlus, int outputBiasParamMinus, int hiddenBiasParamMinus, int hiddenBiasParamPlus, int percentActInput, int percentActOutput, int n_output, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector traceHidden, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector traceOutput, NumericMatrix outputBiasWeights){
+List traceUpdate(float traceParamHidden, float traceParamOutput, float learningRateHidden, float learningRateOutput, float outputBiasParamPlus, float outputBiasParamMinus, float hiddenBiasParamMinus, float hiddenBiasParamPlus, float percentActInput, float percentActOutput, int n_output, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericVector traceHidden, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericVector traceOutput, NumericMatrix outputBiasWeights){
   
   List forwardPassResults = forwardPass(n_output, percentActInput, percentActOutput, n_hidden, input, inputToHiddenWeights, hiddenBiasWeights, hiddenToOutputWeights, outputBiasWeights);
   

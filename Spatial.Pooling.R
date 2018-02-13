@@ -35,7 +35,7 @@ results <- batch(n.epochs) #run training batches
 visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) 
 display.output.bias.tracker(results)
-visualize.letter.activations(results$network, s)
+visualize.letter.activations(results$network, q)
 visualize.output.act.match()
 temp.layer.activations.many <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$trace.output.tracker
