@@ -12,8 +12,6 @@ using namespace Rcpp;
 //
 
 
-<<<<<<< HEAD
-=======
 NumericVector test(int n_hidden, NumericMatrix hiddenBiasWeights, NumericVector input, NumericMatrix inputToHiddenWeights, float percentActInput){
  
   NumericVector hidden(n_hidden);
@@ -39,15 +37,10 @@ NumericVector test(int n_hidden, NumericMatrix hiddenBiasWeights, NumericVector 
 
   return hidden;
 }
->>>>>>> origin/master
 
 // [[Rcpp::export]]
 
 List forwardPass(int n_output, float percentActInput, float percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){
-<<<<<<< HEAD
-  
-=======
->>>>>>> origin/master
   
   NumericVector hidden(n_hidden);
   for(int i=0; i<(n_hidden); i++){
@@ -69,11 +62,7 @@ List forwardPass(int n_output, float percentActInput, float percentActOutput, in
       hidden[x] = 0;
     }
   }
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> origin/master
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));

@@ -29,18 +29,10 @@ learning.measure <- function(input.hidden.weights){
 forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights){ #calculate output activations with "winner-takes-all" method
   
   hidden <- numeric(n.hidden)
-<<<<<<< HEAD
 
   for(i in 1:n.hidden){
     hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
   }
-
-=======
-
-  for(i in 1:n.hidden){
-    hidden[i] <- sigmoid.activation(sum(na.omit(input * input.hidden.weights[,i]) + hidden.bias.weights[i,1]))
-  }
->>>>>>> origin/master
   
   for(c in 1:ceiling(percent.act.input*n.hidden)){
     hidden[which.max(hidden)] <- -1
@@ -80,18 +72,11 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
-<<<<<<< HEAD
   # #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
   # forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
   # 
   # hidden <- forward.pass.results$hidden
   # output <- forward.pass.results$output
-=======
-  #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
->>>>>>> origin/master
-  
-
   
   
   # for(h in 1:n.hidden){
