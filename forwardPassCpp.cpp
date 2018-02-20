@@ -13,7 +13,6 @@ using namespace Rcpp;
 
 
 
-
 // [[Rcpp::export]]
 
 List forwardPass(int n_output, float percentActInput, float percentActOutput, int n_hidden, NumericVector input, NumericMatrix inputToHiddenWeights, NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights){

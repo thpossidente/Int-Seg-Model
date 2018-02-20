@@ -6,11 +6,11 @@ sigmoid.activation <- function(x){
   return(x)
 }
 
-noise.in.letter <- function(letter){
+noise.in.letter <- function(input){
   for(i in 1:(0.1*n.input)){
-    letter[(sample(1:1600,1,replace=T))] <- 1
+    input[(sample(1:1600,1,replace=T))] <- 1
   }
-  return(letter)
+  return(input)
 }
 
 learning.measure <- function(input.hidden.weights){
@@ -72,38 +72,38 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
-  # #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  # forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  # 
-  # hidden <- forward.pass.results$hidden
-  # output <- forward.pass.results$output
-  # 
-  # 
-  # for(h in 1:n.hidden){
-  #   if(hidden[h] == 1){
-  #     hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus
-  #   }
-  #   if(hidden[h] == 0){
-  #     hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
-  #   }
-  #   if(hidden.bias.weights[h,1] < 0){
-  #     hidden.bias.weights[h,1] <- 0
-  #   }
-  # }
+  #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
+  forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
+
+  hidden <- forward.pass.results$hidden
+  output <- forward.pass.results$output
+
+
+  for(h in 1:n.hidden){
+    if(hidden[h] == 1){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus
+    }
+    if(hidden[h] == 0){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
+    }
+    if(hidden.bias.weights[h,1] < 0){
+      hidden.bias.weights[h,1] <- 0
+    }
+  }
   
-  reslts <- test(trace.param.hidden, trace.param.output, 
-                 learning.rate.hidden, learning.rate.output, 
-                 output.bias.param.plus, output.bias.param.minus, 
-                 hidden.bias.param.minus, hidden.bias.param.plus, 
-                 percent.act.input, percent.act.output, 
-                 n.output, n.hidden, 
-                 input, input.hidden.weights, 
-                 trace.hidden, hidden.bias.weights, 
-                 hidden.output.weights, trace.output, 
-                 output.bias.weights)
-  hidden <- reslts[[1]]
-  output <- reslts[[2]]
-  hidden.bias.weights <- reslts[[3]]
+  # reslts <- test(trace.param.hidden, trace.param.output, 
+  #                learning.rate.hidden, learning.rate.output, 
+  #                output.bias.param.plus, output.bias.param.minus, 
+  #                hidden.bias.param.minus, hidden.bias.param.plus, 
+  #                percent.act.input, percent.act.output, 
+  #                n.output, n.hidden, 
+  #                input, input.hidden.weights, 
+  #                trace.hidden, hidden.bias.weights, 
+  #                hidden.output.weights, trace.output, 
+  #                output.bias.weights)
+  # hidden <- reslts[[1]]
+  # output <- reslts[[2]]
+  # hidden.bias.weights <- reslts[[3]]
   # trace.hidden <- reslts[[4]]
   # input.hidden.weights <- reslts[[5]]
   # output.bias.weights <- reslts[[6]]
@@ -229,13 +229,13 @@ batch <- function(n.epochs, network=NA){
       
       # get input vector
       
-      letter <- word[,b]
-      letter <- noise.in.letter(letter)
+      input <- word[,b]
+      input <- noise.in.letter(input)
       
       # update network properties
       
-      results <- trace.update(letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
-      #results <- traceUpdate(trace.param.hidden, trace.param.output, learning.rate.hidden, learning.rate.output, output.bias.param.plus, output.bias.param.minus, hidden.bias.param.minus, hidden.bias.param.plus, percent.act.input, percent.act.output, n.output, n.hidden, letter, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      results <- trace.update(input, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
+      #results <- traceUpdate(trace.param.hidden, trace.param.output, learning.rate.hidden, learning.rate.output, output.bias.param.plus, output.bias.param.minus, hidden.bias.param.minus, hidden.bias.param.plus, percent.act.input, percent.act.output, n.output, n.hidden, input, network$input.hidden.weights, network$trace.hidden, network$hidden.bias.weights, network$hidden.output.weights, network$trace.output, network$output.bias.weights)
       
       network$input.hidden.weights <- results$inputToHiddenWeights
       network$trace.hidden <- results$traceHidden
