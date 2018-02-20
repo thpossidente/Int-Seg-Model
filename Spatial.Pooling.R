@@ -10,14 +10,18 @@ n.hidden <- 100
 n.output <- 30
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
+<<<<<<< HEAD
 n.epochs <- 500
+=======
+n.epochs <- 10000
+>>>>>>> origin/master
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.75 #0.75
 hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
 output.bias.param.plus <- 0 #0
-sparseness.percent <- 0  # 1-sparseness.percent is % nodes active
+sparseness.percent <- 0.75  # 1-sparseness.percent is % nodes active
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
 percent.act.input <- 0.05
