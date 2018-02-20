@@ -92,7 +92,7 @@ List forwardPass(int n_output, float percentActInput, float percentActOutput, in
 
 // [[Rcpp::export]]
 
-NumericVector test(int n_hidden, NumericMatrix hiddenBiasWeights, NumericVector input, NumericMatrix inputToHiddenWeights, int n_output, float percentActInput, float percentActOutput, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights, float hiddenBiasParamMinus, float hiddenBiasParamPlus){
+List test(int n_hidden, NumericMatrix hiddenBiasWeights, NumericVector input, NumericMatrix inputToHiddenWeights, int n_output, float percentActInput, float percentActOutput, NumericMatrix hiddenToOutputWeights, NumericMatrix outputBiasWeights, float hiddenBiasParamMinus, float hiddenBiasParamPlus){
   
   List forwardPassResults = forwardPass(n_output, percentActInput, percentActOutput, n_hidden, input, inputToHiddenWeights, hiddenBiasWeights, hiddenToOutputWeights, outputBiasWeights);
   NumericVector hidden = forwardPassResults[0];

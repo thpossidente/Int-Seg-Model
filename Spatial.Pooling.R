@@ -18,7 +18,7 @@ hidden.bias.param.minus <- 2
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
 output.bias.param.plus <- 0 #0
-sparseness.percent <- 0.75
+sparseness.percent <- 0  # 1-sparseness.percent is % nodes active
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
 percent.act.input <- 0.05

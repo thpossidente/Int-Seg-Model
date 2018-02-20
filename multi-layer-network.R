@@ -72,32 +72,32 @@ forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidde
 
 trace.update <- function(input, input.hidden.weights, trace.hidden, hidden.bias.weights, hidden.output.weights, trace.output, output.bias.weights){
   
-  # #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  # forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
-  # 
-  # hidden <- forward.pass.results$hidden
-  # output <- forward.pass.results$output
-  
-  
-  # for(h in 1:n.hidden){
-  #   if(hidden[h] == 1){
-  #     hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus
-  #   }
-  #   if(hidden[h] == 0){
-  #     hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
-  #   }
-  #   if(hidden.bias.weights[h,1] < 0){
-  #     hidden.bias.weights[h,1] <- 0
-  #   }
-  # }
+  #forward.pass.results <- forward.pass(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
+  forward.pass.results <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights)
 
-  res <- test(n.hidden, hidden.bias.weights, input, input.hidden.weights, n.output, percent.act.input, percent.act.output, hidden.output.weights, output.bias.weights, hidden.bias.param.minus, hidden.bias.param.plus)
-  hidden <- res[1]
-  output <- res[2]
-  hidden.bias.weights <- res[3]
+  hidden <- forward.pass.results$hidden
+  output <- forward.pass.results$output
+
+
+  for(h in 1:n.hidden){
+    if(hidden[h] == 1){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] - hidden.bias.param.minus
+    }
+    if(hidden[h] == 0){
+      hidden.bias.weights[h,1] <- hidden.bias.weights[h,1] + hidden.bias.param.plus
+    }
+    if(hidden.bias.weights[h,1] < 0){
+      hidden.bias.weights[h,1] <- 0
+    }
+  }
+
+  # res <- test(n.hidden, hidden.bias.weights, input, input.hidden.weights, n.output, percent.act.input, percent.act.output, hidden.output.weights, output.bias.weights, hidden.bias.param.minus, hidden.bias.param.plus)
+  # hidden <- res[1]
+  # output <- res[2]
+  # hidden.bias.weights <- res[3]
 
   for(i in 1:n.hidden){
-    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i] 
+    trace.hidden[i] <- (1 - trace.param.hidden) * trace.hidden[i] + trace.param.hidden * hidden[i]
     input.hidden.weights[,i] <- input.hidden.weights[,i] + learning.rate.hidden * trace.hidden[i] * (input - input.hidden.weights[,i])
   }
   
@@ -174,13 +174,9 @@ batch <- function(n.epochs, network=NA){
       trace.hidden = rep(0, times = n.hidden),
       trace.output = rep(0, times = n.output)
     )
-    for(h in 1:(sparseness.percent*(n.input * n.hidden))){ ## work on correct implementation of sparseness with split network
-      network[[1]][sample(1:n.input, 1, replace=TRUE), sample(1:n.hidden, 1, replace=TRUE)] <- NA
-    }
-    
-    for(g in 1:(sparseness.percent*(n.hidden*n.output))){
-      network[[3]][sample(1:n.hidden, 1, replace=TRUE), sample(1:n.output, 1, replace=TRUE)] <- NA
-    }
+ ## work on correct implementation of sparseness with split network
+    network[[1]][sample(1:(n.input*n.hidden), sparseness.percent*(n.input*n.hidden), replace=F)] <- NA
+    network[[3]][sample(1:(n.output*n.hidden), sparseness.percent*(n.output*n.hidden), replace=F)] <- NA
   }
   
   # tracking learning #
