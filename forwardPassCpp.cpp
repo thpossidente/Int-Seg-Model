@@ -1,4 +1,5 @@
-#include <Rcpp.h>
+// [[Rcpp::depends(RcppArmadillo)]]
+#include <RcppArmadilloExtensions/sample.h>
 using namespace Rcpp;
 
 // This is a simple example of exporting a C++ function to R. You can
@@ -234,27 +235,32 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 }
 
 
-// #include <RcppArmadilloExtensions/sample.h>
-// // [[Rcpp::export]]
-// 
-// List batchHelp(int n_epochs, List words, int n_words, List history, NumericVector input, int n_input){
-//   for(int i=0; i<(n_epoch); i++){
-//     NumericMatrix word = words[sample(1:n_words,1,True)]
-//     
-//     if(i == 2 | i )
-//   }
-// }
-// 
-// 
-// // [[Rcpp::export]]
-// 
-// 
-// NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam){
-//   for(int i=0; i<(0.1*n_input); i++){
-//     input[RcppArmadillo::sample(1:n_input,1,True)];
-//   }
-//   return(input);
-// }
+// [[Rcpp::export]]
+
+List batchHelp(int n_epochs, List words, int n_words, List history, NumericVector input, int n_input){
+  
+  NumericVector vect(n_epochs); //could create vector as zeros and for loop
+  for(int i=0; i<(n_epochs); i++){
+    vect[i] = i;
+    NumericMatrix word = words[RcppArmadillo::sample(vect,1,true)];
+
+    // if(i == 2 | i ){
+    //   
+    // }
+  }
+}
+
+
+// [[Rcpp::export]]
+
+
+NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam, int n_epochs){
+  NumericVector vect = seq(1, n_epochs)
+  for(int i=0; i<(0.1*n_input); i++){
+    input[RcppArmadillo::sample(vect,1,true)];
+  }
+  return(input);
+}
 
 
 
