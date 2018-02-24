@@ -234,28 +234,55 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     return(retrn);
 }
 
-
 // [[Rcpp::export]]
 
-List batchHelp(int n_epochs, List words, int n_words, List history, NumericVector input, int n_input){
-  
-  NumericVector vect(n_epochs); //could create vector as zeros and for loop
-  for(int i=0; i<(n_epochs); i++){
-    vect[i] = i;
-    NumericMatrix word = words[RcppArmadillo::sample(vect,1,true)];
+// List batchHelp(int n_epochs, List words, 
+//                int n_words, List history, NumericVector input, 
+//                int n_input, List network, 
+//                List alphabet, int n_hidden,
+//                List letters, Function batchHiddenLayerLearning,
+//                Function testWordContinuity, float letterNoiseParam){
+// 
+//   NumericVector vect(n_epochs);
+//   for(int j=0; j<n_epochs; j++){
+//     vect[j] = j;
+//   }
+// 
+//   for(int i=0; i<(n_epochs); i++){
+//     NumericMatrix word = words[RcppArmadillo::sample(vect,1,true)];
+// 
+//     if(i == 2 | i % 100 == 0){
+//       history["learning.curve"][i / 100,] = learningMeasure(network["input.hidden.weights"], n_hidden, alphabet);
+//       history["bias.tracker"][i / 100,] = NumericVector network["hidden.bias.weights"];
+//       history["output.bias.tracker"][i / 100,] = NumericVector network["output.bias.weights"];
+//       history["hidden.letter.similarity.tracking"][i / 100, ] = callFunction(letters, network, batchHiddenLayerLearning)["similarity"]
+//       history["output.match.tracker"][i / 100] = callFunction2(network, words, testWordContinuity);
+//       history["output.trace.tracker"][i / 100, ] = network["trace.output"];
+//       history["trace.output.tracker"][i/100,] = network["trace.output"];
+//     }
+//     
+//     for(int b=0; b<(length(words)/n_input); b++){
+//       NumericVector input = word(_,b);
+//       input = noiseInLetter(input, n_input, letterNoiseParam, n_epochs);
+//       results = traceUpdate()
+//     }
+//   }
+// }
 
-    // if(i == 2 | i ){
-    //   
-    // }
-  }
-}
+
 
 
 // [[Rcpp::export]]
 
 
 NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam, int n_epochs){
-  NumericVector vect = seq(1, n_epochs)
+  
+  NumericVector vect(n_epochs);
+  
+  for(int j=0; j<n_epochs; j++){
+    vect[j] = j;
+  }
+  
   for(int i=0; i<(0.1*n_input); i++){
     input[RcppArmadillo::sample(vect,1,true)];
   }
@@ -264,9 +291,36 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
 
 
 
+// [[Rcpp::export]]
+
+NumericVector learningMeasure(NumericMatrix inputHiddenWeights, int n_hidden, List alphabet){
+  
+  NumericVector allLettersCompared(26);
+  NumericVector bestFit(n_hidden);
+                           
+  for(int i=0; i<n_hidden; i++){
+    for(int h=0; h<26; h++){
+      allLettersCompared[h] = sum(abs(inputHiddenWeights(_,i) - alphabet[h]));
+    }
+    bestFit[i] = min(allLettersCompared);
+  }
+  return(bestFit);
+}
 
 
+// [[Rcpp::export]]
 
+DataFrame callFunction(List letters, List network, Function batchHiddenLayerLearning) {
+  DataFrame res = batchHiddenLayerLearning(letters, network);
+  return res;
+}
+
+// [[Rcpp::export]]
+
+SEXP callFunction1(List network, List words, Function testWordContinuity){
+  SEXP res = testWordContinuity(network, words);
+  return res;
+}
 
 // You can include R code blocks in C++ files processed with sourceCpp
 // (useful for testing and development). The R code will be automatically 

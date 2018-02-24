@@ -1,6 +1,6 @@
 
 Rcpp::sourceCpp("forwardPassCpp.cpp")
-
+library(RcppArmadillo)
 
 sigmoid.activation <- function(x){
   #return(1 / (1+exp(-x)))
@@ -189,8 +189,6 @@ batch <- function(n.epochs, network=NA){
     output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
     output.match.tracker <- rep(0, times = n.epochs/100),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    hidden.stability = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    hidden.stability.tracking = update.hidden.layer.stability(letters, network),
     output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output),
     trace.output.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
   )
@@ -205,8 +203,6 @@ batch <- function(n.epochs, network=NA){
       history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
       history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
-      history$hidden.stability[ i / 100, ] <- batch.hidden.layer.stability(letters, network, history)
-      history$hidden.stability.tracking <- update.hidden.layer.stability(letters, network)
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
       history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$trace.output.tracker[i/100,] <- network$trace.output
