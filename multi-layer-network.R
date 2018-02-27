@@ -255,3 +255,4 @@ batch <- function(n.epochs, network=NA){
     network=network
   ))
 }
+
