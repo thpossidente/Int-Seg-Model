@@ -194,6 +194,7 @@ batch <- function(n.epochs, network=NA){
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
+  
   for(i in 1:n.epochs){
     
     word <- words[[sample(1:n.words,1, replace = T)]]
@@ -245,6 +246,25 @@ batch <- function(n.epochs, network=NA){
     
     }
 
+  # results <- batchHelp(n.epochs, words,
+  #                      n.words, history, input,
+  #                      n.input, network,
+  #                      alphabet,letters, batchHiddenLayerLearning,
+  #                      test.word.continuity, letter.noise.param,
+  #                      trace.param.hidden, trace.param.output,
+  #                      learning.rate.hidden, learning.rate.output,
+  #                      output.bias.param.plus, output.bias.param.minus,
+  #                      hidden.bias.param.minus, hidden.bias.param.plus,
+  #                      percent.act.input, percent.act.output,
+  #                      n.output, n.hidden,
+  #                      input.to.hidden.weights, trace.hidden, hidden.bias.weights,
+  #                      hidden.to.output.weights, trace.output,
+  #                      output.bias.weights)
+  # return(list(
+  #   history = results$history
+  #   network = results$network
+  # ))
+  # 
     # update learning history
     setTxtProgressBar(pb, i)
     
@@ -255,4 +275,6 @@ batch <- function(n.epochs, network=NA){
     network=network
   ))
 }
+
+
 

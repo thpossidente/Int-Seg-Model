@@ -191,11 +191,10 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 
 // [[Rcpp::export]]
 
-List batchHelp(int n_epochs, List words,
+ List batchHelp(int n_epochs, List words,
                int n_words, List history, NumericVector input,
                int n_input, List network,
-               List alphabet,
-               List letters, Function batchHiddenLayerLearning,
+               List alphabet, List letters, Function batchHiddenLayerLearning,
                Function testWordContinuity, float letterNoiseParam,
                float traceParamHidden, float traceParamOutput,
                float learningRateHidden, float learningRateOutput,
@@ -206,7 +205,7 @@ List batchHelp(int n_epochs, List words,
                NumericMatrix inputToHiddenWeights, Function noiseInletter,
                NumericVector traceHidden, NumericMatrix hiddenBiasWeights,
                NumericMatrix hiddenToOutputWeights, NumericVector traceOutput,
-               NumericMatrix outputBiasWeights, Function callFunction2){
+               NumericMatrix outputBiasWeights){
 
   NumericVector vect(n_epochs);
   for(int j=0; j<n_epochs; j++){
@@ -217,13 +216,20 @@ List batchHelp(int n_epochs, List words,
     NumericMatrix word = words[as<int>(RcppArmadillo::sample(vect,1,true))];
 
     if((i == 2) | (i % 100 == 0)){
-      history["learning.curve"].row(i / 100) = learningMeasure(network["input.hidden.weights"], n_hidden, alphabet);
-      history["bias.tracker"](i / 100,_) = network["hidden.bias.weights"];
-      history["output.bias.tracker"](i / 100,_) = network["output.bias.weights"];
-      history["hidden.letter.similarity.tracking"](i / 100,_) = callFunction(letters, network, batchHiddenLayerLearning)["similarity"];
-      history["output.match.tracker"][i / 100] = callFunction2(network, words, testWordContinuity);
-      history["output.trace.tracker"](i / 100,_) = network["trace.output"];
-      history["trace.output.tracker"](i/100,_) = network["trace.output"];
+      NumericMatrix learningCurve = history["learning.curve"];
+      learningCurve(i / 100,_) = learningMeasure(network["input.hidden.weights"], n_hidden, alphabet);
+      NumericMatrix biasTracker = history["bias.tracker"];
+      biasTracker(i / 100,_) = network["hidden.bias.weights"];
+      NumericMatrix outputBiasTracker = history["output.bias.tracker"];
+      outputBiasTracker(i / 100,_) = network["output.bias.weights"];
+      NumericMatrix hiddenLetterSimilarityTracking = history["hidden.letter.similarity.tracking"];
+      hiddenLetterSimilarityTracking(i / 100,_) = callFunction(letters, network, batchHiddenLayerLearning)["similarity"];
+      NumericVector outputMatchTracker = history["output.match.tracker"];
+      outputMatchTracker[i / 100] = callFunction1(network, words, testWordContinuity);
+      NumericMatrix outputTraceTracker = history["output.trace.tracker"];
+      outputTraceTracker(i / 100,_) = network["trace.output"];
+      NumericMatrix traceOutputTracker = history["trace.output.tracker"];
+      traceOutputTracker(i/100,_) = network["trace.output"];
     }
 
     for(int b=0; b<((words.length())/n_input); b++){
@@ -249,17 +255,20 @@ List batchHelp(int n_epochs, List words,
       network["output.bias.weights"] = results["outputBiasWeights"];
       network["hidden.output.weights"] = results["hiddenToOutputWeights"];
 
-  List retrn = List::create(Named("history") = history,
+  List history1 = List::create(Named("learning.curve") = learningCurve,
+                               _["bias.tracker"] = biasTracker,
+                               _["output.bias.tracker"] = outputBiasTracker,
+                               _["hidden.letter.similarity.tracking"] = hiddenLetterSimilarityTracking,
+                               _["output.match.tracker"] = outputMatchTracker,
+                               _["output.trace.tracker"] = outputTraceTracker,
+                               _["trace.output.tracker"] = traceOutputTracker);
+  
+  List retrn = List::create(Named("history") = history1,
                             _["network"] = network);
   return(retrn);
     }
   }
 }
-
-
-
-
-// [[Rcpp::export]]
 
 
 
