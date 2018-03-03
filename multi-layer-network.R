@@ -185,44 +185,32 @@ batch <- function(n.epochs, network=NA){
   # tracking learning #
   history <- list(               #initializes learning data matrices
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
-    bias.tracker = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
-    output.bias.tracker = matrix(0, nrow = n.epochs/100, ncol= n.output),
-    output.match.tracker <- rep(0, times = n.epochs/100),
+    output.match.tracker = rep(0, times = n.epochs/100),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output),
-    trace.output.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
+    output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output)
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   
   for(i in 1:n.epochs){
-    
+
     word <- words[[sample(1:n.words,1, replace = T)]]
-    
+
     if(i == 2 || i %% 100 == 0){
       history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
-      history$bias.tracker[i / 100,] <- as.vector(network$hidden.bias.weights)
-      history$output.bias.tracker[i / 100,] <- as.vector(network$output.bias.weights)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
       history$output.trace.tracker[i / 100, ] <- network$trace.output
-      history$trace.output.tracker[i/100,] <- network$trace.output
     }
-    
+
     for(b in 1:(length(word)/n.input)){
-      
+
       # get input vector
-      
+
       input <- word[,b]
       input <- noise.in.letter(input)
-      
+
       # update network properties
-      
-      
-      # results <- trace.update(input, network$input.hidden.weights,
-      #                         network$trace.hidden, network$hidden.bias.weights,
-      #                         network$hidden.output.weights, network$trace.output,
-      #                         network$output.bias.weights)
 
       results <- traceUpdate(trace.param.hidden, trace.param.output,
                              learning.rate.hidden, learning.rate.output,
@@ -234,22 +222,24 @@ batch <- function(n.epochs, network=NA){
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
                              network$output.bias.weights)
-      
+
       network$input.hidden.weights <- results$inputToHiddenWeights
       network$trace.hidden <- results$traceHidden
       network$hidden.bias.weights <- results$hiddenBiasWeights
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-      
-      
-    
+
+
+
     }
+    setTxtProgressBar(pb, i)
+  }
 
   # results <- batchHelp(n.epochs, words,
   #                      n.words, history, input,
   #                      n.input, network,
-  #                      alphabet,letters, batchHiddenLayerLearning,
+  #                      alphabet,letters, batch.hidden.layer.learning,
   #                      test.word.continuity, letter.noise.param,
   #                      trace.param.hidden, trace.param.output,
   #                      learning.rate.hidden, learning.rate.output,
@@ -257,24 +247,18 @@ batch <- function(n.epochs, network=NA){
   #                      hidden.bias.param.minus, hidden.bias.param.plus,
   #                      percent.act.input, percent.act.output,
   #                      n.output, n.hidden,
-  #                      input.to.hidden.weights, trace.hidden, hidden.bias.weights,
-  #                      hidden.to.output.weights, trace.output,
+  #                      input.hidden.weights, noiseInLetter,
+  #                      trace.hidden, hidden.bias.weights,
+  #                      hidden.output.weights, trace.output,
   #                      output.bias.weights)
-  # return(list(
-  #   history = results$history
-  #   network = results$network
-  # ))
-  # 
-    # update learning history
-    setTxtProgressBar(pb, i)
-    
-  }
-  
-  return(list(
-    history=history,
-    network=network
-  ))
-}
 
+  return(list(
+    history = history,
+    network = network
+  ))
+  
+
+}
+#test(n.epochs, history, words, network, n.hidden, alphabet, letters, batch.hidden.layer.learning, test.word.continuity)
 
 
