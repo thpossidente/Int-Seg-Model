@@ -154,7 +154,6 @@ batch.hidden.layer.learning <- function(letters, network){
   return(result)
 }
 
-
 visualize.hidden.layer.learning <- function(history){
   plotting.data <- expand.grid(letter=names(letters), time=1:nrow(history$hidden.letter.similarity.tracking))
   plotting.data$similarity <- mapply(function(l, t){

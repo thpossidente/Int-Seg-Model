@@ -26,6 +26,8 @@ learning.measure <- function(input.hidden.weights){
   return(best.fit)
 }
 
+
+
 # 
 # forward.pass <- function(input, input.hidden.weights, hidden.bias.weights, hidden.output.weights, output.bias.weights){ #calculate output activations with "winner-takes-all" method
 #   
@@ -133,6 +135,7 @@ learning.measure <- function(input.hidden.weights){
 # }
 
 batch <- function(n.epochs, network=NA){
+  counter <- 0
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
@@ -193,11 +196,12 @@ batch <- function(n.epochs, network=NA){
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
   
   for(i in 1:n.epochs){
-
+    
+    counter = counter + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
 
     if(i == 2 || i %% 100 == 0){
-      history$learning.curve[i / 100,] <- learning.measure(network$input.hidden.weights)
+      history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
       history$output.trace.tracker[i / 100, ] <- network$trace.output
@@ -208,10 +212,9 @@ batch <- function(n.epochs, network=NA){
       # get input vector
 
       input <- word[,b]
-      input <- noise.in.letter(input)
+      input <- noiseInLetter(input, n.input, letter.noise.param, n.epochs)
 
       # update network properties
-
       results <- traceUpdate(trace.param.hidden, trace.param.output,
                              learning.rate.hidden, learning.rate.output,
                              output.bias.param.plus, output.bias.param.minus,
@@ -221,7 +224,7 @@ batch <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights)
+                             network$output.bias.weights, counter)
 
       network$input.hidden.weights <- results$inputToHiddenWeights
       network$trace.hidden <- results$traceHidden

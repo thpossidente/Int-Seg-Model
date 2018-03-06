@@ -39,12 +39,34 @@ NumericVector learningMeasure(NumericMatrix inputHiddenWeights, int n_hidden, Li
 }
 
 
-// [[Rcpp::export]]
 
-DataFrame bathHiddenLayerLearning(List letters, List network) {
-  DataFrame res = DataFrame::create()
-  return res;
-}
+// // [[Rcpp::export]]
+// 
+// DataFrame bathHiddenLayerLearning(List letters, List network) {
+//   StringVector names = StringVector::create("A", "B", "C", "D", "E", "F", "G",
+//                                                   "H", "I", "J", "K", "L", "M", "N",
+//                                                   "O", "P", "Q", "R", "S", "T", "U",
+//                                                   "V", "W", "X", "Y", "Z");
+//   NumericVector similarity(names.size());
+// 
+//   DataFrame res = DataFrame::create(Named("input") = names, _["similarity"] = similarity);
+//   for(int i=0; i<res.nrow(); i++){
+//     res(i, 2) = hiddenLayerSimilarity(letters[i], network);
+//   }
+//   return res;
+// }
+// 
+// 
+// // [[Rcpp::export]]
+// float hiddenLayerSimilarity(NumericMatrix letter, List network, int n_output,
+//                             float percentActInput, float percentActOutput, int n_hidden){
+//   List results = forwardPass(n_output, percentActInput, percentActOutput,
+//                         n_hidden, letter, network["inputToHiddenWeights"],
+//                         network["hiddenBiasWeights"], network["hiddenToOutputWeights"],
+//                         network["outputBiasWeights"]);
+//   NumericVector active_nodes = which_max()
+// }
+
 
 // [[Rcpp::export]]
 
@@ -52,6 +74,7 @@ double callFunction1(List network, List words, Function testWordContinuity){
   double res = as<double>(testWordContinuity(network, words));
   return res;
 }
+
 
 
 
@@ -122,7 +145,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                  NumericVector input, NumericMatrix inputToHiddenWeights,
                  NumericVector traceHidden, NumericMatrix hiddenBiasWeights,
                  NumericMatrix hiddenToOutputWeights, NumericVector traceOutput,
-                 NumericMatrix outputBiasWeights){
+                 NumericMatrix outputBiasWeights, int counter){
 
   List forwardPassResults = forwardPass(n_output, percentActInput,
                                         percentActOutput, n_hidden,
@@ -152,21 +175,23 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  for(int b=0; b<(n_output); b++){
-    if(output[b] == 1){
-      outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
+  if(counter > 5000){
+    for(int b=0; b<(n_output); b++){
+      if(output[b] == 1){
+        outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
+      }
+      if(output[b] == 0){
+        outputBiasWeights(b,0) = outputBiasWeights(b,0) + outputBiasParamPlus;
+      }
+      if(outputBiasWeights(b,0) < 0){
+        outputBiasWeights(b,0) = 0;
+      }
     }
-    if(output[b] == 0){
-      outputBiasWeights(b,0) = outputBiasWeights(b,0) + outputBiasParamPlus;
-    }
-    if(outputBiasWeights(b,0) < 0){
-      outputBiasWeights(b,0) = 0;
-    }
-  }
 
-  for(int h=0; h<(n_output); h++){
-    traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
-    hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
+    for(int h=0; h<(n_output); h++){
+      traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
+      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
+    }
   }
 
   List retrn = List::create(Named("traceHidden") = traceHidden,
@@ -177,7 +202,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
                             _["outputBiasWeights"] = outputBiasWeights);
-    return(retrn);
+  return(retrn);
 }
 
 
@@ -271,39 +296,39 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 // }
 
 
-//[[Rcpp::export]]
-NumericVector test(int n_epochs, List history, List words, List network, int n_hidden, List alphabet, List letters, Function batchHiddenLayerLearning, Function testWordContinuity){
-  
-  NumericVector vect(n_epochs);
-  for(int j=0; j<n_epochs; j++){
-    vect[j] = j;
-  }
-  
-  
-  NumericMatrix learningCurve = history["learning.curve"];
-  NumericMatrix biasTracker = history["bias.tracker"];
-  NumericMatrix outputBiasTracker = history["output.bias.tracker"];
-  NumericMatrix hiddenLetterSimilarityTracking = history["hidden.letter.similarity.tracking"];
-  NumericVector outputMatchTracker = history["output.match.tracker"];
-  NumericMatrix outputTraceTracker = history["output.trace.tracker"];
-  NumericMatrix traceOutputTracker = history["trace.output.tracker"];
-  
-  for(int i=0; i<(n_epochs); i++){
-    NumericMatrix word = words[as<int>(RcppArmadillo::sample(vect,1,true))];
-    
-    if((i == 2) | (i % 100 == 0)){
-      
-      learningCurve(i / 100,_) = as<NumericVector>(learningMeasure(network["input.hidden.weights"], n_hidden, alphabet));
-      biasTracker(i / 100,_) = as<NumericVector>(network["hidden.bias.weights"]);
-      outputBiasTracker(i / 100,_) = as<NumericVector>(network["output.bias.weights"]);
-      hiddenLetterSimilarityTracking(i / 100,_) = as<NumericVector>(callFunction(letters, network, batchHiddenLayerLearning)["similarity"]);
-      outputMatchTracker[i / 100] = callFunction1(network, words, testWordContinuity);
-      outputTraceTracker(i / 100,_) = as<NumericVector>(network["trace.output"]);
-      traceOutputTracker(i/100,_) = as<NumericVector>(network["trace.output"]);
-    }
-  }
-  return(outputMatchTracker);
-}
+// //[[Rcpp::export]]
+// NumericVector test(int n_epochs, List history, List words, List network, int n_hidden, List alphabet, List letters, Function batchHiddenLayerLearning, Function testWordContinuity){
+//   
+//   NumericVector vect(n_epochs);
+//   for(int j=0; j<n_epochs; j++){
+//     vect[j] = j;
+//   }
+//   
+//   
+//   NumericMatrix learningCurve = history["learning.curve"];
+//   NumericMatrix biasTracker = history["bias.tracker"];
+//   NumericMatrix outputBiasTracker = history["output.bias.tracker"];
+//   NumericMatrix hiddenLetterSimilarityTracking = history["hidden.letter.similarity.tracking"];
+//   NumericVector outputMatchTracker = history["output.match.tracker"];
+//   NumericMatrix outputTraceTracker = history["output.trace.tracker"];
+//   NumericMatrix traceOutputTracker = history["trace.output.tracker"];
+//   
+//   for(int i=0; i<(n_epochs); i++){
+//     NumericMatrix word = words[as<int>(RcppArmadillo::sample(vect,1,true))];
+//     
+//     if((i == 2) | (i % 100 == 0)){
+//       
+//       learningCurve(i / 100,_) = as<NumericVector>(learningMeasure(network["input.hidden.weights"], n_hidden, alphabet));
+//       biasTracker(i / 100,_) = as<NumericVector>(network["hidden.bias.weights"]);
+//       outputBiasTracker(i / 100,_) = as<NumericVector>(network["output.bias.weights"]);
+//       hiddenLetterSimilarityTracking(i / 100,_) = as<NumericVector>(callFunction(letters, network, batchHiddenLayerLearning)["similarity"]);
+//       outputMatchTracker[i / 100] = callFunction1(network, words, testWordContinuity);
+//       outputTraceTracker(i / 100,_) = as<NumericVector>(network["trace.output"]);
+//       traceOutputTracker(i/100,_) = as<NumericVector>(network["trace.output"]);
+//     }
+//   }
+//   return(outputMatchTracker);
+// }
 
 
 
