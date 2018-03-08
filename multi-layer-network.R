@@ -7,24 +7,24 @@ sigmoid.activation <- function(x){
   return(x)
 }
 
-noise.in.letter <- function(input){
-  for(i in 1:(letter.noise.param*n.input)){
-    input[(sample(1:n.input,1,replace=T))] <- 1
-  }
-  return(input)
-}
-
-learning.measure <- function(input.hidden.weights){
-  all.letters.compared <- numeric(26)
-  best.fit <- numeric(n.hidden)
-  for(i in 1:n.hidden){
-    for(h in 1:26){
-      all.letters.compared[h] <- sum(abs(input.hidden.weights[,i] - alphabet[[h]]))
-    }
-    best.fit[i] <- min(all.letters.compared)
-  }
-  return(best.fit)
-}
+# noise.in.letter <- function(input){
+#   for(i in 1:(letter.noise.param*n.input)){
+#     input[(sample(1:n.input,1,replace=T))] <- 1
+#   }
+#   return(input)
+# }
+# 
+# learning.measure <- function(input.hidden.weights){
+#   all.letters.compared <- numeric(26)
+#   best.fit <- numeric(n.hidden)
+#   for(i in 1:n.hidden){
+#     for(h in 1:26){
+#       all.letters.compared[h] <- sum(abs(input.hidden.weights[,i] - alphabet[[h]]))
+#     }
+#     best.fit[i] <- min(all.letters.compared)
+#   }
+#   return(best.fit)
+# }
 
 
 

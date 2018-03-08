@@ -24,14 +24,14 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
 
 // [[Rcpp::export]]
 
-NumericVector learningMeasure(NumericMatrix inputHiddenWeights, int n_hidden, List alphabet){
+NumericVector learningMeasure(NumericMatrix inputToHiddenWeights, int n_hidden, List alphabet){
   
-  NumericVector allLettersCompared(26);
+  NumericVector allLettersCompared(alphabet.size());
   NumericVector bestFit(n_hidden);
   
   for(int i=0; i<n_hidden; i++){
-    for(int h=0; h<26; h++){
-      allLettersCompared[h] = sum(abs(inputHiddenWeights(_,i) - alphabet[h]));
+    for(int h=0; h<alphabet.size(); h++){
+      allLettersCompared[h] = sum(abs(inputToHiddenWeights(_,i) - as<NumericVector>(alphabet[h])));
     }
     bestFit[i] = min(allLettersCompared);
   }

@@ -37,10 +37,12 @@ visualize.hidden.layer.learning(results$history)
 display.learning.curves(results) 
 visualize.letter.activations(results$network, q)
 visualize.output.act.match()
-emp.layer.activations.many <- temp.layer.many.activations(network, words)
+temp.layer.activations.many <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$output.trace.tracker
 
 temp.layer.activations.many[28,]
 
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,2], type = "b")
-output.trace.tracker.results
+
+
+
