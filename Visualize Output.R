@@ -8,7 +8,7 @@ display.learning.curves <- function(results){
   for(i in 1:n.hidden){
     layout(matrix(1:4, nrow=2))
     #plot(results$history$learning.curve[,i], main=paste("Node",i), ylim = 0,1000)
-    plot(results$history$bias.tracker[,i])
+    #plot(results$history$bias.tracker[,i])
     image(t(apply(matrix(results$network$input.hidden.weights[,i], nrow = 40),1,rev)))
   }
 }
@@ -153,7 +153,6 @@ batch.hidden.layer.learning <- function(letters, network){
   }
   return(result)
 }
-
 
 visualize.hidden.layer.learning <- function(history){
   plotting.data <- expand.grid(letter=names(letters), time=1:nrow(history$hidden.letter.similarity.tracking))
