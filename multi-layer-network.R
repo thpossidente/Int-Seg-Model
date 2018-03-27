@@ -135,7 +135,7 @@ sigmoid.activation <- function(x){
 # }
 
 batch <- function(n.epochs, network=NA){
-  counter <- 0
+  counter <- 5001    #change to start what batch 2nd layer starts learning
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
