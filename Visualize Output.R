@@ -107,6 +107,68 @@ temp.layer.activations <- function(network, input.matrix){
   return(percentage*100)
 }
 
+test.word.continuity1 <- function(network, words){
+  
+  n.letters <- 0
+  for(i in 1:length(words)){
+    n.letters <- n.letters + ncol(words[[i]])
+  }
+  
+  input.matrix <- matrix(0, ncol=n.input, nrow=n.letters)
+  r <- 1
+  for(i in 1:length(words)){
+    for(j in 1:ncol(words[[i]])){
+      input.matrix[r,] <- words[[i]][,j]
+      r <- r + 1
+    }
+  }
+  
+  temp.layer.activations(network, input.matrix)
+} 
+
+
+temp.layer.activations1 <- function(network, input.matrix){
+  
+  storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
+  
+  for(i in 1:nrow(input.matrix)){
+    act.results <- forward.pass(input.matrix[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    storing.activations[i,] <- act.results$output
+  }
+  
+  output.results <- data.frame(letter=numeric(),output=numeric())
+  for(i in 1:nrow(storing.activations)){
+    for(j in which(storing.activations[i,] == max(storing.activations[i,]))){
+      output.results <- rbind(output.results, c(letter=i, output=j))  
+    }
+  }
+  colnames(output.results) <- c("letter", "output")
+  
+  ## accuracy measurement ##
+  counter <- 1
+  num.matches <- 0
+  act.per.word <- ceiling(length(output.results$output)/(n.output*percent.act.output*3))
+  for(b in seq(from = act.per.word, to = length(output.results$output) + act.per.word, by = act.per.word)){
+    freq <- rle(sort(output.results$output[counter:b]))
+    counter <- counter + 9 
+    for(h in 1:length(freq$lengths)){
+      if(freq$lengths[h] > 1){
+        num.matches = num.matches + freq$lengths[h]
+      }
+    }
+  }
+  
+  percentage <- num.matches/78
+  ###
+  
+  g <- ggplot(output.results, aes(x=letter, y=output)) + 
+    geom_point()+
+    ylim(1,50)+
+    theme_bw()
+  
+  return(list(percentage*100,g))
+}
+
 
 visualize.letter.activations <- function(network, input){
   result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)

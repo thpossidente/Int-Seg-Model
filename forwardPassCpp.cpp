@@ -195,8 +195,8 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     }
 
     for(int h=0; h<(n_output); h++){
-      traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
       hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
+      traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     }
   }
 
