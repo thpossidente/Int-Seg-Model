@@ -61,7 +61,7 @@ test.word.continuity <- function(network, words){
     }
   }
   
-  temp.layer.activations(network, input.matrix)
+  return(temp.layer.activations(network, input.matrix))
 } 
 
 
