@@ -40,8 +40,19 @@ visualize.output.act.match()
 temp.layer.activations.many <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$output.trace.tracker
 
-temp.layer.activations.many[9,]
-
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], type = "b")
 
+test.word.continuity1(results$network, words)
+
+
+## for write-up, could try to find a simple validation experiment
+## OR could try an extended thesis proposal and find some behavioral data to compare model to
+## OR could do a simple version of intended original experiment
+## Implement network in object-based coding. Each layer is an object and they can be stacked/rearranged. Eventually entire network 
+## would be a single object. 
+
+
+## one test of network later is how well the network can deal with correlated inputs (meaning that inputs have a lot of overlap, as 
+## one would expect for letter inputs). If inputs are totally uncorrelated (little similar activations between inputs), network should 
+## perform better. 
 

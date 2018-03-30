@@ -123,7 +123,7 @@ test.word.continuity1 <- function(network, words){
     }
   }
   
-  temp.layer.activations(network, input.matrix)
+  temp.layer.activations1(network, input.matrix)
 } 
 
 
