@@ -123,7 +123,7 @@ test.word.continuity1 <- function(network, words){
     }
   }
   
-  temp.layer.activations(network, input.matrix)
+  temp.layer.activations1(network, input.matrix)
 } 
 
 
@@ -166,7 +166,7 @@ temp.layer.activations1 <- function(network, input.matrix){
     ylim(1,50)+
     theme_bw()
   
-  return(list(percentage*100,g))
+  return(g)
 }
 
 

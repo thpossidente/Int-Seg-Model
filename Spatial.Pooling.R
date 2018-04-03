@@ -16,8 +16,8 @@ trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to 
 trace.param.output <- 0.86
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 0 #0
-output.bias.param.plus <- 0 #0
+output.bias.param.minus <- 0.5 #0
+output.bias.param.plus <- 0.001 #0
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -40,8 +40,9 @@ visualize.output.act.match()
 temp.layer.activations.many <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$output.trace.tracker
 
-temp.layer.activations.many[9,]
+temp.layer.activations.many[27,]
 
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], type = "b")
 
-
+test.word.continuity1(results$network, words)
+plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,29], type='b', ylim=c(0,0.005))
