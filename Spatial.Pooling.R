@@ -8,7 +8,7 @@ source('multi-layer-network.R')
 
 n.input <- 1600
 n.hidden <- 100
-n.output <- 30
+n.output <- 30  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.005
 n.epochs <- 10000
@@ -16,8 +16,8 @@ trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to 
 trace.param.output <- 0.86
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 0.5 #0
-output.bias.param.plus <- 0.001 #0
+output.bias.param.minus <- 1 #0
+output.bias.param.plus <- 0.0005 #0
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive
 num.inputs.generated <- 50
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -46,9 +46,7 @@ temp.layer.activations.many[27,]
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], type = "b")
 
 test.word.continuity1(results$network, words)
-plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,29], type='b', ylim=c(0,0.005))
-
-test.word.continuity1(results$network, words)
+plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,11], type='b', ylim=c(0,0.015))
 
 
 

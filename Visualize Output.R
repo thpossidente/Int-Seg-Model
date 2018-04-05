@@ -70,7 +70,10 @@ temp.layer.activations <- function(network, input.matrix){
   storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
   
   for(i in 1:nrow(input.matrix)){
-    act.results <- forward.pass(input.matrix[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                              n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                              network$hidden.bias.weights, network$hidden.output.weights, 
+                              network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -85,18 +88,18 @@ temp.layer.activations <- function(network, input.matrix){
   ## accuracy measurement ##
   counter <- 1
   num.matches <- 0
-  act.per.word <- ceiling(length(output.results$output)/(n.output*percent.act.output*3))
+  act.per.word <- n.output * percent.act.output * 3
   for(b in seq(from = act.per.word, to = length(output.results$output) + act.per.word, by = act.per.word)){
     freq <- rle(sort(output.results$output[counter:b]))
-    counter <- counter + 9 
+    counter <- counter + act.per.word 
     for(h in 1:length(freq$lengths)){
       if(freq$lengths[h] > 1){
         num.matches = num.matches + freq$lengths[h]
       }
     }
   }
-  
-  percentage <- num.matches/78
+
+    percentage <- num.matches/(length(output.results$output))
   ###
 
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
@@ -132,7 +135,10 @@ temp.layer.activations1 <- function(network, input.matrix){
   storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
   
   for(i in 1:nrow(input.matrix)){
-    act.results <- forward.pass(input.matrix[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                               network$hidden.bias.weights, network$hidden.output.weights, 
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -147,10 +153,10 @@ temp.layer.activations1 <- function(network, input.matrix){
   ## accuracy measurement ##
   counter <- 1
   num.matches <- 0
-  act.per.word <- ceiling(length(output.results$output)/(n.output*percent.act.output*3))
+  act.per.word <- n.output * percent.act.output * 3
   for(b in seq(from = act.per.word, to = length(output.results$output) + act.per.word, by = act.per.word)){
     freq <- rle(sort(output.results$output[counter:b]))
-    counter <- counter + 9 
+    counter <- counter + act.per.word
     for(h in 1:length(freq$lengths)){
       if(freq$lengths[h] > 1){
         num.matches = num.matches + freq$lengths[h]
@@ -158,7 +164,7 @@ temp.layer.activations1 <- function(network, input.matrix){
     }
   }
   
-  percentage <- num.matches/78
+  percentage <- num.matches/(length(output.results$output))
   ###
   
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
@@ -260,3 +266,4 @@ visualize.output.act.match <- function(){
   plot(results$history$output.match.tracker, ylim = range(0, 100), type='o', ann = F)
   title(xlab = 'Time', ylab = 'Percentage of activation matches')
 }
+
