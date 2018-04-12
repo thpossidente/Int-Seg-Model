@@ -217,6 +217,16 @@ batch <- function(n.epochs, network=NA){
 
       input <- word[,b]
       input <- noiseInLetter(input, n.input, letter.noise.param, n.epochs)
+      
+      # dropout output layer
+      coordinates <- data.frame(hidden=sample(1:n.hidden, dropout*n.hidden*n.output, replace=T), output=sample(1:n.output, dropout*n.hidden*n.output, replace=T)) 
+      for(n in 1:nrow(coordinates)){
+        coordinates$weight[n] <- network$hidden.output.weights[coordinates$hidden[n], coordinates$output[n]]
+      }
+      for(c in 1:nrow(coordinates)){
+        network$hidden.output.weights[coordinates$hidden[c], coordinates$output[c]] <- NA
+      }
+      
 
       # update network properties
       results <- traceUpdate(trace.param.hidden, trace.param.output,
@@ -229,6 +239,7 @@ batch <- function(n.epochs, network=NA){
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
                              network$output.bias.weights, counter)
+      
 
       network$input.hidden.weights <- results$inputToHiddenWeights
       network$trace.hidden <- results$traceHidden
@@ -236,7 +247,9 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-
+      for(x in 1:nrow(coordinates)){
+        network$hidden.output.weights[coordinates$hidden[x], coordinates$output[x]] <- coordinates$weight[x]
+      }
 
 
     }

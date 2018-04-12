@@ -2,7 +2,14 @@
 #include <RcppArmadilloExtensions/sample.h>
 using namespace Rcpp;
 
-
+// // [[Rcpp::export]]
+// NumericVector coordinatesWeights(NumericMatrix coordinates, List network, int n_hidden, int n_output, float dropout){
+//   
+//   NumericVector weights(n_hidden*n_output*dropout);
+//   for(int n=0; n<(n_hidden*n_output*dropout);n++){
+//     weights[n] = network
+//   }
+// }
 
 
 // [[Rcpp::export]]
