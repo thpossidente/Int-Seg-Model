@@ -135,7 +135,7 @@ sigmoid.activation <- function(x){
 # }
 
 batch <- function(n.epochs, network=NA){
-  counter <- 5001    #change to start what batch 2nd layer starts learning
+  counter <- 1    #change to start what batch 2nd layer starts learning
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
@@ -218,15 +218,6 @@ batch <- function(n.epochs, network=NA){
       input <- word[,b]
       input <- noiseInLetter(input, n.input, letter.noise.param, n.epochs)
       
-      # dropout output layer
-      coordinates <- data.frame(hidden=sample(1:n.hidden, dropout*n.hidden*n.output, replace=T), output=sample(1:n.output, dropout*n.hidden*n.output, replace=T)) 
-      for(n in 1:nrow(coordinates)){
-        coordinates$weight[n] <- network$hidden.output.weights[coordinates$hidden[n], coordinates$output[n]]
-      }
-      for(c in 1:nrow(coordinates)){
-        network$hidden.output.weights[coordinates$hidden[c], coordinates$output[c]] <- NA
-      }
-      
 
       # update network properties
       results <- traceUpdate(trace.param.hidden, trace.param.output,
@@ -247,9 +238,6 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-      for(x in 1:nrow(coordinates)){
-        network$hidden.output.weights[coordinates$hidden[x], coordinates$output[x]] <- coordinates$weight[x]
-      }
 
 
     }
