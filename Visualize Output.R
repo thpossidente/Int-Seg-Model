@@ -267,3 +267,67 @@ visualize.output.act.match <- function(){
   title(xlab = 'Time', ylab = 'Percentage of activation matches')
 }
 
+
+output.act.unique <- function(network, words){
+  
+  n.letters <- 0
+  for(i in 1:length(words)){
+    n.letters <- n.letters + ncol(words[[i]])
+  }
+  
+  input.matrix <- matrix(0, ncol=n.input, nrow=n.letters)
+  r <- 1
+  for(i in 1:length(words)){
+    for(j in 1:ncol(words[[i]])){
+      input.matrix[r,] <- words[[i]][,j]
+      r <- r + 1
+    }
+  }
+  
+  storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
+  
+  for(i in 1:nrow(input.matrix)){
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                               network$hidden.bias.weights, network$hidden.output.weights, 
+                               network$output.bias.weights)
+    storing.activations[i,] <- act.results$output
+  }
+  
+  output.results <- data.frame(letter=numeric(),output=numeric())
+  for(i in 1:nrow(storing.activations)){
+    for(j in which(storing.activations[i,] == max(storing.activations[i,]))){
+      output.results <- rbind(output.results, c(letter=i, output=j))  
+    }
+  }
+  colnames(output.results) <- c("letter", "output")
+  
+  output.results.grouped <- list(output.results$output[1:(n.output*percent.act.output*3)],
+                                 output.results$output[((n.output*percent.act.output*3)+1):(2*(n.output*percent.act.output*3))],
+                                 output.results$output[(2*(n.output*percent.act.output*3)+1):(3*(n.output*percent.act.output*3))],
+                                 output.results$output[(3*(n.output*percent.act.output*3)+1):(4*(n.output*percent.act.output*3))],
+                                 output.results$output[(4*(n.output*percent.act.output*3)+1):(5*(n.output*percent.act.output*3))],
+                                 output.results$output[(5*(n.output*percent.act.output*3)+1):(6*(n.output*percent.act.output*3))],
+                                 output.results$output[(6*(n.output*percent.act.output*3)+1):(7*(n.output*percent.act.output*3))],
+                                 output.results$output[(7*(n.output*percent.act.output*3)+1):(8*(n.output*percent.act.output*3))],
+                                 output.results$output[(8*(n.output*percent.act.output*3)+1):((9*(n.output*percent.act.output*3))-(n.output*percent.act.output))]
+                                 )
+  
+  act.unique.perc <- numeric(nrow(output.results))
+  counter1 = 0
+  for(n in 1:length(words)){
+    for(x in 1:(ncol(words[[n]])*(n.output*percent.act.output))){
+      counter1 = counter1 + 1
+      sum.in.word <- sum(output.results.grouped[[n]] == output.results$output[counter1])
+      act.unique.perc[counter1] <- sum.in.word/sum(output.results$output == output.results$output[counter1])
+    }
+  }
+  
+  return(mean(act.unique.perc))
+  
+}
+
+
+
+
+

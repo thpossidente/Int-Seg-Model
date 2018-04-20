@@ -2,10 +2,10 @@
 
 
 random.inputs <- function(){
-  one.zero <- c(0,1)
+  one.zero <- c(1,0)
   input.list <- vector('list', num.inputs.generated)
   for(i in 1:num.inputs.generated){
-    input.list[[i]] <- c(sample(one.zero, n.input/2, replace = TRUE, c(0.9, 0.1)))
+    input.list[[i]] <- c(sample(one.zero, n.input/2, replace = TRUE, c(0.1, 0.9)))
   }
   
   grouped.inputs <- vector('list', (num.inputs.generated/5))
@@ -85,8 +85,8 @@ input.generation <- function(input.gen.parameter){
       random.num.1 <- sample(1:(num.inputs.generated),1,replace = T)
       random.num.2 <- sample(1:(num.inputs.generated),1,replace = T)
       added <- random.num.1 + random.num.2
-      if(added > 50){
-        added <- added %% 50
+      if(added > (num.inputs.generated)){
+        added <- added %% (num.inputs.generated)
         if(added == 0){
           added <- 1
         }

@@ -135,7 +135,7 @@ sigmoid.activation <- function(x){
 # }
 
 batch <- function(n.epochs, network=NA){
-  counter <- 5001    #change to start what batch 2nd layer starts learning
+  counter <- 1    #change to start what batch 2nd layer starts learning
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
@@ -191,7 +191,8 @@ batch <- function(n.epochs, network=NA){
     output.match.tracker = rep(0, times = n.epochs/100),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output),
-    output.bias.tracker = matrix(0, nrow=n.epochs/100, ncol = n.output)
+    output.bias.tracker = matrix(0, nrow=n.epochs/100, ncol = n.output),
+    output.act.unique.tracker <- rep(0, times=n.epochs/100)
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -207,6 +208,7 @@ batch <- function(n.epochs, network=NA){
       history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
       history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$output.bias.tracker[i / 100, ] <- network$output.bias.weights[,1]
+      history$output.act.unique.tracker[i / 100] <- output.act.unique(network, words)
     }
 
     for(b in 1:(length(word)/n.input)){
@@ -215,6 +217,7 @@ batch <- function(n.epochs, network=NA){
 
       input <- word[,b]
       input <- noiseInLetter(input, n.input, letter.noise.param, n.epochs)
+      
 
       # update network properties
       results <- traceUpdate(trace.param.hidden, trace.param.output,
@@ -227,6 +230,7 @@ batch <- function(n.epochs, network=NA){
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
                              network$output.bias.weights, counter)
+      
 
       network$input.hidden.weights <- results$inputToHiddenWeights
       network$trace.hidden <- results$traceHidden
@@ -234,7 +238,6 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-
 
 
     }
