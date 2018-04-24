@@ -136,6 +136,7 @@ sigmoid.activation <- function(x){
 
 batch <- function(n.epochs, network=NA){
   counter <- 1    #change to start what batch 2nd layer starts learning
+  counter.bias <- 1 #change to start what batch output bias node starts at
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
@@ -200,6 +201,7 @@ batch <- function(n.epochs, network=NA){
   for(i in 1:n.epochs){
     
     counter = counter + 1
+    counter.bias = counter.bias + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
 
     if(i == 2 || i %% 100 == 0){
@@ -229,7 +231,7 @@ batch <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights, counter)
+                             network$output.bias.weights, counter, counter.bias)
       
 
       network$input.hidden.weights <- results$inputToHiddenWeights

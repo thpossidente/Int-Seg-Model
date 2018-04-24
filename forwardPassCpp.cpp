@@ -119,10 +119,12 @@ List forwardPass(int n_output, float percentActInput,
 
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
-    //float preOutput = sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
-    //NumericVector preOutput1(0, preOutput);
-    //output[i] += max(preOutput1);
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
+  }
+  
+  float max_output = max(output);  // normalizing outputs from 0-1
+  for(int x=0; x<(n_output); x++){
+    output[x] = output[x] / max_output;
   }
   
   int largest1;
@@ -158,7 +160,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                  NumericVector input, NumericMatrix inputToHiddenWeights,
                  NumericVector traceHidden, NumericMatrix hiddenBiasWeights,
                  NumericMatrix hiddenToOutputWeights, NumericVector traceOutput,
-                 NumericMatrix outputBiasWeights, int counter){
+                 NumericMatrix outputBiasWeights, int counter, int counterBias){
 
   List forwardPassResults = forwardPass(n_output, percentActInput,
                                         percentActOutput, n_hidden,
@@ -188,7 +190,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  if(counter > 5000){
+  if(counterBias > 10000){
     for(int b=0; b<(n_output); b++){
       if(output[b] == 1){
         outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -200,7 +202,8 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
         outputBiasWeights(b,0) = 0;
       }
     }
-
+  }
+  if(counter > 5000){
     for(int h=0; h<(n_output); h++){
       hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
       traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];

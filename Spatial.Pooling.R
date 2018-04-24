@@ -11,13 +11,13 @@ n.hidden <- 150
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.009 # 0.009
-n.epochs <- 10000
+n.epochs <- 15000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.7 #0.86
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 0 #0
-output.bias.param.plus <- 0 #0 
+output.bias.param.minus <- 1 #0
+output.bias.param.plus <- 0.00005 #0 
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive #0.75
 num.inputs.generated <- n.input/2 # half of total inputs
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -43,8 +43,6 @@ visualize.letter.activations(results$network, j)
 temp.layer.activations.many <- temp.layer.many.activations(network, words)
 output.trace.tracker.results <- results$history$output.trace.tracker
 
-
-temp.layer.activations.many[27,]
 
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], type = "b")
 
