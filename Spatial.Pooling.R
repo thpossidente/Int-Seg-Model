@@ -50,7 +50,3 @@ plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], typ
 
 
 plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,11], type='b', ylim=c(0,0.015))
-
-
-
-  
