@@ -50,12 +50,3 @@ plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], typ
 
 
 plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,11], type='b', ylim=c(0,0.015))
-
-# start bias nodes at 10000 to 15000 and see what the effect is
-# need to balance bias weights and connection weights -- bias weights should give just enought to be activated
-# If whole temporal layer is normalized on scale 0-1 (before setting highest to 1 and others to zero)
-# then implementing bias on a known scale. Then picking "winner"
-
-# thinking in terms of mutual information -- compare information between input and spatial layer and temporal layer and input
-# input being whatever stage in the letters you are at
-# 
