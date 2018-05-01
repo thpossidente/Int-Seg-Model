@@ -11,13 +11,18 @@ n.hidden <- 150
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.009 # 0.009
-n.epochs <- 15000
+n.epochs <- 10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.7 #0.86
 hidden.bias.param.minus <- 1
 hidden.bias.param.plus <- 0.0005
+<<<<<<< HEAD
 output.bias.param.minus <- 0.5 #0
 output.bias.param.plus <- 0.0005 #0 
+=======
+output.bias.param.minus <- 0.005 #0
+output.bias.param.plus <- 0.00005 #0 
+>>>>>>> dc1f800ded5dcd6ec915afd807ebb701805960e2
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive #0.75
 num.inputs.generated <- n.input/2 # half of total inputs
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -47,4 +52,8 @@ output.trace.tracker.results <- results$history$output.trace.tracker
 plot(x=seq(from = 1, to = 100, by = 1), y=output.trace.tracker.results[,30], type = "b")
 
 
+<<<<<<< HEAD
 plot(x=seq(from=100, to=15000, by=100), y=results$history$output.bias.tracker[,7], type='b', ylim=c(0,0.02))
+=======
+plot(x=seq(from=100, to=15000, by=100), y=results$history$output.bias.tracker[,10], type='b', ylim=c(0,0.005))
+>>>>>>> dc1f800ded5dcd6ec915afd807ebb701805960e2
