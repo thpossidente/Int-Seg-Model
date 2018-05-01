@@ -205,6 +205,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
   }
   if(counter > 5000){
     for(int h=0; h<(n_output); h++){
+      //float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*1000)+learningRateOutput;
       hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
       traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     }
