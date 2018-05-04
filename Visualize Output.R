@@ -201,7 +201,8 @@ calculate.mean.weights <- function(active.nodes){
 
 
 hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
-  result <- forward.pass(letter, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  result <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, letter, network$input.hidden.weights,
+                        network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   all.active.nodes <- network$input.hidden.weights[,active.nodes]
   average.weights <- calculate.mean.weights(all.active.nodes)
@@ -329,5 +330,64 @@ output.act.unique <- function(network, words){
 
 
 
+mutual.info.output <- function(){
+  n.letters <- 0
+  for(i in 1:length(words)){
+    n.letters <- n.letters + ncol(words[[i]])
+  }
+  
+  input.matrix <- matrix(0, ncol=n.input, nrow=n.letters)
+  r <- 1
+  for(i in 1:length(words)){
+    for(j in 1:ncol(words[[i]])){
+      input.matrix[r,] <- words[[i]][,j]
+      r <- r + 1
+    }
+  }
+  
+  storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
+  
+  for(i in 1:nrow(input.matrix)){
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                               n.hidden, input.matrix[i,], results$network$input.hidden.weights, 
+                               results$network$hidden.bias.weights, results$network$hidden.output.weights, 
+                               results$network$output.bias.weights)
+    storing.activations[i,] <- act.results$output
+  }
+  
+  output.results <- data.frame(letter=numeric(),output=numeric())
+  for(i in 1:nrow(storing.activations)){
+    for(j in which(storing.activations[i,] == max(storing.activations[i,]))){
+      output.results <- rbind(output.results, c(letter=i, output=j))  
+    }
+  }
+  colnames(output.results) <- c("letter", "output")
+  
+  word.acts <- matrix(0, nrow = 9, ncol <- 3)
+  acts <- numeric(3)
+  counter2 <- 0
+  counter3 <- 0
+  for(f in 1:24){
+    counter2 <- counter2 + 1
+    acts[counter2] <- output.results[f,2]
+    if(f %% 3 == 0){
+      counter2 = 0
+      counter3 <- counter3 + 1
+      word.acts[counter3,1:3] <- acts
+      }
+  }
+  word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
+  
+  mutual.info <- 0
+  for(w in 1:9){
+    prob.word <- ((sum(word.acts == word.acts[w,1]))/26) + ((sum(word.acts == word.acts[w,2]))/26) + ((sum(word.acts == word.acts[w,3]))/26)
+    prob.act <- 1/9
+    mutual.info = mutual.info + ((1/9)*(log2((1/9)/(prob.act*prob.word))))
+  }
+  
+  return(mutual.info)
+  
+}
 
+mutual.info.output()
 
