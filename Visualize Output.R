@@ -330,7 +330,7 @@ output.act.unique <- function(network, words){
 
 
 
-mutual.info.output <- function(){
+mutual.info.output <- function(network){
   n.letters <- 0
   for(i in 1:length(words)){
     n.letters <- n.letters + ncol(words[[i]])
@@ -349,9 +349,9 @@ mutual.info.output <- function(){
   
   for(i in 1:nrow(input.matrix)){
     act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
-                               n.hidden, input.matrix[i,], results$network$input.hidden.weights, 
-                               results$network$hidden.bias.weights, results$network$hidden.output.weights, 
-                               results$network$output.bias.weights)
+                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                               network$hidden.bias.weights, network$hidden.output.weights, 
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -377,11 +377,11 @@ mutual.info.output <- function(){
   #     }
   # }
   # word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
-  counter <- 1
+  counter5 <- 1
   for(z in 1:26){
-      output.results[z,1] <- counter
+      output.results[z,1] <- counter5
       if(z %% 3 == 0){
-        counter <- counter + 1
+        counter5 <- counter5 + 1
       }
   }
   
