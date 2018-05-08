@@ -361,28 +361,36 @@ mutual.info.output <- function(){
       output.results <- rbind(output.results, c(letter=i, output=j))  
     }
   }
-  colnames(output.results) <- c("letter", "output")
+  colnames(output.results) <- c("word", "output")
   
-  word.acts <- matrix(0, nrow = 9, ncol <- 3)
-  acts <- numeric(3)
-  counter2 <- 0
-  counter3 <- 0
-  for(f in 1:24){
-    counter2 <- counter2 + 1
-    acts[counter2] <- output.results[f,2]
-    if(f %% 3 == 0){
-      counter2 = 0
-      counter3 <- counter3 + 1
-      word.acts[counter3,1:3] <- acts
+  # word.acts <- matrix(0, nrow = 9, ncol <- 3)
+  # acts <- numeric(3)
+  # counter2 <- 0
+  # counter3 <- 0
+  # for(f in 1:24){
+  #   counter2 <- counter2 + 1
+  #   acts[counter2] <- output.results[f,2]
+  #   if(f %% 3 == 0){
+  #     counter2 = 0
+  #     counter3 <- counter3 + 1
+  #     word.acts[counter3,1:3] <- acts
+  #     }
+  # }
+  # word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
+  counter <- 1
+  for(z in 1:26){
+      output.results[z,1] <- counter
+      if(z %% 3 == 0){
+        counter <- counter + 1
       }
   }
-  word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
   
   mutual.info <- 0
-  for(w in 1:9){
-    prob.word <- ((sum(word.acts == word.acts[w,1]))/26) + ((sum(word.acts == word.acts[w,2]))/26) + ((sum(word.acts == word.acts[w,3]))/26)
-    prob.act <- 1/9
-    mutual.info = mutual.info + ((1/9)*(log2((1/9)/(prob.act*prob.word))))
+  for(w in 1:26){
+    prob.word <- sum(output.results[,1] == output.results[w,1]) / length(output.results[,1])
+    prob.act <- sum(output.results[,2] == output.results[w,2]) / length(output.results[,2])
+    joint.prob <- sum((output.results[,1] == output.results[w,1]) & (output.results[,2] == output.results[w,2])) / length(output.results[,1])
+    mutual.info = mutual.info + (joint.prob * (log2((joint.prob)/(prob.act*prob.word))))
   }
   
   return(mutual.info)
