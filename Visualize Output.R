@@ -386,16 +386,41 @@ mutual.info.output <- function(network){
   }
   
   mutual.info <- 0
-  for(w in 1:26){
-    prob.word <- sum(output.results[,1] == output.results[w,1]) / length(output.results[,1])
-    prob.act <- sum(output.results[,2] == output.results[w,2]) / length(output.results[,2])
-    joint.prob <- sum((output.results[,1] == output.results[w,1]) & (output.results[,2] == output.results[w,2])) / length(output.results[,1])
-    mutual.info = mutual.info + (joint.prob * (log2((joint.prob)/(prob.act*prob.word))))
+  probs.word <- numeric(9)
+  probs.act <- numeric(10)
+  probs.joint <- numeric(90)
+  mutual.info <- numeric(90)
+  count3 <- 0
+  count4 <- 0
+  
+  for(w in 1:9){
+    probs.word[w] <- sum(output.results[,1] == w) / length(output.results[,1])
   }
+  for(a in 1:10){
+    probs.act[a] <- sum(output.results[,2] == a) / length(output.results[,2])
+  }
+  
+  for(k in 1:9){
+    for(h in 1:10){
+      count3 <- count3 + 1
+      probs.joint[count3] <- sum((output.results[,1] == k) & (output.results[,2] == h)) / length(output.results[,1])
+      
+    }
+  }
+  
+  for(x in 1:9){
+    for(t in 1:10){
+      count4 <- count4 + 1
+      mutual.info[count4] = (probs.joint[count4] * (log2((probs.joint[count4])/(probs.act[t]*probs.word[x]))))
+    }
+  }
+  
+  mutual.info <- sum(mutual.info, na.rm = T)
   
   return(mutual.info)
   
 }
 
-mutual.info.output()
+
+
 
