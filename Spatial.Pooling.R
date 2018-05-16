@@ -1,4 +1,5 @@
 #install.packages('ggplot2')
+
 library(ggplot2)
 
 source('Load Letters.R')
@@ -7,7 +8,7 @@ source('multi-layer-network.R')
 
 
 n.input <- 1600
-n.hidden <- 250 
+n.hidden <- 500 
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.009 # 0.009
