@@ -1,3 +1,5 @@
 - Implement Time Delay on temporal layers instead of modified hebbian trace update. 
     - Time delay: including previous activation values along with currect activation values (for as many previous passes as you want).
     - Must store previous n activation vectors then use them to calculate output as well as current activations
+    
+- Sparesness with split network must be changed

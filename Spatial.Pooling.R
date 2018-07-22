@@ -26,6 +26,7 @@ percent.act.input <- 0.05
 percent.act.output <- 0.1
 n.words <- length(words)
 letter.noise.param <- 0.1
+outputDelay <- numeric(n_hidden*4)
 input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
                          # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
                          # if 0.5: inputs for each system consistently co-occur

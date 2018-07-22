@@ -170,7 +170,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 
   NumericVector hidden = forwardPassResults["hidden"];
   NumericVector output = forwardPassResults["output"];
-
+  
 
   for(int x=0; x<(n_hidden); x++){
     if(hidden[x] == 1){
@@ -203,6 +203,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
       }
     }
   }
+  
   if(counter > 5000){
     for(int h=0; h<(n_output); h++){
       float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*10000)+learningRateOutput;
