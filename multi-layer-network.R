@@ -135,6 +135,7 @@ sigmoid.activation <- function(x){
 # }
 
 batch <- function(n.epochs, network=NA){
+  delay = 0
   counter <- 1    #change to start what batch 2nd layer starts learning
   counter.bias <- 5001 #change to start what batch output bias node starts at
   # network properties #
@@ -181,7 +182,8 @@ batch <- function(n.epochs, network=NA){
       hidden.output.weights = pre.hidden.output.weights,
       output.bias.weights = matrix(0, nrow=n.output, ncol=1),
       trace.hidden = rep(0, times = n.hidden),
-      trace.output = rep(0, times = n.output)
+      trace.output = rep(0, times = n.output),
+      hidden.activation.delay = matrix(0, nrow=delay.param, ncol=n.hidden)
     )
  ## work on correct implementation of sparseness with split network
     network[[1]][sample(1:(n.input*n.hidden), sparseness.percent*(n.input*n.hidden), replace=F)] <- NA
@@ -235,7 +237,8 @@ batch <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights, counter, counter.bias)
+                             network$output.bias.weights, counter, counter.bias, 
+                             network$hidden.activation.delay, delay.param)
       
 
       network$input.hidden.weights <- results$inputToHiddenWeights
@@ -244,6 +247,12 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
+      if(delay > delay.param){
+        delay = 0
+      }
+      network$hidden.activation.delay[delay,] <- results$hidden
+      delay = delay + 1
+      
 
 
     }

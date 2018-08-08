@@ -91,7 +91,8 @@ List forwardPass(int n_output, float percentActInput,
                  float percentActOutput, int n_hidden,
                  NumericVector input, NumericMatrix inputToHiddenWeights,
                  NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights,
-                 NumericMatrix outputBiasWeights){
+                 NumericMatrix outputBiasWeights, NumericMatrix hiddenActivationDelay,
+                 int delayParam){
   
   NumericVector hidden(n_hidden);
   for(int i=0; i<(n_hidden); i++){
@@ -120,7 +121,12 @@ List forwardPass(int n_output, float percentActInput,
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
+    for(int h=0; h<(delayParam); h++){
+      output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)))) / 2;
+    }
   }
+  
+  // NumericMatrix hiddenActivationsDelayed = 
   
   float max_output = max(output);  // normalizing outputs from 0-1
   for(int x=0; x<(n_output); x++){
@@ -160,13 +166,15 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                  NumericVector input, NumericMatrix inputToHiddenWeights,
                  NumericVector traceHidden, NumericMatrix hiddenBiasWeights,
                  NumericMatrix hiddenToOutputWeights, NumericVector traceOutput,
-                 NumericMatrix outputBiasWeights, int counter, int counterBias){
+                 NumericMatrix outputBiasWeights, int counter, int counterBias, 
+                 NumericMatrix hiddenActivationDelay, int delayParam){
 
   List forwardPassResults = forwardPass(n_output, percentActInput,
                                         percentActOutput, n_hidden,
                                         input, inputToHiddenWeights,
                                         hiddenBiasWeights, hiddenToOutputWeights,
-                                        outputBiasWeights);
+                                        outputBiasWeights, hiddenActivationDelay,
+                                        delayParam);
 
   NumericVector hidden = forwardPassResults["hidden"];
   NumericVector output = forwardPassResults["output"];
@@ -207,7 +215,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
   if(counter > 5000){
     for(int h=0; h<(n_output); h++){
       float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*10000)+learningRateOutput;
-      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutputMod * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
+      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutputMod * traceOutput[h] * (hidden - hiddenToOutputWeights(_,h));
       traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     }
   }
@@ -220,6 +228,8 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
                             _["outputBiasWeights"] = outputBiasWeights);
+  
+  
   return(retrn);
 }
 

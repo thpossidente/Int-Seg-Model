@@ -3,3 +3,9 @@
     - Must store previous n activation vectors then use them to calculate output as well as current activations
     
 - Sparesness with split network must be changed
+
+
+
+State of Network:
+
+- Implementing time delay. Set both trace params to 1. 
