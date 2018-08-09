@@ -103,10 +103,10 @@ temp.layer.activations <- function(network, input.matrix){
     percentage <- num.matches/(length(output.results$output))
   ###
 
-  g <- ggplot(output.results, aes(x=letter, y=output)) + 
-    geom_point()+
-    ylim(1,50)+
-    theme_bw()
+  #g <- ggplot(output.results, aes(x=letter, y=output)) + 
+  #  geom_point()+
+  #  ylim(1,50)+
+  #  theme_bw()
   
   return(percentage*100)
 }

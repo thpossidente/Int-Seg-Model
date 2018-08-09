@@ -1,8 +1,10 @@
 #install.packages('ggplot2')
+#install.packages('ggplot')
 #install.packages('png')
 #install.packages('abind')
 #install.packages('dplyr')
 
+library('ggplot2')
 
 source('Load Letters.R')
 source('Visualize Output.R')
@@ -14,10 +16,10 @@ n.hidden <- 500
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.009 # 0.009
-n.epochs <- 10000
+n.epochs <- 10000   #10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 1 #0.8
-hidden.bias.param.minus <- 1
+trace.param.output <- 0.8 #0.8
+hidden.bias.param.minus <- 0.05
 hidden.bias.param.plus <- 0.0005
 output.bias.param.minus <- 0 #0
 output.bias.param.plus <- 0 #0
@@ -41,9 +43,9 @@ visualize.hidden.layer.learning(results$history)
 visualize.output.act.match()
 plot(x=seq(from = 1, to = n.epochs/100, by = 1), y=results$history$output.act.unique.tracker, type='b', ylim=c(0,1))
 test.word.continuity1(results$network, words)
-plot(x=seq(from=100, to=10000, by=100), y=results$history$mutual.info.tracker, type = 'b', ylim=c(0,3.2), xlab = "Epochs", ylab = "Mutual Information")
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.tracker, type = 'b', ylim=c(0,3.2), xlab = "Epochs", ylab = "Mutual Information")
 
-#plot(x=seq(from=100, to=10000, by=100), y=results$history$output.bias.tracker[,6], type='b', ylim=c(0,0.02))
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,9], type='b', ylim=c(0,0.02))
 
 
 #display.learning.curves(results) 

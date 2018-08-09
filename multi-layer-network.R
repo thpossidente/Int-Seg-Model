@@ -135,7 +135,7 @@ sigmoid.activation <- function(x){
 # }
 
 batch <- function(n.epochs, network=NA){
-  delay = 0
+  delay = 1
   counter <- 1    #change to start what batch 2nd layer starts learning
   counter.bias <- 5001 #change to start what batch output bias node starts at
   # network properties #
@@ -247,11 +247,11 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-      if(delay > delay.param){
-        delay = 0
-      }
-      network$hidden.activation.delay[delay,] <- results$hidden
-      delay = delay + 1
+      #if(delay > delay.param){
+      #  delay = 1
+      #}
+      #network$hidden.activation.delay[delay,] <- results$hidden
+      #delay = delay + 1
       
 
 
