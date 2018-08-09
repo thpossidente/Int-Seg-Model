@@ -122,11 +122,9 @@ List forwardPass(int n_output, float percentActInput,
   for(int i=0; i<(n_output); i++){
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
     for(int h=0; h<(delayParam); h++){
-      output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)))) / 2;
+      output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)))) / 3;
     }
   }
-  
-  // NumericMatrix hiddenActivationsDelayed = 
   
   float max_output = max(output);  // normalizing outputs from 0-1
   for(int x=0; x<(n_output); x++){

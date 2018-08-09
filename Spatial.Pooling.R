@@ -1,11 +1,13 @@
 #install.packages('ggplot2')
+#install.packages('png')
+#install.packages('abind')
+#install.packages('dplyr')
 
-library(ggplot2)
 
 source('Load Letters.R')
 source('Visualize Output.R')
 source('multi-layer-network.R')
-
+Rcpp::sourceCpp('forwardPassCpp.cpp')
 
 n.input <- 1600
 n.hidden <- 500 
