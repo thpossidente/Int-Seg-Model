@@ -16,7 +16,7 @@ n.hidden <- 500
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
 learning.rate.output <- 0.009 # 0.009
-n.epochs <- 10000   #10000
+n.epochs <- 7500   #10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 0.8 #0.8
 hidden.bias.param.minus <- 0.05
