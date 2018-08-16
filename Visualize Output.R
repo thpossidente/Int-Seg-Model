@@ -37,7 +37,11 @@ temp.layer.many.activations <- function(network, words){
   storing.activations <- matrix(0, nrow=nrow(input.matrix1), ncol=n.output)
   
   for(i in 1:nrow(input.matrix1)){
-    act.results <- forward.pass(input.matrix1[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                               network$hidden.bias.weights, network$hidden.output.weights, 
+                               network$output.bias.weights, network$hidden.activation.delay,
+                               delay.param)
     storing.activations[i,] <- act.results$output
   }
   return(storing.activations)
@@ -179,11 +183,16 @@ temp.layer.activations1 <- function(network, input.matrix){
 
 
 visualize.letter.activations <- function(network, input){
-  result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  result <-forwardPass(n.output, percent.act.input, percent.act.output,
+                       n.hidden, input, network$input.hidden.weights, 
+                       network$hidden.bias.weights, network$hidden.output.weights, 
+                       network$output.bias.weights, network$hidden.activation.delay,
+                       delay.param)
   active.nodes <- which(result$hidden == max(result$hidden))
   nplots <- length(active.nodes) + 2
   nrow <- round(sqrt(nplots))
   ncol <- ceiling(nplots / nrow)
+  dev.off()
   layout(matrix(1:(nrow*ncol), nrow=nrow))
   image(t(apply(matrix(input, nrow = 40),1,rev)))
   for(act in active.nodes){
@@ -241,12 +250,11 @@ visualize.hidden.layer.learning <- function(history){
 
 
 hidden.layer.stability <- function(letter, input, network, history){
-  result <- forward.pass(n_output, percentActInput,
-                         percentActOutput, n_hidden,
-                         input, inputToHiddenWeights,
-                         hiddenBiasWeights, hiddenToOutputWeights,
-                         outputBiasWeights, hiddenActivationDelay,
-                         delayParam)
+  result <- forwardPass(n.output, percent.act.input, percent.act.output,
+                        n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                        network$hidden.bias.weights, network$hidden.output.weights, 
+                        network$output.bias.weights, network$hidden.activation.delay,
+                        delay.param)
   active.nodes <- which(result$hidden == max(result$hidden))
   previous.active.nodes <- history$hidden.stability.tracking[[letter]]
   change <- length(active.nodes) - sum(active.nodes %in% previous.active.nodes)
@@ -265,7 +273,11 @@ batch.hidden.layer.stability <- function(letters, network, history){
 
 update.hidden.layer.stability <- function(letters, network){
   tracker <- sapply(names(letters), function(x){
-    result <- forward.pass(letters[[x]], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    result <- forwardPass(n.output, percent.act.input, percent.act.output,
+                          n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                          network$hidden.bias.weights, network$hidden.output.weights, 
+                          network$output.bias.weights, network$hidden.activation.delay,
+                          delay.param)
     active.nodes <- which(result$hidden == max(result$hidden))
     return(active.nodes)
   }, USE.NAMES = T, simplify=FALSE)

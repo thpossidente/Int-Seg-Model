@@ -32,7 +32,7 @@ n.words <- length(words)
 letter.noise.param <- 0.1
 delay.param = 3  # number of hidden activations saved and used as input along with current input into output layer
 input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
-# if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
+# if 0: Next inputs are predicted by combination of both systems' prehious inputs - one system alone cannot predict next inputs
 # if 0.5: inputs for each system consistently co-occur
 
 ## RUN ##
@@ -40,15 +40,24 @@ input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, rando
 
 
 counter = 1
-res = matrix(0, nrow=100, ncol = 2)
+res = matrix(0, nrow=100, ncol = 7)
 
 for(i in seq(0.1, 1, 0.02)){
   trace.param.output = i
-  res[counter, 1] = i
+  
+  res[counter, 1] = mean(results$history$mutual.info.tracker[45:50])
+
+  res[counter, 2] = i
   
   results <- batch(n.epochs) #run training batches
   
-  res[counter, 2] = mean(results$history$mutual.info.tracker[65:75])
+  
+  res[counter, 3] = mean(results$history$mutual.info.tracker[50:55])
+  res[counter, 4] = mean(results$history$mutual.info.tracker[55:60])
+  res[counter, 5] = mean(results$history$mutual.info.tracker[60:65])
+  res[counter, 6] = mean(results$history$mutual.info.tracker[65:70])
+  res[counter, 7] = mean(results$history$mutual.info.tracker[70:75])
+  
   
   counter = counter + 1
   

@@ -13,16 +13,21 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam, int n_epochs){
+NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam){
   
-  NumericVector vect(n_epochs);
+  NumericVector vect(n_input);
   
-  for(int j=0; j<n_epochs; j++){
+  for(int j=0; j<1600; j++){
     vect[j] = j;
   }
   
-  for(int i=0; i<(0.1*n_input); i++){
-    input[as<int>(RcppArmadillo::sample(vect,1,true))];
+  for(int i=0; i<(letterNoiseParam*n_input); i++){
+    int rand = as<int>(RcppArmadillo::sample(vect,1,true));
+    if(input[rand] == 1){
+      input[rand] = 0;
+    } else {
+      input[rand] = 1;
+    }
   }
   return(input);
 }

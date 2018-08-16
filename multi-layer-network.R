@@ -134,13 +134,17 @@ sigmoid.activation <- function(x){
 #     output.bias.weights=output.bias.weights))
 # }
 
+
+
 batch <- function(n.epochs, network=NA){
   delay = 1
-  counter <- 1    #change to start what batch 2nd layer starts learning
-  counter.bias <- 5001 #change to start what batch output bias node starts at
+  counter <- 5000    #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
+  counter.bias <- 1 #change to start what batch output bias node starts at
   # network properties #
-  pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=1), nrow=n.input, ncol=n.hidden)
-  pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=1), nrow=n.hidden, ncol=n.output)
+  #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
+  #pre.hidden.output.weights <- matrix((rnorm(n.hidden*n.output) * sqrt(2/n.hidden)), nrow=n.hidden, ncol=n.output)
+  pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.5), nrow=n.input, ncol=n.hidden)   # Random normalization
+  pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.5), nrow=n.hidden, ncol=n.output)
   
   for(input in 1:(n.input/2)){
     for(hidden in (n.hidden/2 + 1):n.hidden){
@@ -173,7 +177,6 @@ batch <- function(n.epochs, network=NA){
     }
   }
   
-  network <- NA
   
   if(is.na(network)){
     network <- list(
@@ -193,12 +196,12 @@ batch <- function(n.epochs, network=NA){
   # tracking learning #
   history <- list(               #initializes learning data matrices
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
-    output.match.tracker = rep(0, times = n.epochs/100),
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    output.trace.tracker = matrix(0, nrow = n.epochs/100, ncol = n.output),
+    output.trace.tracker = matrix(0, nrow = n.epochs, ncol = n.output),
     output.bias.tracker = matrix(0, nrow=n.epochs/100, ncol = n.output),
     output.act.unique.tracker <- rep(0, times=n.epochs/100),
     mutual.info.tracker <- rep(0, times = n.epochs/100)
+    
   )
   
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
@@ -208,26 +211,32 @@ batch <- function(n.epochs, network=NA){
     counter = counter + 1
     counter.bias = counter.bias + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
+    
+    #if(counter > 5000 && counter < 7500){      # increasing output lr from 0.00001 to 0.005 throughout 5000-10000 epochs
+    #  learning.rate.output = learning.rate.output - 0.0000192
+    #}
 
     if(i == 2 || i %% 100 == 0){
       history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
-      history$output.match.tracker[i / 100] <- test.word.continuity(network, words)
       history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$output.bias.tracker[i / 100, ] <- network$output.bias.weights[,1]
       history$output.act.unique.tracker[i / 100] <- output.act.unique(network, words)
       history$mutual.info.tracker[i /100] <- mutual.info.output(network)
     }
+    
+    history$output.trace.tracker[i,] <- network$trace.output
 
     for(b in 1:(length(word)/n.input)){
 
       # get input vector
 
       input <- word[,b]
-      input <- noiseInLetter(input, n.input, letter.noise.param, n.epochs)
+      input <- noiseInLetter(input, n.input, letter.noise.param)
       
 
       # update network properties
+
       results <- traceUpdate(trace.param.hidden, trace.param.output,
                              learning.rate.hidden, learning.rate.output,
                              output.bias.param.plus, output.bias.param.minus,
@@ -252,9 +261,6 @@ batch <- function(n.epochs, network=NA){
       #}
       #network$hidden.activation.delay[delay,] <- results$hidden
       #delay = delay + 1
-      
-
-
     }
     setTxtProgressBar(pb, i)
   }
