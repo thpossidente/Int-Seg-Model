@@ -139,7 +139,7 @@ sigmoid.activation <- function(x){
 batch <- function(n.epochs, network=NA){
   delay = 1
   counter <- 5000    #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
-  counter.bias <- 1 #change to start what batch output bias node starts at
+  counter.bias <- 5000 #change to start what batch output bias node starts at
   # network properties #
   #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
   #pre.hidden.output.weights <- matrix((rnorm(n.hidden*n.output) * sqrt(2/n.hidden)), nrow=n.hidden, ncol=n.output)
@@ -204,7 +204,12 @@ batch <- function(n.epochs, network=NA){
     
   )
   
+  network$hidden.activation.delay = matrix(0, nrow=delay.param, ncol=n.hidden)
+  iter = 0
+  
   pb <- txtProgressBar(min=1, max=n.epochs,style=3)
+  
+  iter = 0
   
   for(i in 1:n.epochs){
     
@@ -212,8 +217,9 @@ batch <- function(n.epochs, network=NA){
     counter.bias = counter.bias + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
     
-    #if(counter > 5000 && counter < 7500){      # increasing output lr from 0.00001 to 0.005 throughout 5000-10000 epochs
-    #  learning.rate.output = learning.rate.output - 0.0000192
+    
+    #if(counter > 5000 && counter < 5201){      # increasing output lr from 0.00001 to 0.005 throughout 5000-10000 epochs
+    #  learning.rate.output = learning.rate.output - 0.00012495
     #}
 
     if(i == 2 || i %% 100 == 0){
@@ -226,11 +232,20 @@ batch <- function(n.epochs, network=NA){
     }
     
     history$output.trace.tracker[i,] <- network$trace.output
-
+    
+    if(counter > 5000){  # Cosine Annealing
+      iter = iter + 1
+      if(iter > (n.epochs)/restarts){
+        iter = 1
+        learning.rate.output.min = learning.rate.output.min - (learning.rate.output.min/2)
+        learning.rate.output.max = learning.rate.output.max - (learning.rate.output.max/2)
+      }
+      learning.rate.output = learning.rate.output.min + ((learning.rate.output.max - learning.rate.output.min)/2) * (1 + cos((iter*pi)/((n.epochs)/restarts)))
+    }
+    
     for(b in 1:(length(word)/n.input)){
-
       # get input vector
-
+                                                         
       input <- word[,b]
       input <- noiseInLetter(input, n.input, letter.noise.param)
       
@@ -256,7 +271,12 @@ batch <- function(n.epochs, network=NA){
       network$trace.output <- results$traceOutput
       network$output.bias.weights <- results$outputBiasWeights
       network$hidden.output.weights <- results$hiddenToOutputWeights
-      #if(delay > delay.param){
+      
+      #output.print <- results$output #diagnostic
+      #print(output.print) #diagnostic
+      
+      
+      #if(delay > delay.param){  # trace delay
       #  delay = 1
       #}
       #network$hidden.activation.delay[delay,] <- results$hidden

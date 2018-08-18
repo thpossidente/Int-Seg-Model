@@ -125,11 +125,11 @@ List forwardPass(int n_output, float percentActInput,
 
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
-    int t = 6;
+    //int t = 2;
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
-    //for(int h=0; h<(delayParam); h++){
+    //for(int h=0; h<(delayParam); h++){       // Time delay
     //  output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i)))) / t;
-    //  t += 2;
+    //  t += 12;
     //}
   }
   
@@ -203,7 +203,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  if(counterBias > 10000){
+  if(counterBias < 9998 && counterBias > 5000){
     for(int b=0; b<(n_output); b++){
       if(output[b] == 1){
         outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -214,6 +214,12 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
       if(outputBiasWeights(b,0) < 0){
         outputBiasWeights(b,0) = 0;
       }
+    }
+  }
+  
+  if(counterBias == 9999){
+    for(int h=0; h<(n_output); h++){
+      outputBiasWeights(h,0) = 0;
     }
   }
   
@@ -233,7 +239,8 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                             _["traceOutput"] = traceOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
-                            _["outputBiasWeights"] = outputBiasWeights);
+                            _["outputBiasWeights"] = outputBiasWeights,
+                            _["output"] = output);
   
   
   return(retrn);

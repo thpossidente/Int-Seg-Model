@@ -175,8 +175,8 @@ temp.layer.activations1 <- function(network, input.matrix){
   
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
-    ylim(1,50)+
-    theme_bw()
+    theme_bw()+
+    scale_y_continuous(limit = c(1,10), breaks = seq(1,10,1), minor_breaks = seq(1,10,1))
   
   return(g)
 }
@@ -387,21 +387,7 @@ mutual.info.output <- function(network){
     }
   }
   colnames(output.results) <- c("word", "output")
-  
-  # word.acts <- matrix(0, nrow = 9, ncol <- 3)
-  # acts <- numeric(3)
-  # counter2 <- 0
-  # counter3 <- 0
-  # for(f in 1:24){
-  #   counter2 <- counter2 + 1
-  #   acts[counter2] <- output.results[f,2]
-  #   if(f %% 3 == 0){
-  #     counter2 = 0
-  #     counter3 <- counter3 + 1
-  #     word.acts[counter3,1:3] <- acts
-  #     }
-  # }
-  # word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
+
   counter5 <- 1
   for(z in 1:26){
       output.results[z,1] <- counter5

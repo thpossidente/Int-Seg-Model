@@ -3,8 +3,11 @@
 #install.packages('png')
 #install.packages('abind')
 #install.packages('dplyr')
-load('trained_hidden_layer_10000') # loading weights as variable 'network'
+
 library('ggplot2')
+
+load('trained_hidden_layer_10000') # loading weights as variable 'network'
+
 
 source('Load Letters.R')
 source('Visualize Output.R')
@@ -15,14 +18,17 @@ n.input <- 1600
 n.hidden <- 500 
 n.output <- 10  #Must be multiple of 10 due to activation percentage calculation
 learning.rate.hidden <- 0.005
-learning.rate.output <- 0.009 # 0.009
+learning.rate.output <- 0.00001
+learning.rate.output.max <- 0.5 # 0.009
+learning.rate.output.min <- 0.00001
+restarts <- 5
 n.epochs <- 5000   #10000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
-trace.param.output <- 0.5 #0.8
+trace.param.output <- 0.9 #0.8
 hidden.bias.param.minus <- 0.05
 hidden.bias.param.plus <- 0.0005
-output.bias.param.minus <- 0 #0
-output.bias.param.plus <- 0 #0
+output.bias.param.minus <- 0.05 #0
+output.bias.param.plus <- 0.005 #0
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive #0.75
 num.inputs.generated <- n.input/2 # half of total inputs
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -45,8 +51,12 @@ plot(x=seq(from = 1, to = n.epochs/100, by = 1), y=results$history$output.act.un
 test.word.continuity1(results$network, words)
 plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.tracker, type = 'b', ylim=c(0,3.2), xlab = "Epochs", ylab = "Mutual Information")
 
-#plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,9], type='b', ylim=c(0,0.02))
+
+
+
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,6], type='b', ylim=c(0,0.02))
 
 visualize.letter.activations(results$network, c)
-#output.trace.tracker.results <- results$history$output.trace.tracker
-plot(x = seq(1:nrow(trace)), y = trace[,5])
+
+trace <- results$history$output.trace.tracker
+plot(x = seq(1:nrow(trace)), y = trace[,1])
