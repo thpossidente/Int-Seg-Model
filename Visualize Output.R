@@ -176,7 +176,7 @@ temp.layer.activations1 <- function(network, input.matrix){
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
     theme_bw()+
-    scale_y_continuous(limit = c(1,10), breaks = seq(1,10,1), minor_breaks = seq(1,10,1))
+    scale_y_continuous(limit = c(1, n.output), breaks = seq(1, n.output,1), minor_breaks = seq(1,n.output,1))
   
   return(g)
 }
