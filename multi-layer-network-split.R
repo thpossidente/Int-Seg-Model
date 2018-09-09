@@ -12,8 +12,8 @@ sigmoid.activation <- function(x){
 
 batch_split <- function(n.epochs, network=NA){
   delay = 1
-  counter <- 1    #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
-  counter.bias <- 5000 #change to start what batch output bias node starts at
+  counter <- 2500    #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
+  counter.bias <- 2500 #change to start what batch output bias node starts at
   # network properties #
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.5), nrow=n.input, ncol=n.hidden)   # Random normalization
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.5), nrow=n.hidden, ncol=n.output)
@@ -58,9 +58,8 @@ batch_split <- function(n.epochs, network=NA){
       hidden.output.weights = pre.hidden.output.weights,
       output.bias.weights = matrix(0, nrow=n.output, ncol=1),
       trace.hidden = rep(0, times = n.hidden),
-      trace.output = rep(0, times = n.output),
-      hidden.activation.delay = matrix(0, nrow=delay.param, ncol=n.hidden))
-    
+      trace.output = rep(0, times = n.output))
+      
     network[[1]][sample(1:(n.input*n.hidden), sparseness.percent*(n.input*n.hidden), replace=F)] <- NA
     network[[3]][sample(1:(n.output*n.hidden), sparseness.percent*(n.output*n.hidden), replace=F)] <- NA
   } else{
@@ -87,7 +86,6 @@ batch_split <- function(n.epochs, network=NA){
   
   for(i in 1:n.epochs){
     
-    counter = counter + 1
     counter.bias = counter.bias + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
     
@@ -112,8 +110,8 @@ batch_split <- function(n.epochs, network=NA){
       }
       learning.rate.output = learning.rate.output.min + ((learning.rate.output.max - learning.rate.output.min)/2) * (1 + cos((iter*pi)/((n.epochs)/restarts)))
     }
-    
-    
+
+
     iter1 = iter1 + 1
     if(iter1 > (n.epochs)/restarts){
       iter1 = 1
@@ -122,7 +120,7 @@ batch_split <- function(n.epochs, network=NA){
     }
     learning.rate.hidden = learning.rate.hidden.min + ((learning.rate.hidden.max - learning.rate.hidden.min)/2) * (1 + cos((iter*pi)/((n.epochs)/restarts)))
 
-    
+
     
     network$trace.output <- rep(0, times = n.output) # set trace.output to zero after each stimulus group
     
@@ -146,8 +144,7 @@ batch_split <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights, counter, counter.bias, 
-                             network$hidden.activation.delay, delay.param)
+                             network$output.bias.weights, counter, counter.bias)
       
       
       network$input.hidden.weights <- results$inputToHiddenWeights

@@ -40,8 +40,7 @@ temp.layer.many.activations <- function(network, words){
     act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
                                n.hidden, input.matrix[i,], network$input.hidden.weights, 
                                network$hidden.bias.weights, network$hidden.output.weights, 
-                               network$output.bias.weights, network$hidden.activation.delay,
-                               delay.param)
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   return(storing.activations)
@@ -77,8 +76,7 @@ temp.layer.activations <- function(network, input.matrix){
     act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
                               network$hidden.bias.weights, network$hidden.output.weights, 
-                              network$output.bias.weights, network$hidden.activation.delay,
-                              delay.param)
+                              network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -143,8 +141,7 @@ temp.layer.activations1 <- function(network, input.matrix){
     act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
                                n.hidden, input.matrix[i,], network$input.hidden.weights, 
                                network$hidden.bias.weights, network$hidden.output.weights, 
-                               network$output.bias.weights, network$hidden.activation.delay,
-                               delay.param)
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -186,8 +183,7 @@ visualize.letter.activations <- function(network, input){
   result <-forwardPass(n.output, percent.act.input, percent.act.output,
                        n.hidden, input, network$input.hidden.weights, 
                        network$hidden.bias.weights, network$hidden.output.weights, 
-                       network$output.bias.weights, network$hidden.activation.delay,
-                       delay.param)
+                       network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   nplots <- length(active.nodes) + 2
   nrow <- round(sqrt(nplots))
@@ -215,8 +211,7 @@ hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
   result <- forwardPass(n.output, percent.act.input, percent.act.output,
                         n.hidden, letter, network$input.hidden.weights, 
                         network$hidden.bias.weights, network$hidden.output.weights, 
-                        network$output.bias.weights, network$hidden.activation.delay,
-                        delay.param)
+                        network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   all.active.nodes <- network$input.hidden.weights[,active.nodes]
   average.weights <- calculate.mean.weights(all.active.nodes)
@@ -253,8 +248,7 @@ hidden.layer.stability <- function(letter, input, network, history){
   result <- forwardPass(n.output, percent.act.input, percent.act.output,
                         n.hidden, input.matrix[i,], network$input.hidden.weights, 
                         network$hidden.bias.weights, network$hidden.output.weights, 
-                        network$output.bias.weights, network$hidden.activation.delay,
-                        delay.param)
+                        network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   previous.active.nodes <- history$hidden.stability.tracking[[letter]]
   change <- length(active.nodes) - sum(active.nodes %in% previous.active.nodes)
@@ -276,8 +270,7 @@ update.hidden.layer.stability <- function(letters, network){
     result <- forwardPass(n.output, percent.act.input, percent.act.output,
                           n.hidden, input.matrix[i,], network$input.hidden.weights, 
                           network$hidden.bias.weights, network$hidden.output.weights, 
-                          network$output.bias.weights, network$hidden.activation.delay,
-                          delay.param)
+                          network$output.bias.weights)
     active.nodes <- which(result$hidden == max(result$hidden))
     return(active.nodes)
   }, USE.NAMES = T, simplify=FALSE)
@@ -313,8 +306,7 @@ output.act.unique <- function(network, words){
     act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
                                n.hidden, input.matrix[i,], network$input.hidden.weights, 
                                network$hidden.bias.weights, network$hidden.output.weights, 
-                               network$output.bias.weights, network$hidden.activation.delay,
-                               delay.param)
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
@@ -375,8 +367,7 @@ mutual.info.output <- function(network){
                                percent.act.output, n.hidden,
                                input.matrix[i,], network$input.hidden.weights,
                                network$hidden.bias.weights, network$hidden.output.weights,
-                               network$output.bias.weights, network$hidden.activation.delay,
-                               delay.param)
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   
