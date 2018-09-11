@@ -17,7 +17,7 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
   
   NumericVector vect(n_input);
   
-  for(int j=0; j<1600; j++){
+  for(int j=0; j<n_input; j++){
     vect[j] = j;
   }
   

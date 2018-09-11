@@ -424,5 +424,72 @@ mutual.info.output <- function(network){
 }
 
 
+mutual.info.spatial <- function(network){
+  input.mat <- matrix(0, ncol=n.input, nrow=26*10)
 
+  r <- 1
+  for(i in 1:26){
+    for(j in 1:10){
+      input.mat[r,] <- noiseInLetter(alphabet[[i]], n.input, letter.noise.param)
+      r <- r + 1
+    }
+  }
+
+  storing.activations <- matrix(0, nrow=nrow(input.mat), ncol=n.output)
+  for(i in 1:nrow(input.mat)){
+    act.results <- forwardPass(n.output, percent.act.input,
+                               percent.act.output, n.hidden,
+                               input.mat[i,], network$input.hidden.weights,
+                               network$hidden.bias.weights, network$hidden.output.weights,
+                               network$output.bias.weights)
+    storing.activations[i,] <- act.results$output
+  }
+  
+  output.results <- data.frame(letter=numeric(),output=numeric())
+  
+  tick <- 1
+  for(h in 1:nrow(storing.activations)){
+    output.results[h,1] <- tick
+    if(h %% 10 == 0){
+      tick = tick + 1
+    }
+  }
+  
+  
+  for(k in 1:nrow(storing.activations)){
+    output.results[k,2] <- which.max(storing.activations[k,])
+  }
+  
+  probs.letter <- numeric(26)
+  probs.act <- numeric(30)
+  probs.joint <- numeric(26*30)
+  mutual.info <- numeric(26*30)
+  
+  for(w in 1:length(probs.letter)){
+    probs.letter[w] <- sum(output.results[,1] == w) / length(output.results[,1])
+  }
+  
+  for(x in 1:length(probs.act)){
+    probs.act[x] <- sum(output.results[,2] == x) / length(output.results[,2])
+  }
+  
+  count3 = 0
+  for(k in 1:length(probs.letter)){
+    for(h in 1:length(probs.act)){
+      count3 <- count3 + 1
+      probs.joint[count3] <- sum((output.results[,1] == k) & (output.results[,2] == h)) / length(output.results[,1])
+    }
+  }
+  
+  count4 = 0
+  for(v in 1:length(probs.letter)){
+    for(t in 1:length(probs.act)){
+      count4 <- count4 + 1
+      mutual.info[count4] = (probs.joint[count4] * (log2((probs.joint[count4])/(probs.act[t]*probs.letter[v]))))
+    }
+  }
+  
+  mutual.info <- sum(mutual.info, na.rm = T)
+  return(mutual.info)
+}
 

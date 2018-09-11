@@ -186,8 +186,7 @@ batch <- function(n.epochs, network=NA){
       hidden.output.weights = pre.hidden.output.weights,
       output.bias.weights = matrix(0, nrow=n.output, ncol=1),
       trace.hidden = rep(0, times = n.hidden),
-      trace.output = rep(0, times = n.output),
-      hidden.activation.delay = matrix(0, nrow=delay.param, ncol=n.hidden))
+      trace.output = rep(0, times = n.output))
       
       network[[1]][sample(1:(n.input*n.hidden), sparseness.percent*(n.input*n.hidden), replace=F)] <- NA
       network[[3]][sample(1:(n.output*n.hidden), sparseness.percent*(n.output*n.hidden), replace=F)] <- NA
@@ -274,8 +273,7 @@ batch <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights, counter, counter.bias, 
-                             network$hidden.activation.delay, delay.param)
+                             network$output.bias.weights, counter, counter.bias)
       
 
       network$input.hidden.weights <- results$inputToHiddenWeights

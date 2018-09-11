@@ -24,13 +24,13 @@ learning.rate.output <- 0.0001
 learning.rate.output.max <- 0.5 # 0.009
 learning.rate.output.min <- 0.00001
 restarts <- 5 # 5
-n.epochs <- 7500
+n.epochs <- 500
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 1 
 hidden.bias.param.minus <- 0 # 0.05
 hidden.bias.param.plus <- 0 # 0.0005
-output.bias.param.minus <- 0.05 #0
-output.bias.param.plus <- 0.005 #0
+output.bias.param.minus <- 0 #0
+output.bias.param.plus <- 0 #0
 sparseness.percent <- 0.75  # sparseness.percent is % nodes inactive #0.75
 num.inputs.generated <- n.input/2 # half of total inputs
 integration.parameter <- 1 #0 is totally segregated, 1 is totally integrated
@@ -50,13 +50,15 @@ visualize.hidden.layer.learning(results$history)
 visualize.output.act.match()
 plot(x=seq(from = 1, to = n.epochs/100, by = 1), y=results$history$output.act.unique.tracker, type='b', ylim=c(0,1))
 test.word.continuity1(results$network, words)
-plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.tracker, type = 'b', ylim=c(0,3.2), xlab = "Epochs", ylab = "Mutual Information")
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.tracker, type = 'b', ylim=c(0,5), xlab = "Epochs", ylab = "Mutual Information")
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.spatial.track , type = 'b', ylim=c(0,5), xlab = "Epochs", ylab = "Mutual Information")
+
 
 
 
 plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,16], type='b', ylim=c(0,0.02))
 
-visualize.letter.activations(results$network, s)
+visualize.letter.activations(results$network, a)
 
 trace <- results$history$output.trace.tracker
 plot(x = seq(1:nrow(trace)), y = trace[,3])
