@@ -13,16 +13,21 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam, int n_epochs){
+NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseParam){
   
-  NumericVector vect(n_epochs);
+  NumericVector vect(n_input);
   
-  for(int j=0; j<n_epochs; j++){
+  for(int j=0; j<1600; j++){
     vect[j] = j;
   }
   
-  for(int i=0; i<(0.1*n_input); i++){
-    input[as<int>(RcppArmadillo::sample(vect,1,true))];
+  for(int i=0; i<(letterNoiseParam*n_input); i++){
+    int rand = as<int>(RcppArmadillo::sample(vect,1,true));
+    if(input[rand] == 1){
+      input[rand] = 0;
+    } else {
+      input[rand] = 1;
+    }
   }
   return(input);
 }
@@ -119,7 +124,12 @@ List forwardPass(int n_output, float percentActInput,
 
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
+    //int t = 2;
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
+    //for(int h=0; h<(delayParam); h++){       // Time delay
+    //  output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i)))) / t;
+    //  t += 12;
+    //}
   }
   
   float max_output = max(output);  // normalizing outputs from 0-1
@@ -170,7 +180,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 
   NumericVector hidden = forwardPassResults["hidden"];
   NumericVector output = forwardPassResults["output"];
-
+  
 
   for(int x=0; x<(n_hidden); x++){
     if(hidden[x] == 1){
@@ -190,7 +200,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  if(counterBias > 10000){
+  if(counterBias < 9998 && counterBias > 5000){
     for(int b=0; b<(n_output); b++){
       if(output[b] == 1){
         outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -203,10 +213,18 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
       }
     }
   }
+  
+  if(counterBias == 9999){
+    for(int h=0; h<(n_output); h++){
+      outputBiasWeights(h,0) = 0;
+    }
+  }
+  
   if(counter > 5000){
     for(int h=0; h<(n_output); h++){
-      float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*10000)+learningRateOutput;
-      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutputMod * traceOutput[h] *(hidden - hiddenToOutputWeights(_,h));
+      //float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*10000)+learningRateOutput;
+      //traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];  
+      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] * (hidden - hiddenToOutputWeights(_,h));
       traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
     }
   }
@@ -218,7 +236,10 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                             _["traceOutput"] = traceOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
-                            _["outputBiasWeights"] = outputBiasWeights);
+                            _["outputBiasWeights"] = outputBiasWeights,
+                            _["output"] = output);
+  
+  
   return(retrn);
 }
 

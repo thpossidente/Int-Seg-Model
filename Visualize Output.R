@@ -37,7 +37,10 @@ temp.layer.many.activations <- function(network, words){
   storing.activations <- matrix(0, nrow=nrow(input.matrix1), ncol=n.output)
   
   for(i in 1:nrow(input.matrix1)){
-    act.results <- forward.pass(input.matrix1[i,], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
+                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                               network$hidden.bias.weights, network$hidden.output.weights, 
+                               network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
   return(storing.activations)
@@ -102,10 +105,10 @@ temp.layer.activations <- function(network, input.matrix){
     percentage <- num.matches/(length(output.results$output))
   ###
 
-  g <- ggplot(output.results, aes(x=letter, y=output)) + 
-    geom_point()+
-    ylim(1,50)+
-    theme_bw()
+  #g <- ggplot(output.results, aes(x=letter, y=output)) + 
+  #  geom_point()+
+  #  ylim(1,50)+
+  #  theme_bw()
   
   return(percentage*100)
 }
@@ -169,19 +172,23 @@ temp.layer.activations1 <- function(network, input.matrix){
   
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
-    ylim(1,50)+
-    theme_bw()
+    theme_bw()+
+    scale_y_continuous(limit = c(1, n.output), breaks = seq(1, n.output,1), minor_breaks = seq(1,n.output,1))
   
   return(g)
 }
 
 
 visualize.letter.activations <- function(network, input){
-  result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  result <-forwardPass(n.output, percent.act.input, percent.act.output,
+                       n.hidden, input, network$input.hidden.weights, 
+                       network$hidden.bias.weights, network$hidden.output.weights, 
+                       network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   nplots <- length(active.nodes) + 2
   nrow <- round(sqrt(nplots))
   ncol <- ceiling(nplots / nrow)
+  dev.off()
   layout(matrix(1:(nrow*ncol), nrow=nrow))
   image(t(apply(matrix(input, nrow = 40),1,rev)))
   for(act in active.nodes){
@@ -201,8 +208,10 @@ calculate.mean.weights <- function(active.nodes){
 
 
 hidden.layer.similarity <- function(letter, network, comparison.letter=NA){
-  result <- forwardPass(n.output, percent.act.input, percent.act.output, n.hidden, letter, network$input.hidden.weights,
-                        network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  result <- forwardPass(n.output, percent.act.input, percent.act.output,
+                        n.hidden, letter, network$input.hidden.weights, 
+                        network$hidden.bias.weights, network$hidden.output.weights, 
+                        network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   all.active.nodes <- network$input.hidden.weights[,active.nodes]
   average.weights <- calculate.mean.weights(all.active.nodes)
@@ -236,7 +245,10 @@ visualize.hidden.layer.learning <- function(history){
 
 
 hidden.layer.stability <- function(letter, input, network, history){
-  result <- forward.pass(input, network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+  result <- forwardPass(n.output, percent.act.input, percent.act.output,
+                        n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                        network$hidden.bias.weights, network$hidden.output.weights, 
+                        network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
   previous.active.nodes <- history$hidden.stability.tracking[[letter]]
   change <- length(active.nodes) - sum(active.nodes %in% previous.active.nodes)
@@ -255,7 +267,10 @@ batch.hidden.layer.stability <- function(letters, network, history){
 
 update.hidden.layer.stability <- function(letters, network){
   tracker <- sapply(names(letters), function(x){
-    result <- forward.pass(letters[[x]], network$input.hidden.weights, network$hidden.bias.weights, network$hidden.output.weights, network$output.bias.weights)
+    result <- forwardPass(n.output, percent.act.input, percent.act.output,
+                          n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                          network$hidden.bias.weights, network$hidden.output.weights, 
+                          network$output.bias.weights)
     active.nodes <- which(result$hidden == max(result$hidden))
     return(active.nodes)
   }, USE.NAMES = T, simplify=FALSE)
@@ -348,9 +363,10 @@ mutual.info.output <- function(network){
   storing.activations <- matrix(0, nrow=nrow(input.matrix), ncol=n.output)
   
   for(i in 1:nrow(input.matrix)){
-    act.results <- forwardPass(n.output, percent.act.input, percent.act.output,
-                               n.hidden, input.matrix[i,], network$input.hidden.weights, 
-                               network$hidden.bias.weights, network$hidden.output.weights, 
+    act.results <- forwardPass(n.output, percent.act.input,
+                               percent.act.output, n.hidden,
+                               input.matrix[i,], network$input.hidden.weights,
+                               network$hidden.bias.weights, network$hidden.output.weights,
                                network$output.bias.weights)
     storing.activations[i,] <- act.results$output
   }
@@ -362,21 +378,7 @@ mutual.info.output <- function(network){
     }
   }
   colnames(output.results) <- c("word", "output")
-  
-  # word.acts <- matrix(0, nrow = 9, ncol <- 3)
-  # acts <- numeric(3)
-  # counter2 <- 0
-  # counter3 <- 0
-  # for(f in 1:24){
-  #   counter2 <- counter2 + 1
-  #   acts[counter2] <- output.results[f,2]
-  #   if(f %% 3 == 0){
-  #     counter2 = 0
-  #     counter3 <- counter3 + 1
-  #     word.acts[counter3,1:3] <- acts
-  #     }
-  # }
-  # word.acts[9,1:2] <- c(output.results[25,2], output.results[26,2])
+
   counter5 <- 1
   for(z in 1:26){
       output.results[z,1] <- counter5
