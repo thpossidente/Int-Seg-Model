@@ -100,9 +100,6 @@ List forwardPass(int n_output, float percentActInput,
   
   NumericVector hidden(n_hidden);
   for(int i=0; i<(n_hidden); i++){
-    //float preHidden = sum(na_omit(input * inputToHiddenWeights(_,i) + hiddenBiasWeights(i,0)));
-    //NumericVector preHidden1(0, preHidden);
-    //hidden[i] += max(preHidden1);
     hidden[i] += sum(na_omit(input * inputToHiddenWeights(_,i) + hiddenBiasWeights(i,0)));
   }
   

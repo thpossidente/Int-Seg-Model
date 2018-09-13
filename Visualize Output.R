@@ -246,7 +246,7 @@ visualize.hidden.layer.learning <- function(history){
 
 hidden.layer.stability <- function(letter, input, network, history){
   result <- forwardPass(n.output, percent.act.input, percent.act.output,
-                        n.hidden, input.matrix[i,], network$input.hidden.weights, 
+                        n.hidden, noiseInLetter(input.matrix[i,]), network$input.hidden.weights, 
                         network$hidden.bias.weights, network$hidden.output.weights, 
                         network$output.bias.weights)
   active.nodes <- which(result$hidden == max(result$hidden))
@@ -430,34 +430,34 @@ mutual.info.spatial <- function(network){
   r <- 1
   for(i in 1:26){
     for(j in 1:10){
-      input.mat[r,] <- noiseInLetter(alphabet[[i]], n.input, letter.noise.param)
+      input.mat[r,] <- noiseInLetter(letters[[i]], n.input, letter.noise.param)
       r <- r + 1
     }
   }
 
-  storing.activations <- matrix(0, nrow=nrow(input.mat), ncol=n.output)
+  storing.acts <- matrix(0, nrow=nrow(input.mat), ncol=n.output)
   for(i in 1:nrow(input.mat)){
-    act.results <- forwardPass(n.output, percent.act.input,
+    act.res <- forwardPass(n.output, percent.act.input,
                                percent.act.output, n.hidden,
                                input.mat[i,], network$input.hidden.weights,
                                network$hidden.bias.weights, network$hidden.output.weights,
                                network$output.bias.weights)
-    storing.activations[i,] <- act.results$output
+    storing.acts[i,] <- act.res$output
   }
   
-  output.results <- data.frame(letter=numeric(),output=numeric())
+  output.res <- data.frame(letter=numeric(),output=numeric())
   
   tick <- 1
-  for(h in 1:nrow(storing.activations)){
-    output.results[h,1] <- tick
+  for(h in 1:nrow(storing.acts)){
+    output.res[h,1] <- tick
     if(h %% 10 == 0){
       tick = tick + 1
     }
   }
   
   
-  for(k in 1:nrow(storing.activations)){
-    output.results[k,2] <- which.max(storing.activations[k,])
+  for(k in 1:nrow(storing.acts)){
+    output.res[k,2] <- which.max(storing.acts[k,])
   }
   
   probs.letter <- numeric(26)
@@ -466,18 +466,18 @@ mutual.info.spatial <- function(network){
   mutual.info <- numeric(26*30)
   
   for(w in 1:length(probs.letter)){
-    probs.letter[w] <- sum(output.results[,1] == w) / length(output.results[,1])
+    probs.letter[w] <- sum(output.res[,1] == w) / length(output.res[,1])
   }
   
   for(x in 1:length(probs.act)){
-    probs.act[x] <- sum(output.results[,2] == x) / length(output.results[,2])
+    probs.act[x] <- sum(output.res[,2] == x) / length(output.res[,2])
   }
   
   count3 = 0
   for(k in 1:length(probs.letter)){
     for(h in 1:length(probs.act)){
       count3 <- count3 + 1
-      probs.joint[count3] <- sum((output.results[,1] == k) & (output.results[,2] == h)) / length(output.results[,1])
+      probs.joint[count3] <- sum((output.res[,1] == k) & (output.res[,2] == h)) / length(output.res[,1])
     }
   }
   

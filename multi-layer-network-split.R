@@ -73,13 +73,13 @@ batch_split <- function(n.epochs, network=NA){
   
   # tracking learning #
   history <- list(               #initializes learning data matrices
+    mutual.info.spatial.track <- rep(0, times = n.epochs/100),
     learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
     hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
     output.trace.tracker = matrix(0, nrow = n.epochs, ncol = n.output),
     output.bias.tracker = matrix(0, nrow=n.epochs/100, ncol = n.output),
-    output.act.unique.tracker <- rep(0, times=n.epochs/100),
-    mutual.info.tracker <- rep(0, times = n.epochs/100)
-    mutual.info.spatial.track <- rep(0, times = n.epochs/100)
+    output.act.unique.tracker <- rep(0, times=n.epochs/100)
+    #mutual.info.tracker <- rep(0, times = n.epochs/100)
   )
   
   iter = 0
@@ -95,14 +95,14 @@ batch_split <- function(n.epochs, network=NA){
     word <- words[[sample(1:n.words,1, replace = T)]]
     
     
-    if(i == 2 || i %% 100 == 0){
+    if(i %% 100 == 0){
+      history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
       history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$output.bias.tracker[i / 100, ] <- network$output.bias.weights[,1]
       history$output.act.unique.tracker[i / 100] <- output.act.unique(network, words)
-      history$mutual.info.tracker[i /100] <- mutual.info.output(network)
-      history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
+      #history$mutual.info.tracker[i /100] <- mutual.info.output(network)
     }
     
     history$output.trace.tracker[i,] <- network$trace.output
