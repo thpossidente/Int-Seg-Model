@@ -24,7 +24,7 @@ learning.rate.output <- 0.0001
 learning.rate.output.max <- 0.5 # 0.009
 learning.rate.output.min <- 0.00001
 restarts <- 5 # 5
-n.epochs <- 500
+n.epochs <- 1000
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 1 
 hidden.bias.param.minus <- 0 # 0.05
@@ -41,9 +41,9 @@ letter.noise.param <- 0.1
 input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
 # if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
 # if 0.5: inputs for each system consistently co-occur
-
+  
 ## RUN ##
-
+  
 results <- batch_split(n.epochs, network=NA) #run training batches
 
 visualize.hidden.layer.learning(results$history)
@@ -56,7 +56,7 @@ plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.spatial
 
 
 
-plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,16], type='b', ylim=c(0,0.02))
+plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,19], type='b', ylim=c(0,5))
 
 visualize.letter.activations(results$network, b)
 

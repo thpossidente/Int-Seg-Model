@@ -20,7 +20,7 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
   for(int j=0; j<n_input; j++){
     vect[j] = j;
   }
-  
+
   for(int i=0; i<(letterNoiseParam*n_input); i++){
     int rand = as<int>(RcppArmadillo::sample(vect,1,true));
     if(input[rand] == 1){
@@ -29,8 +29,10 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
       input[rand] = 1;
     }
   }
+  
   return(input);
 }
+
 
 
 

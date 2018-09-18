@@ -13,7 +13,7 @@ sigmoid.activation <- function(x){
 batch_split <- function(n.epochs, network=NA){
   
   delay = 1
-  counter <- 4500#change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
+  counter <- 4500 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
   counter.bias <- 5000 #change to start what batch output bias node starts at
   # network properties #
   #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
@@ -96,14 +96,12 @@ batch_split <- function(n.epochs, network=NA){
     
     
     if(i %% 100 == 0){
-      print(network)
-      history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
-      print(network)
       history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$output.trace.tracker[i / 100, ] <- network$trace.output
       history$output.bias.tracker[i / 100, ] <- network$output.bias.weights[,1]
       history$output.act.unique.tracker[i / 100] <- output.act.unique(network, words)
+      history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
       #history$mutual.info.tracker[i /100] <- mutual.info.output(network)
     }
     
