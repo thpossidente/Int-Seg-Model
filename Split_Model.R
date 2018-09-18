@@ -24,7 +24,7 @@ learning.rate.output <- 0.0001
 learning.rate.output.max <- 0.5 # 0.009
 learning.rate.output.min <- 0.00001
 restarts <- 5 # 5
-n.epochs <- 100
+n.epochs <- 500
 trace.param.hidden <- 1 # value of 1 indicates pure hebbian learning. Closer to zero, more of 'history' of node activation is taken into account
 trace.param.output <- 1 
 hidden.bias.param.minus <- 0 # 0.05
@@ -58,7 +58,7 @@ plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$mutual.info.spatial
 
 plot(x=seq(from=100, to=n.epochs, by=100), y=results$history$output.bias.tracker[,16], type='b', ylim=c(0,0.02))
 
-visualize.letter.activations(results$network, a)
+visualize.letter.activations(results$network, b)
 
 trace <- results$history$output.trace.tracker
 plot(x = seq(1:nrow(trace)), y = trace[,3])

@@ -96,7 +96,9 @@ batch_split <- function(n.epochs, network=NA){
     
     
     if(i %% 100 == 0){
+      print(network)
       history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
+      print(network)
       history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
       history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
       history$output.trace.tracker[i / 100, ] <- network$trace.output
