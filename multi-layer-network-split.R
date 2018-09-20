@@ -135,7 +135,7 @@ batch_split <- function(n.epochs, network=NA){
       # get input vector
 
       input <- word[,b]
-      input <- noiseInLetter(input, n.input, letter.noise.param)
+      input <- noise.in.letter(input)
       
       # update network properties
       

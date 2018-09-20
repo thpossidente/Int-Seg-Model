@@ -3,6 +3,17 @@ library(dplyr)
 #install.packages("magrittr")
 library(magrittr)
 
+noise.in.letter <- function(input){
+  for(i in 1:(letter.noise.param*n.input)){
+    rand <- sample(c(1:n.input), 1, TRUE)
+    if(input[rand] > 0.5){
+      input[rand] = 0
+    } else{
+      input[rand] = 1
+    }
+  }
+  return(input)
+}
 
 display.learning.curves <- function(results){
   for(i in 1:n.hidden){
@@ -449,7 +460,7 @@ mutual.info.spatial <- function(network){
   for(i in 1:nrow(input.mat)){
     act.res <- forwardPass(n.output, percent.act.input,
                                percent.act.output, n.hidden,
-                               noiseInLetter(input.mat[i,], n.input, letter.noise.param), network$input.hidden.weights,
+                               noise.in.letter(input.mat[i,]), network$input.hidden.weights,
                                network$hidden.bias.weights, network$hidden.output.weights,
                                network$output.bias.weights)
     storing.acts[i,] <- act.res$output

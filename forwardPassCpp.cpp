@@ -23,7 +23,7 @@ NumericVector noiseInLetter(NumericVector input, int n_input, float letterNoiseP
 
   for(int i=0; i<(letterNoiseParam*n_input); i++){
     int rand = as<int>(RcppArmadillo::sample(vect,1,true));
-    if(input[rand] == 1){
+    if(input[rand] > 0.5){
       input[rand] = 0;
     } else {
       input[rand] = 1;
