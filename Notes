@@ -1,0 +1,3 @@
+- New metric for spatial layer 2:
+  - mutual information between letter and output. Should be fairly easy, maybe run every letter 10 times w/o changing weights and record outputs. Then mutual information calc. by assigning each letter to a number. 
+  - May have to adjust bias so that different nodes are active for every letter, but not so much that it's random which nodes activate. Also must make sure to put bias to zero before running activations to calculate mutual info.
