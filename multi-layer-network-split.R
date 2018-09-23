@@ -13,7 +13,7 @@ sigmoid.activation <- function(x){
 batch_split <- function(n.epochs, network=NA){
   
   delay = 1
-  counter <- 4500 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
+  counter <- 5000 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
   counter.bias <- 5000 #change to start what batch output bias node starts at
   # network properties #
   #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
@@ -73,13 +73,12 @@ batch_split <- function(n.epochs, network=NA){
   
   # tracking learning #
   history <- list(               #initializes learning data matrices
-    mutual.info.spatial.track <- rep(0, times = n.epochs/100),
-    learning.curve = matrix(0, nrow = n.epochs/100, ncol = n.hidden), 
-    hidden.letter.similarity.tracking = matrix(0, nrow=n.epochs/100, ncol = length(letters)),
-    output.trace.tracker = matrix(0, nrow = n.epochs, ncol = n.output),
-    output.bias.tracker = matrix(0, nrow=n.epochs/100, ncol = n.output),
-    output.act.unique.tracker <- rep(0, times=n.epochs/100)
-    #mutual.info.tracker <- rep(0, times = n.epochs/100)
+    mutual.info.spatial.track <- rep(0, times = (n.epochs/100)+1),
+    learning.curve = matrix(0, nrow = (n.epochs/100)+1, ncol = n.hidden), 
+    hidden.letter.similarity.tracking = matrix(0, nrow=(n.epochs/100)+1, ncol = length(letters)),
+    output.trace.tracker = matrix(0, nrow = (n.epochs+1), ncol = n.output),
+    output.bias.tracker = matrix(0, nrow=(n.epochs/100)+1, ncol = n.output),
+    output.act.unique.tracker <- rep(0, times=(n.epochs/100)+1)
   )
   
   iter = 0
@@ -94,15 +93,22 @@ batch_split <- function(n.epochs, network=NA){
     counter.bias = counter.bias + 1
     word <- words[[sample(1:n.words,1, replace = T)]]
     
+    if(i == 2){
+      history$learning.curve[i-1,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
+      history$hidden.letter.similarity.tracking[i-1, ] <- batch.hidden.layer.learning(letters, network)$similarity
+      history$output.trace.tracker[i-1, ] <- network$trace.output
+      history$output.bias.tracker[i-1, ] <- network$output.bias.weights[,1]
+      history$output.act.unique.tracker[i-1] <- output.act.unique(network, words)
+      history$mutual.info.spatial.track[i-1] <- mutual.info.spatial(network)
+    }
     
     if(i %% 100 == 0){
-      history$learning.curve[i / 100,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
-      history$hidden.letter.similarity.tracking[i / 100, ] <- batch.hidden.layer.learning(letters, network)$similarity
-      history$output.trace.tracker[i / 100, ] <- network$trace.output
-      history$output.bias.tracker[i / 100, ] <- network$output.bias.weights[,1]
-      history$output.act.unique.tracker[i / 100] <- output.act.unique(network, words)
-      history$mutual.info.spatial.track[i / 100] <- mutual.info.spatial(network)
-      #history$mutual.info.tracker[i /100] <- mutual.info.output(network)
+      history$learning.curve[(i / 100) + 1,] <- learningMeasure(network$input.hidden.weights, n.hidden, alphabet)
+      history$hidden.letter.similarity.tracking[(i / 100) + 1, ] <- batch.hidden.layer.learning(letters, network)$similarity
+      history$output.trace.tracker[(i / 100) + 1, ] <- network$trace.output
+      history$output.bias.tracker[(i / 100) + 1, ] <- network$output.bias.weights[,1]
+      history$output.act.unique.tracker[(i / 100) + 1] <- output.act.unique(network, words)
+      history$mutual.info.spatial.track[(i / 100) + 1] <- mutual.info.spatial(network)
     }
     
     history$output.trace.tracker[i,] <- network$trace.output
@@ -148,7 +154,7 @@ batch_split <- function(n.epochs, network=NA){
                              input, network$input.hidden.weights,
                              network$trace.hidden, network$hidden.bias.weights,
                              network$hidden.output.weights, network$trace.output,
-                             network$output.bias.weights, counter, counter.bias)
+                             network$output.bias.weights, counter, counter.bias, n.epochs)
       
       
       network$input.hidden.weights <- results$inputToHiddenWeights

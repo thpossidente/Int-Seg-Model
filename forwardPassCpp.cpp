@@ -169,7 +169,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                  NumericVector input, NumericMatrix inputToHiddenWeights,
                  NumericVector traceHidden, NumericMatrix hiddenBiasWeights,
                  NumericMatrix hiddenToOutputWeights, NumericVector traceOutput,
-                 NumericMatrix outputBiasWeights, int counter, int counterBias){
+                 NumericMatrix outputBiasWeights, int counter, int counterBias, int n_epochs){
 
   List forwardPassResults = forwardPass(n_output, percentActInput,
                                         percentActOutput, n_hidden,
@@ -199,7 +199,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  if(counterBias < 9998 && counterBias > 5000){
+  if(counterBias > 5000 || counterBias < 5000 + n_epochs - 500){
     for(int b=0; b<(n_output); b++){
       if(output[b] == 1){
         outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -213,18 +213,16 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     }
   }
   
-  if(counterBias == 9999){
+  if(counterBias > 5000 + n_epochs - 500){
     for(int h=0; h<(n_output); h++){
       outputBiasWeights(h,0) = 0;
     }
   }
   
   if(counter > 5000){
-    for(int h=0; h<(n_output); h++){
-      //float learningRateOutputMod = ((outputBiasWeights(h,0)*(outputBiasWeights(h,0)))*10000)+learningRateOutput;
-      //traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];  
-      hiddenToOutputWeights(_, h) = hiddenToOutputWeights(_,h) + learningRateOutput * traceOutput[h] * (hidden - hiddenToOutputWeights(_,h));
-      traceOutput[h] = (1 - traceParamOutput) * traceOutput[h] + traceParamOutput * output[h];
+    for(int j=0; j<(n_output); j++){
+      hiddenToOutputWeights(_, j) = hiddenToOutputWeights(_,j) + learningRateOutput * traceOutput[j] * (hidden - hiddenToOutputWeights(_,j));
+      traceOutput[j] = (1 - traceParamOutput) * traceOutput[j] + traceParamOutput * output[j];
     }
   }
 
