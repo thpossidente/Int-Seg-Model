@@ -164,23 +164,6 @@ temp.layer.activations1 <- function(network, input.matrix){
   }
   colnames(output.results) <- c("letter", "output")
   
-  ## accuracy measurement ##
-  counter <- 1
-  num.matches <- 0
-  act.per.word <- n.output * percent.act.output * 3
-  for(b in seq(from = act.per.word, to = length(output.results$output) + act.per.word, by = act.per.word)){
-    freq <- rle(sort(output.results$output[counter:b]))
-    counter <- counter + act.per.word
-    for(h in 1:length(freq$lengths)){
-      if(freq$lengths[h] > 1){
-        num.matches = num.matches + freq$lengths[h]
-      }
-    }
-  }
-  
-  percentage <- num.matches/(length(output.results$output))
-  ###
-  
   g <- ggplot(output.results, aes(x=letter, y=output)) + 
     geom_point()+
     theme_bw()+
@@ -458,7 +441,7 @@ mutual.info.spatial <- function(network){
 
   storing.acts <- matrix(0, nrow=nrow(input.mat), ncol=n.output)
   for(i in 1:nrow(input.mat)){
-    act.res <- forwardPass(n.output, percent.act.input,
+    act.res <- forwardPassNoBias(n.output, percent.act.input,
                                percent.act.output, n.hidden,
                                noise.in.letter(input.mat[i,]), network$input.hidden.weights,
                                network$hidden.bias.weights, network$hidden.output.weights,

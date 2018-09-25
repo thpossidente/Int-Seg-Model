@@ -13,8 +13,8 @@ sigmoid.activation <- function(x){
 batch_split <- function(n.epochs, network=NA){
   
   delay = 1
-  counter <- 5000 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
-  counter.bias <- 5000 #change to start what batch output bias node starts at
+  counter <- 4900 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
+  counter.bias <- 4900 #change to start what batch output bias node starts at
   # network properties #
   #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
   #pre.hidden.output.weights <- matrix((rnorm(n.hidden*n.output) * sqrt(2/n.hidden)), nrow=n.hidden, ncol=n.output)

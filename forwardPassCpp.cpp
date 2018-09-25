@@ -156,6 +156,69 @@ List forwardPass(int n_output, float percentActInput,
 }
 
 
+// [[Rcpp::export]]
+
+List forwardPassNoBias(int n_output, float percentActInput,
+                 float percentActOutput, int n_hidden,
+                 NumericVector input, NumericMatrix inputToHiddenWeights,
+                 NumericMatrix hiddenBiasWeights, NumericMatrix hiddenToOutputWeights,
+                 NumericMatrix outputBiasWeights){
+  
+  NumericVector hidden(n_hidden);
+  for(int i=0; i<(n_hidden); i++){
+    hidden[i] += sum(na_omit(input * inputToHiddenWeights(_,i)));
+  }
+  
+  int largest;
+  int number = ceil(percentActInput * n_hidden);
+  for(int c=0; c<(number); c++){
+    largest = which_max(hidden);
+    hidden[largest] = -1;
+  }
+  
+  
+  for(int x=0; x<(n_hidden); x++){
+    if(hidden[x] == -1){
+      hidden[x] = 1;
+    } else{
+      hidden[x] = 0;
+    }
+  }
+  
+  NumericVector output(n_output);
+  for(int i=0; i<(n_output); i++){
+    //int t = 2;
+    output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i)));
+    //for(int h=0; h<(delayParam); h++){       // Time delay
+    //  output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i)))) / t;
+    //  t += 12;
+    //}
+  }
+  
+  float max_output = max(output);  // normalizing outputs from 0-1
+  for(int x=0; x<(n_output); x++){
+    output[x] = output[x] / max_output;
+  }
+  
+  int largest1;
+  int number1 = ceil(percentActOutput * n_output);
+  for(int k=0; k<(number1); k++){
+    largest1 = which_max(output);
+    output[largest1] = -1;
+  }
+  
+  for(int d=0; d<(n_output); d++){
+    if(output[d] == -1){
+      output[d] = 1;
+    } else{
+      output[d] = 0;
+    }
+  }
+  
+  List retrn = List::create(Named("hidden") = hidden,_["output"] = output); 
+  return(retrn);
+}
+
 
 
  // [[Rcpp::export]]
@@ -180,7 +243,6 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
   NumericVector hidden = forwardPassResults["hidden"];
   NumericVector output = forwardPassResults["output"];
   
-
   for(int x=0; x<(n_hidden); x++){
     if(hidden[x] == 1){
       hiddenBiasWeights(x,0) = hiddenBiasWeights(x,0) - hiddenBiasParamMinus;
@@ -193,13 +255,12 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     }
   }
 
-
   for(int i=0; i<(n_hidden); i++){
     traceHidden[i] = (1 - traceParamHidden) * traceHidden[i] + traceParamHidden * hidden[i];
     inputToHiddenWeights(_,i) = inputToHiddenWeights(_,i) + learningRateHidden * traceHidden[i] * (input - inputToHiddenWeights(_,i));
   }
 
-  if(counterBias > 5000 || counterBias < 5000 + n_epochs - 500){
+  if(counterBias > 5000 || counterBias < 5000 + n_epochs - (0.1*n_epochs)){
     for(int b=0; b<(n_output); b++){
       if(output[b] == 1){
         outputBiasWeights(b,0) = outputBiasWeights(b,0) - outputBiasParamMinus;
@@ -213,7 +274,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
     }
   }
   
-  if(counterBias > 5000 + n_epochs - 500){
+  if(counterBias > 5000 + n_epochs - (n_epochs*0.1)){
     for(int h=0; h<(n_output); h++){
       outputBiasWeights(h,0) = 0;
     }
@@ -221,8 +282,8 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
   
   if(counter > 5000){
     for(int j=0; j<(n_output); j++){
-      hiddenToOutputWeights(_, j) = hiddenToOutputWeights(_,j) + learningRateOutput * traceOutput[j] * (hidden - hiddenToOutputWeights(_,j));
       traceOutput[j] = (1 - traceParamOutput) * traceOutput[j] + traceParamOutput * output[j];
+      hiddenToOutputWeights(_, j) = hiddenToOutputWeights(_,j) + learningRateOutput * traceOutput[j] * (hidden - hiddenToOutputWeights(_,j));
     }
   }
 
@@ -233,8 +294,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
                             _["traceOutput"] = traceOutput,
                             _["output"] = output,
                             _["hiddenToOutputWeights"] = hiddenToOutputWeights,
-                            _["outputBiasWeights"] = outputBiasWeights,
-                            _["output"] = output);
+                            _["outputBiasWeights"] = outputBiasWeights);
   
   
   return(retrn);
