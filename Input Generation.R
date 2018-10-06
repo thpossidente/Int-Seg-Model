@@ -12,3 +12,9 @@ generate_input1 <- function(size, rec_field, noise){ # generates inputs matrix o
   }
   
 }
+
+
+
+
+
+
