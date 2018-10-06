@@ -1,0 +1,7 @@
+That sounds right. I think the ideal way to convince yourself is to write some analysis code that will also be useful later on. I think what you want to do for the analysis is calculate the mutual information between each pair of pixels (this may be computationally expensive). Then you can calculate a statistic like "average MI within a cluster" and calculate that for different sizes of cluster. In your example, there should be high MI for clusters that are smaller than 5x5, but low MI once it gets larger than that.
+
+Once you have that kind of data, it would be interesting to think about how you would "correctly" infer that the clusters are 5x5.
+
+Maybe the answer has to do with what you calculate the MI between. For example, calculating MI between pairs of pixels could give you one answer, but if you did it between a cluster of 4 and a neighboring cluster of 4, then as long as you are within the 5x5 group you should get something close to perfect MI.
+
+If you get a solution for this, by the way, then that opens up the possibility of applying the technique to natural images.
