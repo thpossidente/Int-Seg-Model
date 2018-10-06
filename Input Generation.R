@@ -7,8 +7,8 @@ generate_input1 <- function(size, rec_field, noise){ # generates inputs matrix o
   inp_mat <- matrix(0, size, size)
   
   
-  for(i in 1:sqrt(num_regions)){
-    for(h in 1:sqrt(num_regions)){
+  for(i in 1:(size/rec_field)){
+    for(h in 1:(size/rec_field)){
       inp_mat[(((rec_field*i) - (rec_field-1)):(rec_field*i)), (((rec_field*h) - (rec_field-1)):(rec_field*h))] = random_region_scheme1(rec_field)
     }
   }
