@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-float averageMIinCluster(NumericMatrix inputMatrix, int clusterSize){
+float averageMIinCluster(list inputMatrices, int clusterSize){
   
   int numClusters = (inputMatrix.size() / clusterSize^2);
   
@@ -13,7 +13,7 @@ float averageMIinCluster(NumericMatrix inputMatrix, int clusterSize){
     for(int h=0; h<(inputMatrix.size() / clusterSize);h++){
       
       for(int r=0; r<(numClusters * (numClusters - 1));r++){
-        s
+        
       }
     }
   }

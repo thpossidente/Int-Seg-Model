@@ -100,3 +100,15 @@ random_region_scheme1 <- function(rec_field){
   
 }
 
+
+
+generate_MI_matrices <- function(size, rec_field, noise, num_inputs){
+  
+  matrices <- list()
+  
+  for(i in 1:num_inputs){
+    matrices[[i]] <- matrix(generate_input1(size, rec_field, noise), nrow = size, ncol = size)
+  }
+  return(matrices)
+}
+
