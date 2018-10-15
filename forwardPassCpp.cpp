@@ -323,7 +323,7 @@ List traceUpdate(float traceParamHidden, float traceParamOutput,
 //   for(int j=0; j<n_epochs; j++){
 //     vect[j] = j;
 //   }
-//   
+//
 //   
 //   NumericMatrix learningCurve = history["learning.curve"];
 //   NumericMatrix biasTracker = history["bias.tracker"];
