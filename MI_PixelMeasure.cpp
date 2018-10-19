@@ -34,12 +34,12 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
           
           
           for(int r=0; r<(oneMat.size());r++){               // for each matrix in the vector of matrices
-            pixelPairs(r, 0) = cluster[h];                   // first of pixel pair will always be current pixel under examination
+            pixelPairs(r, 0) = cluster[pixel];                   // first of pixel pair will always be current pixel under examination
             NumericMatrix compare3 = inputMatrices[r];       // Getting  pixel in same position from each of all other matrices
             NumericMatrix compare2 = compare3( Range( (0+clusterSize*i), (clusterSize+clusterSize*i) ), 
                                                Range( (0+clusterSize*j), (clusterSize+clusterSize*j)) );
             NumericVector compare1 = as<NumericVector>(compare2);
-            int compare = compare1[h];                     
+            int compare = compare1[pixel];                     
             
             pixelPairs(r, 1) = compare;                      // second of pixel pair is pixel in same position from every other matrix
             
@@ -60,16 +60,16 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
           prob_pixel1[1] = sum(pixelPairs(_,0))/num_matrices;  // prob of 1 occuring in second col
           
           for(int t=0; t<(num_matrices);t++){                   // calculating # of times 0,0 1,0 0,1 and 1,1 occur
-            if(pixelPairs(t, 0) == 0 & pixelPairs(t, 1) == 0){
+            if((pixelPairs(t, 0) == 0) & (pixelPairs(t, 1) == 0)){
               joint_prob[0] += 1;
             }
-            if(pixelPairs(t, 0) == 1 & pixelPairs(t, 1) == 0){
+            if((pixelPairs(t, 0) == 1) & (pixelPairs(t, 1) == 0)){
               joint_prob[0] += 1;
             }
-            if(pixelPairs(t, 0) == 0 & pixelPairs(t, 1) == 1){
+            if((pixelPairs(t, 0) == 0) & (pixelPairs(t, 1) == 1)){
               joint_prob[0] += 1;
             }
-            if(pixelPairs(t, 0) == 1 & pixelPairs(t, 1) == 1){
+            if((pixelPairs(t, 0) == 1) & (pixelPairs(t, 1) == 1)){
               joint_prob[0] += 1;
             }
           
