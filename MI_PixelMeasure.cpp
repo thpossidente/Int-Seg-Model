@@ -5,7 +5,7 @@ using namespace Rcpp;
 float averageMIinCluster(List inputMatrices, int clusterSize){
 
   NumericMatrix oneMat = inputMatrices[0];
-  int numClusters = (oneMat.size() / clusterSize^2);
+  int numClusters = ((oneMat.size()) / clusterSize^2);
   int num_matrices = inputMatrices.size();
   int counter = 0;
 
@@ -14,12 +14,10 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
   NumericVector MIcluster(numClusters);                       // Initialize vector for MI in each cluster for each matrix
   float aveMIperCluster;                                      // Initialie float for average MI for each cluster for all matrices
   
-  
-  
 
     
-  for(int i=0; i<(oneMat.size() / clusterSize);i++){               // for each cluster
-    for(int j=0; j<(oneMat.size() / clusterSize);j++){ 
+  for(int i=0; i<((oneMat.size()) / clusterSize);i++){               // for each cluster
+    for(int j=0; j<((oneMat.size()) / clusterSize);j++){ 
       counter += 1;
       
       for(int h=0; h<(clusterSize^2);h++){                       // For each pixel combination possible
@@ -27,24 +25,43 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
           int pixel_pos1 = h;                                          // Select pixel1 position
           int pixel_pos2 = f;                                          // Select pixel2 position
           
-          for(int r=0; r<(oneMat.size());r++){               // for each matrix in the vector of matrices
-      
+          
+          for(int r=0; r<((inputMatrices.size()));r++){               // for each matrix in the vector of matrices
             NumericMatrix mat = inputMatrices[r];       // getting matrix
-            NumericMatrix matCluster = mat( Range( (0+clusterSize*i), (clusterSize+clusterSize*i) ), //getting cluster
-                                            Range( (0+clusterSize*j), (clusterSize+clusterSize*j)) );
-            NumericVector matClusterVec = as<NumericVector>(matCluster);  // flatten cluster
+        
+            /////// left off error checking here
+            NumericMatrix matCluster(clusterSize, clusterSize);
+            matCluster = mat(Range( (0+(clusterSize*i)) , (clusterSize+(clusterSize*i)) ), //getting cluster - somehow incorrect getting weird close to 0 values for everything
+                             Range( (0+(clusterSize*j)) , (clusterSize+(clusterSize*j)) ) );
+            
+            //if((i == 3) && (j == 1)){
+            //  Rcout << matCluster << "\n";
+            //}
+
+            
+            NumericVector matClusterVec(clusterSize^2);   // flatten cluster into vector
+            
+            for(int w=0; w<(clusterSize);w++){
+              for(int d=0; d<(clusterSize); d++){
+                matClusterVec[w] = matCluster( w , d );
+              }
+            } 
+            
             int pixel1 = matClusterVec[pixel_pos1]; // Getting pixel1 
             int pixel2 = matClusterVec[pixel_pos2]; // Getting pixel2 
             
             pixelPairs(r, 0) = pixel1;                    // putting pixels into matrix for MI calculation  
             pixelPairs(r, 1) = pixel2;
+            
           }
         }
-          
+        
+        
         NumericVector prob_pixel0(2);    // Initializing probability vectors used to calculate mutual info
         NumericVector prob_pixel1(2);
         NumericVector joint_prob(4);
         NumericVector MI(4);      // initializing vector for MI 
+        
           
         prob_pixel0[0] = (num_matrices - sum(pixelPairs(_,0)))/num_matrices; // prob of 0 occuring in first col
         prob_pixel0[1] = sum(pixelPairs(_,0))/num_matrices;  // prob of 1 occuring in first col
@@ -69,7 +86,8 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
         for(int z=0; z<4;z++){
           joint_prob[z] = joint_prob[z]/num_matrices;    //turning frequency into probability for each combination
         }
-          
+
+        
         MI[0] =  (joint_prob[0] * (log2((joint_prob[0])/(prob_pixel0[0]*prob_pixel1[0]))));  // calculating MIs
         MI[1] =  (joint_prob[1] * (log2((joint_prob[1])/(prob_pixel0[1]*prob_pixel1[0]))));
         MI[2] =  (joint_prob[2] * (log2((joint_prob[2])/(prob_pixel0[0]*prob_pixel1[1]))));
@@ -77,11 +95,12 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
         
         MIpixel[h] = sum(MI); // MI of particular pixel combo in particular cluster across all matrices
     }
+
     MIcluster[counter] = sum(MIpixel); // summing MI of all pixel combos in particular cluster across al matrices
     }
   }
-  aveMIperCluster = sum(MIcluster) / MIcluster.size(); // averaging MI per cluster of all matrices and then returning that value
-    
-  return(aveMIperCluster); 
+  aveMIperCluster = sum(MIcluster) / (MIcluster.size()); // averaging MI per cluster of all matrices and then returning that value
+  
+  return(aveMIperCluster);
 }
   
