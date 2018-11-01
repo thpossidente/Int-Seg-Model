@@ -16,8 +16,8 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
   
 
     
-  for(int i=0; i<((oneMat.size()) / clusterSize);i++){               // for each cluster
-    for(int j=0; j<((oneMat.size()) / clusterSize);j++){ 
+  for(int i=0; i<(pow(numClusters, 0.5));i++){               // for each cluster
+    for(int j=0; j<(pow(numClusters, 0.5));j++){ 
       counter += 1;
       
       for(int h=0; h<(clusterSize^2);h++){                       // For each pixel combination possible
@@ -25,20 +25,19 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
           int pixel_pos1 = h;                                          // Select pixel1 position
           int pixel_pos2 = f;                                          // Select pixel2 position
           
-          
+
           for(int r=0; r<((inputMatrices.size()));r++){               // for each matrix in the vector of matrices
             NumericMatrix mat = inputMatrices[r];       // getting matrix
-        
-            /////// left off error checking here
-            NumericMatrix matCluster(clusterSize, clusterSize);
-            matCluster = mat(Range( (0+(clusterSize*i)) , (clusterSize+(clusterSize*i)) ), //getting cluster - somehow incorrect getting weird close to 0 values for everything
-                             Range( (0+(clusterSize*j)) , (clusterSize+(clusterSize*j)) ) );
-            
-            //if((i == 3) && (j == 1)){
-            //  Rcout << matCluster << "\n";
-            //}
 
-            
+            NumericMatrix matCluster(clusterSize, clusterSize);
+            matCluster = mat(Range( (0+(clusterSize*i)) , ((clusterSize+(clusterSize*i))-1) ), //getting cluster - somehow incorrect getting weird close to 0 values for everything
+                             Range( (0+(clusterSize*j)) , ((clusterSize+(clusterSize*j))-1) ) );
+
+            if(j == 3){
+              Rcout << matCluster << "\n";
+            }
+
+            }}} /*
             NumericVector matClusterVec(clusterSize^2);   // flatten cluster into vector
             
             for(int w=0; w<(clusterSize);w++){
@@ -95,7 +94,7 @@ float averageMIinCluster(List inputMatrices, int clusterSize){
         
         MIpixel[h] = sum(MI); // MI of particular pixel combo in particular cluster across all matrices
     }
-
+*/
     MIcluster[counter] = sum(MIpixel); // summing MI of all pixel combos in particular cluster across al matrices
     }
   }
