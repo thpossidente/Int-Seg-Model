@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-float averageMIinCluster(List inputMatrices, int windowSize, int stride){
+float averageMIperPixelPair(List inputMatrices, int windowSize, int stride){
 
   NumericMatrix oneMat = inputMatrices[0];
   int num_matrices = inputMatrices.size();
@@ -10,9 +10,8 @@ float averageMIinCluster(List inputMatrices, int windowSize, int stride){
   
 
   NumericMatrix pixelPairs(num_matrices,2);           // Initialize matrix to store pixel pairs to calculate MI with
-  NumericVector MIpixel(pow(windowSize,4));                       // Initialize vector for MI in each pixel of a cluster
   NumericVector MIcluster(num_clusters);                       // Initialize vector for MI in each cluster for each matrix
-  float aveMIperCluster;                                      // Initialie float for average MI for each cluster for all matrices
+  float aveMIperPixelPair;                                      // Initialie float for average MI for each cluster for all matrices
   
   int originX = 0;
   int originY = 0;
@@ -21,6 +20,8 @@ float averageMIinCluster(List inputMatrices, int windowSize, int stride){
   
   for(int b=0; b<num_clusters;b++){     // for each window
     int counter = 0;
+    NumericVector MIpixel(pow(windowSize,4));                       // Initialize vector for MI in each pixel of a cluster
+    
     for(int h=0; h<(pow(windowSize,2));h++){                       // For each pixel combination possible in a given window
       for(int f=0; f<(pow(windowSize,2));f++){
         int pixel_pos1 = h;                                          // Select pixel1 position
@@ -89,19 +90,19 @@ float averageMIinCluster(List inputMatrices, int windowSize, int stride){
         MI[3] =  (joint_prob[3] * (log2((joint_prob[3])/(prob_pixel0[1]*prob_pixel1[1]))));
         
         for(int v=0; v<4;v++){
-          if(R_IsNaN(MI[v])){
+          if((R_IsNaN(MI[v])) || (MI[v] == R_PosInf) ){
             MI[v] = 0;
           }
         }
         
         MIpixel[counter] = sum(MI); // MI of particular pixel combo in particular cluster across all matrices
         counter += 1;
-        Rcout << MIpixel << '\n';
       }
         
     }
 
-  MIcluster[b] = sum(MIpixel); // summing MI of all pixel combos in particular cluster across al matrices
+  MIcluster[b] = sum(MIpixel) / (MIpixel.size()); // ave MI of all pixel combos in particular cluster across al matrices
+  Rcout << MIcluster << '\n';
   
   if(originX == (oneMat.nrow() - stride)){  // updating origin of cluster for next pass
     originX = 0;
@@ -111,8 +112,8 @@ float averageMIinCluster(List inputMatrices, int windowSize, int stride){
   }
   }
   
-  aveMIperCluster = sum(MIcluster) / (MIcluster.size()); // averaging MI per cluster of all matrices and then returning that value
+  aveMIperPixelPair = sum(MIcluster) / (MIcluster.size()); // averaging MI per pixel pair for all clusters of all matrices and then returning that value
   
-  return(aveMIperCluster);
+  return(aveMIperPixelPair);
 }
   
