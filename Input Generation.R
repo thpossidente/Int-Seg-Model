@@ -112,3 +112,21 @@ generate_MI_matrices <- function(size, rec_field, noise, num_inputs){
   return(matrices)
 }
 
+
+
+
+random_matrix <- function(size, num_inputs){
+  
+  matrices <- list()
+  
+  for(i in 1:num_inputs){
+    matrices[[i]] = matrix(sample((0:1), (size*size), replace =TRUE), nrow = size, ncol = size)
+  }
+  
+  return(matrices)
+}
+
+
+
+
+
