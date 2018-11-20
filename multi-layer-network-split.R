@@ -2,11 +2,6 @@
 Rcpp::sourceCpp("forwardPassCpp.cpp")
 library(RcppArmadillo)
 
-sigmoid.activation <- function(x){
-  #return(1 / (1+exp(-x)))
-  return(x)
-}
-
 
 
 
@@ -15,9 +10,8 @@ batch_split <- function(n.epochs, network=NA){
   delay = 1
   counter <- 4900 #change to start what batch 2nd layer starts learning (start at 1 will have layer start learning after 5000 epochs)
   counter.bias <- 4900 #change to start what batch output bias node starts at
+  
   # network properties #
-  #pre.input.hidden.weights <- matrix((rnorm(n.input*n.hidden) * sqrt(2/n.input)), nrow=n.input, ncol=n.hidden)    # He normalization
-  #pre.hidden.output.weights <- matrix((rnorm(n.hidden*n.output) * sqrt(2/n.hidden)), nrow=n.hidden, ncol=n.output)
   pre.input.hidden.weights <- matrix(runif(n.input*n.hidden, min=0, max=0.5), nrow=n.input, ncol=n.hidden)   # Random normalization
   pre.hidden.output.weights <- matrix(runif(n.hidden*n.output, min=0, max=0.5), nrow=n.hidden, ncol=n.output)
   

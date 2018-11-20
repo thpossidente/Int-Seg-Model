@@ -6,8 +6,6 @@
 
 library('ggplot2')
 
-#load('trained_hidden_weights_20000_CosAnneal') # loading weights as variable 'network'
-
 
 source('Load Letters.R')
 source('Visualize Output.R')
@@ -38,9 +36,7 @@ percent.act.input <- 0.05 # 0.05
 percent.act.output <- 0.03333 # .10
 n.words <- length(words)
 letter.noise.param <- 0.1
-input.gen.parameter <- 0 # if 1: temporal pattern of input for one system, random pattern for other system. (one system predicts next input) 
-# if 0: Next inputs are predicted by combination of both systems' previous inputs - one system alone cannot predict next inputs
-# if 0.5: inputs for each system consistently co-occur
+
   
 ## RUN ##
   

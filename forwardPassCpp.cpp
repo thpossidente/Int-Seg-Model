@@ -123,12 +123,8 @@ List forwardPass(int n_output, float percentActInput,
 
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
-    //int t = 2;
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i) + outputBiasWeights(i,0)));
-    //for(int h=0; h<(delayParam); h++){       // Time delay
-    //  output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i)))) / t;
-    //  t += 12;
-    //}
+
   }
   
   float max_output = max(output);  // normalizing outputs from 0-1
@@ -187,12 +183,7 @@ List forwardPassNoBias(int n_output, float percentActInput,
   
   NumericVector output(n_output);
   for(int i=0; i<(n_output); i++){
-    //int t = 2;
     output[i] += sum(na_omit(hidden * hiddenToOutputWeights(_,i)));
-    //for(int h=0; h<(delayParam); h++){       // Time delay
-    //  output[i] += (sum(na_omit(hiddenActivationDelay(h,_) * hiddenToOutputWeights(_,i)))) / t;
-    //  t += 12;
-    //}
   }
   
   float max_output = max(output);  // normalizing outputs from 0-1

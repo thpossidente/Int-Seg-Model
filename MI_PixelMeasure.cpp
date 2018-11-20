@@ -2,7 +2,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-float averageMIperPixelPair(List inputMatrices, int windowSize, int stride){
+float averageMIperCluster(List inputMatrices, int windowSize, int stride){
 
   NumericMatrix oneMat = inputMatrices[0];
   int num_matrices = inputMatrices.size();
@@ -11,7 +11,7 @@ float averageMIperPixelPair(List inputMatrices, int windowSize, int stride){
 
   NumericMatrix pixelPairs(num_matrices,2);           // Initialize matrix to store pixel pairs to calculate MI with
   NumericVector MIcluster(num_clusters);                       // Initialize vector for MI in each cluster for each matrix
-  float aveMIperPixelPair;                                      // Initialie float for average MI for each cluster for all matrices
+  float aveMIperCluster;                                      // Initialie float for average MI for each cluster for all matrices
   
   int originX = 0;
   int originY = 0;
@@ -102,7 +102,7 @@ float averageMIperPixelPair(List inputMatrices, int windowSize, int stride){
         
     }
 
-  MIcluster[b] = sum(MIpixel) / (MIpixel.size()); // ave MI of all pixel combos in particular cluster across al matrices
+  MIcluster[b] = sum(MIpixel); // sum MI of all pixel combos in particular cluster across al matrices
   Rcout << MIcluster << '\n';
   
   if(originY == (oneMat.nrow() - stride)){  // updating origin of cluster for next pass
@@ -113,8 +113,17 @@ float averageMIperPixelPair(List inputMatrices, int windowSize, int stride){
   }
   }
   
-  aveMIperPixelPair = sum(MIcluster) / (MIcluster.size()); // averaging MI per pixel pair for all clusters of all matrices and then returning that value
+  aveMIperCluster = sum(MIcluster) / (MIcluster.size()); // averaging MI per cluster for all clusters of all matrices and then returning that value
   
-  return(aveMIperPixelPair);
+  return(aveMIperCluster);
 }
+
+
+
+
+
+
+
+
+
   

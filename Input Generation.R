@@ -1,15 +1,18 @@
 
-generate_input1 <- function(size, rec_field, noise){ # generates inputs matrix of dimension (size, size) that have high mutual 
+generate_input1 <- function(size, rec_field, noise, schemes){ # generates inputs matrix of dimension (size, size) that have high mutual 
                                                      # information between the receptive fields regions (the area of which is
                                                      # determined by the receptive_fields arg). Smallest receptive_field_size 
                                                      # is 2 and must be even. Size must be even. Noise is percent of inputs
                                                      # that are flipped from 0 to 1 or 1 to 0.
+  schemes <- schemes
   inp_mat <- matrix(0, size, size)
-  
+  nums <- sample(1:4,((size^2)/(rec_field^2)),replace = TRUE)
+  counter <- 0
   
   for(i in 1:(size/rec_field)){
     for(h in 1:(size/rec_field)){
-      inp_mat[(((rec_field*i) - (rec_field-1)):(rec_field*i)), (((rec_field*h) - (rec_field-1)):(rec_field*h))] = random_region_scheme1(rec_field)
+      counter = counter + 1
+      inp_mat[(((rec_field*i) - (rec_field-1)):(rec_field*i)), (((rec_field*h) - (rec_field-1)):(rec_field*h))] = schemes[[nums[counter]]]
     }
   }
   
@@ -29,85 +32,86 @@ generate_input1 <- function(size, rec_field, noise){ # generates inputs matrix o
 }
 
 
-MI_region_scheme1 <- function(rec_field){
-  
-  MI_region_scheme <- matrix(0, rec_field, rec_field)
-  
-  MI_region_scheme[1,] <- 1
-  MI_region_scheme[,1] <- 1
-  MI_region_scheme[rec_field,] <- 1
-  MI_region_scheme[,rec_field] <- 1
-  
-  return(MI_region_scheme)
-  
-}
-
-MI_region_scheme2 <- function(rec_field){
-  
-  MI_region_scheme <- matrix(0, rec_field, rec_field)
-  
-  MI_region_scheme[1:(rec_field/2), 1:(rec_field/2)] <- 1
-  MI_region_scheme[(rec_field/2+1):rec_field, (rec_field/2+1):rec_field] <- 1
-
-  
-  return(MI_region_scheme)
-  
-}
-
-MI_region_scheme3 <- function(rec_field){
-  
-  MI_region_scheme <- matrix(0, rec_field, rec_field)
-  
-  MI_region_scheme[1:ceiling(rec_field*0.25),] <- 1
-  
-  
-  return(MI_region_scheme)
-  
-}
-
-
-MI_region_scheme4 <- function(rec_field){
-  
-  MI_region_scheme <- matrix(0, rec_field, rec_field)
-  
-  MI_region_scheme[1:(rec_field/2), 1:(rec_field/2)] <- 1
-  MI_region_scheme[ceiling(rec_field*0.75):rec_field,] <- 1
-  
-  
-  return(MI_region_scheme)
-  
-}
-
-
-random_region_scheme1 <- function(rec_field){
-  rand <- sample(c(1,2,3,4), 1, replace=T)
-  
-  if(rand == 1){
-    return(MI_region_scheme1(rec_field))
-  }
-  
-  if(rand == 2){
-    return(MI_region_scheme2(rec_field))
-  }
-  
-  if(rand == 3){
-    return(MI_region_scheme3(rec_field))
-  }
-  
-  if(rand == 4){
-    return(MI_region_scheme4(rec_field))
-  }
-  
-}
+# MI_region_scheme1 <- function(rec_field){
+#   
+#   MI_region_scheme <- matrix(0, rec_field, rec_field)
+#   
+#   MI_region_scheme[1,] <- 1
+#   MI_region_scheme[,1] <- 1
+#   MI_region_scheme[rec_field,] <- 1
+#   MI_region_scheme[,rec_field] <- 1
+#   
+#   return(MI_region_scheme)
+#   
+# }
+# 
+# MI_region_scheme2 <- function(rec_field){
+#   
+#   MI_region_scheme <- matrix(0, rec_field, rec_field)
+#   
+#   MI_region_scheme[1:(rec_field/2), 1:(rec_field/2)] <- 1
+#   MI_region_scheme[(rec_field/2+1):rec_field, (rec_field/2+1):rec_field] <- 1
+# 
+#   
+#   return(MI_region_scheme)
+#   
+# }
+# 
+# MI_region_scheme3 <- function(rec_field){
+#   
+#   MI_region_scheme <- matrix(0, rec_field, rec_field)
+#   
+#   MI_region_scheme[1:ceiling(rec_field*0.25),] <- 1
+#   
+#   
+#   return(MI_region_scheme)
+#   
+# }
+# 
+# 
+# MI_region_scheme4 <- function(rec_field){
+#   
+#   MI_region_scheme <- matrix(0, rec_field, rec_field)
+#   
+#   MI_region_scheme[1:(rec_field/2), 1:(rec_field/2)] <- 1
+#   MI_region_scheme[ceiling(rec_field*0.75):rec_field,] <- 1
+#   
+#   
+#   return(MI_region_scheme)
+#   
+# }
+# 
+# 
+# random_region_scheme1 <- function(rec_field){
+#   rand <- sample(c(1,2,3,4), 1, replace=T)
+#   
+#   if(rand == 1){
+#     return(MI_region_scheme1(rec_field))
+#   }
+#   
+#   if(rand == 2){
+#     return(MI_region_scheme2(rec_field))
+#   }
+#   
+#   if(rand == 3){
+#     return(MI_region_scheme3(rec_field))
+#   }
+#   
+#   if(rand == 4){
+#     return(MI_region_scheme4(rec_field))
+#   }
+#   
+# }
 
 
 
 generate_MI_matrices <- function(size, rec_field, noise, num_inputs){
   
   matrices <- list()
+  schemes <- rand_mat_schemes(size, rec_field)
   
   for(i in 1:num_inputs){
-    matrices[[i]] <- matrix(generate_input1(size, rec_field, noise), nrow = size, ncol = size)
+    matrices[[i]] <- matrix(generate_input1(size, rec_field, noise, schemes), nrow = size, ncol = size)
   }
   return(matrices)
 }
@@ -127,6 +131,15 @@ random_matrix <- function(size, num_inputs){
 }
 
 
+rand_mat_schemes <- function(size, rec_field){
+  matrices <- list()
+
+  for(i in 1:4){
+    matrices[[i]] = matrix(sample((0:1), (rec_field*rec_field), replace =TRUE), nrow = rec_field, ncol = rec_field)
+  }
+  return(matrices)
+  
+}
 
 
 
