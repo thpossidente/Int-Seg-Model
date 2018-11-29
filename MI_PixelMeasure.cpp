@@ -21,11 +21,15 @@ float averageMIperCluster(List inputMatrices, int windowSize, int stride){
   for(int b=0; b<num_clusters;b++){     // for each window
     int counter = 0;
     NumericVector MIpixel(pow(windowSize,4));                       // Initialize vector for MI in each pixel of a cluster
-    
+
     for(int h=0; h<(pow(windowSize,2));h++){                       // For each pixel combination possible in a given window
       for(int f=0; f<(pow(windowSize,2));f++){
         int pixel_pos1 = h;                                          // Select pixel1 position
         int pixel_pos2 = f;                                          // Select pixel2 position
+        
+        if(h == f){continue;} // Skip calculating comparison b/t same pixel
+        if(h > f){continue;} // Skip calculationss comparing pixels that have already been compared. 
+        
 
         for(int r=0; r<((inputMatrices.size()));r++){               // for each matrix in the vector of matrices
           NumericMatrix mat = inputMatrices[r];       // getting matrix
