@@ -4,5 +4,6 @@ Look for tensorflow use of modularity of
 Tensorflow - can you implement custom learning rules?
 Hebbian, winner-take-all
 Tensorflow custom layers? 
+- Look for Tf/Keras competitive hebbian layer - may already be out there
 
 Or build one in R for my specific case
