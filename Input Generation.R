@@ -4,9 +4,8 @@ generate_input1 <- function(size, rec_field, noise, schemes){ # generates inputs
                                                      # determined by the receptive_fields arg). Smallest receptive_field_size 
                                                      # is 2 and must be even. Size must be even. Noise is percent of inputs
                                                      # that are flipped from 0 to 1 or 1 to 0.
-  schemes <- schemes
   inp_mat <- matrix(0, size, size)
-  nums <- sample(1:4,((size^2)/(rec_field^2)),replace = TRUE)
+  nums <- sample(1:4,((size^2)/(rec_field^2)),replace = FALSE)
   counter <- 0
   
   for(i in 1:(size/rec_field)){
@@ -18,12 +17,14 @@ generate_input1 <- function(size, rec_field, noise, schemes){ # generates inputs
   
   inp <- as.vector(inp_mat)
   
-  for(b in 1:(noise*(size^2))){
-    rand <- sample(c(1:(size^2)), 1, TRUE)
-    if(inp[rand] > 0.5){
-      inp[rand] = 0
-    } else{
-      inp[rand] = 1
+  if(noise > 0){
+    for(b in 1:(noise*(size^2))){
+      rand <- sample(c(1:(size^2)), 1, TRUE)
+      if(inp[rand] > 0.5){
+        inp[rand] = 0
+      } else{
+        inp[rand] = 1
+      }
     }
   }
   
