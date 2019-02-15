@@ -17,7 +17,7 @@ generate_input1 <- function(size, rec_field, noise, schemes){ # generates inputs
   
   inp <- as.vector(inp_mat)
   
-  if(noise > 0){
+  if(noise > 0.000001){
     for(b in 1:(noise*(size^2))){
       rand <- sample(c(1:(size^2)), 1, TRUE)
       if(inp[rand] > 0.5){
