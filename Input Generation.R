@@ -143,4 +143,5 @@ rand_mat_schemes <- function(size, rec_field){
 }
 
 
+# lapply(test, function(x) write.table( data.frame(x), 'test.csv'  , append= T, sep=',' ))
 
