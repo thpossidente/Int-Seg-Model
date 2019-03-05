@@ -1,8 +1,5 @@
 library(pixmap)
 
-img <- read.pnm("Binary_shapes/7_06.pgm")
-img_size <- img@size
-img <- img@grey
 
 files <- list.files(path="Binary_shapes", pattern="*.pgm", full.names=TRUE, recursive=FALSE)
 images <- lapply(files, function(file){
@@ -21,7 +18,10 @@ images <- lapply(files, function(file){
 
 
 labels <- lapply(files, function(file){
-  
+  if(is.na(as.numeric(substr(file, start = 15, stop = 16)))){
+    label <- as.numeric(substr(file, start = 15, stop = 15))
+  } else {label <- as.numeric(substr(file, start = 15, stop = 16))}
+  return(label)
 })
 
 

@@ -106,7 +106,7 @@ float averageMIperCluster(List inputMatrices, int windowSize, int stride){
         
     }
 
-  MIcluster[b] = sum(MIpixel); // sum MI of all pixel combos in particular cluster across al matrices
+  MIcluster[b] = sum(MIpixel); // sum MI of all pixel combos in particular cluster across all matrices
   Rcout << MIcluster << '\n';
   
   if(originY == (oneMat.nrow() - stride)){  // updating origin of cluster for next pass
