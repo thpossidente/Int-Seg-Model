@@ -1,6 +1,7 @@
 library(pixmap)
 
 
+
 files <- list.files(path="Binary_shapes", pattern="*.pgm", full.names=TRUE, recursive=FALSE)
 images <- lapply(files, function(file){
   img <- read.pnm(file)
