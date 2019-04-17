@@ -26,6 +26,9 @@ Abstract:
   
 * *Results*
   * This folder contains two excel files that show the results of Experiment 1 ("Testing MI Calculator") and Experiment 2 ("Supervised Network Outcomes")
+  
+* *Toy_Image_Datasets*
+  * Folder containing 2 folders - one containing the datasets used in Experiment 1, the other containing the datasets used in Experiment 2
  
 * *Binary_Datasets_Testing* 
   * This folder contains 3 image datasets:
