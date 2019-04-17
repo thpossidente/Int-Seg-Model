@@ -1,18 +1,38 @@
-# Int-Seg-Model 
-## Senior Thesis Thomas Possidente, Vassar College '19, Advisor: Joshua de Leeuw
+# Senior Thesis Thomas Possidente, Vassar College '19, Advisor: Joshua de Leeuw
+# Investigation of Optimal Receptive Field Size for Maximizing Mutual Information and Increasing Learning Efficiency
 
-This project is a work in progress and most code is not yet fully commented. 
+This repo contains all the code and datasets for the "Investigation of Optimal Receptive Field Size for Maximizing Mutual Information and Increasing Learning Efficiency". 
 
-The goal of this project is to develop an unsupervised artificial neural network (ANN) architecture that learns regularities in image data by optimizing mutual information via receptive field size. 
+Abstract:
 
-Thus far:
-* A preliminary unsupervised ANN is functional and can learn spatial regularities in letters.
-  + Load Letters.R converts PNGs of letters of a specific font into matrices of pixel values. 
-  + multi-layer-network-split.R contains the parts of the ANN that were not offloaded into Rcpp for efficiency
-  + forwardPassCpp.cpp contains the parts of the ANN that were offloaded into Rcpp for efficiency
-  + Visualize Output.R contains functions that help describe, visualize, and diagnose learning in the ANN
-  + Split_Model.R defines parameters and runs the ANN. It also calls some of the functions from Visualize Output.R to evaluate learning
+## Contents of Repo 
 
-* A preliminary calculator of mutual information (MI) in matrices of pixel values is functional.
-  + Input Generator.R includes functions that create matrices of pixel values that have high MI within a specified receptive field size. Number of matrices, size of matrix, size of receptive field, and added noise can all be varied.
-  + MI_PixelMeasure.cpp includes an Rcpp function that calculates the average MI between any 2 pixels in the matrix set, based on a specified receptive field size (window), and stride. 
+* *Input Generation.R* 
+  * An R script that contains functions to create toy image datasets of 1s and 0s that have high mutual information at a specified spatial resolution or "receptive field". Noise level, image (matrix) size, receptive field size, and number of matrices can be specified. Also contains a function to make image datasets of randomly placed 1s and 0s.
+  
+* *MI_PixelMeasure.cpp* 
+  * An Rcpp file that contains a function to measure the mutual information in an image dataset for a specified receptive field size. 
+  
+* *MI.Calculation.Script.R* 
+  * An R script containing a simple function to run multiple trials of mutual information measurements (MI_PixelMeasure)
+  
+* *Supervised_ANNs.ipynb* 
+  * A python Jupyter notebook that contains code for building and testing supervised Convolutional Neural Networks on toy image datasets created by "Input Generation.R"
+  
+* *Unsupervised_ANNs,ipynb
+  * An unfinished python Jupyter notebook that begins to implement the unsupervised version of the analyses run using "Supervised_ANNs.ipynb" using custom layers, loss, and optimizers in Keras.
+  
+* *Results*
+  * This folder contains two excel files that show the results of Experiment 1 ("Testing MI Calculator") and Experiment 2 ("Supervised Network Outcomes")
+ 
+* *Binary_Datasets_Testing* 
+  * This folder contains 3 image datasets:
+    * CalTech 101 Silhouettes Data Set (called "Binary_shapes in this folder) - https://people.cs.umass.edu/~marlin/data.shtml
+    * The Omniglot Dataset - https://github.com/brendenlake/omniglot
+    * MNIST - http://yann.lecun.com/exdb/mnist/index.html
+  * This folder also contains 2 R scripts, one for unpacking the Binary_shapes dataset and one for unpacking the MNIST dataset.
+  * Lastly this folder contains "ANNs Binary Shapes Analysis.ipynb" which begins to test the binary_shapes dataset on supervised CNNs
+
+* *Original Unsupervised Alphabet ANN* 
+  * Contains a prelimary unsupervised ANN that was used to develop methods for implementing Hebbian updating and winner-take-all activation to learn letters of the alphabet of a specific font. 
+  * R and Rcpp
