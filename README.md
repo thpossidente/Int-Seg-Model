@@ -8,6 +8,7 @@
 This repo contains all the code and datasets for the "Investigation of Optimal Receptive Field Size for Maximizing Mutual Information and Increasing Learning Efficiency". 
 
 Abstract:
+As a parameter within an information processing system, receptive field (RF) size should be tuned to maximize information transmission per unit of energy expended. We hypothesize that tuning RF size to maximize the amount of mutual information per RF would result in more efficient statistical learning due to the increased predictability of patterns in inputs. We argue that convolutional neural networks (CNNs) perform statistical learning and are information processing systems governed by the principles of information theory and are thus adequate models of statistical learning in systems like the brain. In this experiment we generate sets of inputs with high mutual information in different spatial resolutions, then use supervised CNNs with various receptive field sizes to classify these inputs. Our results show that RF sizes that increase mutual information per RF generally result in more efficient statistical learning. In light of these results, we contend that RF sizes that increase mutual information per RF could also be advantageous for neural circuits in the brain that perform statistical learning, and thus maximizing mutual information could have been a factor in the evolution of receptive field size. 
 
 ## Contents of Repo 
 
