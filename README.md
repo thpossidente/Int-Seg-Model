@@ -1,6 +1,8 @@
 # Investigation of Optimal Receptive Field Size for Maximizing Mutual Information and Increasing Learning Efficiency
 
-## Senior Thesis Thomas Possidente, Vassar College '19, Advisor: Joshua de Leeuw
+## Senior Cognitive Science Thesis - Thomas Possidente, Vassar College '19
+## First Reader: Joshua de Leeuw
+## Second Reader: Ken Livingston
 
 
 This repo contains all the code and datasets for the "Investigation of Optimal Receptive Field Size for Maximizing Mutual Information and Increasing Learning Efficiency". 
