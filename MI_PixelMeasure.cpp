@@ -2,18 +2,18 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-float averageMIperCluster(List inputMatrices, int windowSize, int stride){
+List averageMIperCluster(List inputMatrices, int windowSize, int stride){
   
-  int counter123 = 0;
   NumericMatrix oneMat = inputMatrices[0];
   int num_matrices = inputMatrices.size();
   int num_clusters = (pow((((oneMat.nrow() - windowSize)/(stride)) + 1), 2));
-
+  
   
 
   NumericMatrix pixelPairs(num_matrices,2);           // Initialize matrix to store pixel pairs to calculate MI with
   NumericVector MIcluster(num_clusters);                       // Initialize vector for MI in each cluster for each matrix
   float aveMIperCluster;                                      // Initialie float for average MI for each cluster for all matrices
+  float SD;                // to calculate standard dev. of MI
   
   int originX = 0;
   int originY = 0;
@@ -37,8 +37,6 @@ float averageMIperCluster(List inputMatrices, int windowSize, int stride){
 
         for(int r=0; r<((inputMatrices.size()));r++){               // for each matrix in the vector of matrices
           
-          
-          counter123 += 1;
           
           NumericMatrix mat = inputMatrices[r];       // getting matrix
 
@@ -115,8 +113,8 @@ float averageMIperCluster(List inputMatrices, int windowSize, int stride){
     }
 
   MIcluster[b] = sum(MIpixel); // sum MI of all pixel combos in particular cluster across all matrices
-  //Rcout << MIcluster << '\n';
-  
+
+
   if(originY == (oneMat.nrow() - stride)){  // updating origin of cluster for next pass
     originY = 0;
     originX += stride;
@@ -126,18 +124,14 @@ float averageMIperCluster(List inputMatrices, int windowSize, int stride){
   }
   
   aveMIperCluster = sum(MIcluster) / (MIcluster.size()); // averaging MI per cluster for all clusters of all matrices and then returning that value
+
+  SD = sum(abs(pow((MIcluster - aveMIperCluster), 2))); // calculating SD
+  SD = sqrt(SD / MIcluster.size());
+
+  List retrn = List::create(Named("Average") = aveMIperCluster,
+                            _["SD"] = SD,
+                            _["MI of each Cluster"] = MIcluster);
   
-  Rcout << counter123;
-  
-  return(aveMIperCluster);
+  return(retrn);
 }
 
-
-
-
-
-
-
-
-
-  
