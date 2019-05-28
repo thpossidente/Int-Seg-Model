@@ -1,4 +1,4 @@
-
+  
 generate_input1 <- function(size, rec_field, noise, schemes){ # generates inputs matrix of dimension (size, size) that have high mutual 
                                                      # information between the receptive fields regions (the area of which is
                                                      # determined by the receptive_fields arg). Smallest receptive_field_size 
