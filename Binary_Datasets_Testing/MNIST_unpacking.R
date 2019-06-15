@@ -21,5 +21,6 @@ for(i in 1:5000){
 }
 
 images <- mnist_images1
+remove(mnist_images, datasets, i, mnist, mnist_images1, n)
 
 #lapply(images, function(x) write.table( data.frame(x), 'mnist_images.csv'  , append= T, sep=',' ))

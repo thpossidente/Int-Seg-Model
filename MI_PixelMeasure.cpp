@@ -12,7 +12,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
   int num_matrices = inputMatrices.size();  // number of matrices in the input set
   int num_clusters = (pow((((oneMat.nrow() - windowSize)/(stride)) + 1), 2));  // number of total RFs based on RF size and stride
   
-  int num_pixel_combos;       // Initializing then calculating num of pixel combos w/o repeats or comparing pixel to self
+  int num_pixel_combos = 0;       // Initializing then calculating num of pixel combos w/o repeats or comparing pixel to self
   for(int m=1; m<(num_pixels_per_window);m++){
     num_pixel_combos += num_pixels_per_window - m;
   }
@@ -25,6 +25,11 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
     
   int counter_UniquePixelPairs = 0;
   
+  Rcout << "num_pixels_per_window: " << num_pixels_per_window << "\n" << 
+           "num_matrices: " << num_matrices << "\n" <<
+           "num_clusters: " << num_clusters << "\n" <<
+           "num_pixel_combos: " << num_pixel_combos << "\n";
+
   
       // Looping through pixel pairs and calculating MI //
 
@@ -37,8 +42,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
 
       int pixel_pos1 = h;                                          // Select pixel1 position
       int pixel_pos2 = f;                                          // Select pixel2 position
-
-
+      
 
       if(h == f){continue;} // Skip calculating comparison b/t same pixel
       if(h > f){continue;} // Skip calculationss comparing pixels that have already been compared.
@@ -49,8 +53,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
       for(int b=0;b<num_clusters; b++){          // for each RF possible in a matrix
 
         for(int r=0; r<((inputMatrices.size()));r++){               // for each matrix in the vector of matrices
-
-
+          
           NumericMatrix mat = inputMatrices[r];       // getting matrix
 
           NumericMatrix matCluster(windowSize, windowSize);  // selecting cluster
@@ -68,7 +71,6 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
           }
 
 
-
           int pixel1 = matClusterVec[pixel_pos1]; // Getting pixel1
           int pixel2 = matClusterVec[pixel_pos2]; // Getting pixel2
 
@@ -78,6 +80,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
 
 
         }
+        
 
 
         if(originY == (oneMat.nrow() - stride)){  // updating origin of RF for next pass
@@ -89,7 +92,6 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
 
 
     }
-
 
            // Calculating MI for one pixel pair //
 
@@ -124,6 +126,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
     for(int z=0; z<4;z++){
       joint_prob[z] = joint_prob[z]/(counter);    //turning frequency into probability for each combination
     }
+    
 
     MI[0] =  (joint_prob[0] * (log2((joint_prob[0])/(prob_pixel0[0]*prob_pixel1[0]))));  // calculating MIs
     MI[1] =  (joint_prob[1] * (log2((joint_prob[1])/(prob_pixel0[1]*prob_pixel1[0]))));
@@ -135,6 +138,7 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
         MI[v] = 0;
       }
     }
+    
 
     MI_per_pixel_pair = sum(MI); // MI of particular pixel combo across all RFs in all matrices
     MI_all_pixel_pairs[counter_UniquePixelPairs] = MI_per_pixel_pair;
