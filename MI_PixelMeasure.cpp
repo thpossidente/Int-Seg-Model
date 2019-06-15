@@ -25,10 +25,10 @@ List averageMIperCluster(List inputMatrices, int windowSize, int stride){
     
   int counter_UniquePixelPairs = 0;
   
-  Rcout << "num_pixels_per_window: " << num_pixels_per_window << "\n" << 
-           "num_matrices: " << num_matrices << "\n" <<
-           "num_clusters: " << num_clusters << "\n" <<
-           "num_pixel_combos: " << num_pixel_combos << "\n";
+  // Rcout << "num_pixels_per_window: " << num_pixels_per_window << "\n" << 
+  //          "num_matrices: " << num_matrices << "\n" <<
+  //          "num_clusters: " << num_clusters << "\n" <<
+  //          "num_pixel_combos: " << num_pixel_combos << "\n";
 
   
       // Looping through pixel pairs and calculating MI //
