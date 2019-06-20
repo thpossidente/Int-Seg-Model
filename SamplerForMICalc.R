@@ -3,7 +3,7 @@
 # Calls to MI_PixelMeasure.cpp to calculate MI per RF of those samples
 # Outputs MI per RF for graphing later
 
-sampling_MI_calc <- function(matrices, RF_size, stride, batch_number, samples_per_batch){
+sampling_MI_calc <- function(matrices, RF_size, batch_number, samples_per_batch){
   
   total_samples <- batch_number*samples_per_batch      
   
@@ -15,6 +15,7 @@ sampling_MI_calc <- function(matrices, RF_size, stride, batch_number, samples_pe
   y_mat_coords2 <- sample((ncol(matrices[[1]]) - RF_size), total_samples, replace = TRUE)  # RF sized patches
   counter <- total_samples
   
+
   samples <- list()
   
   for(s in 1:total_samples){
@@ -37,20 +38,19 @@ sampling_MI_calc <- function(matrices, RF_size, stride, batch_number, samples_pe
     samples[[counter]] = single_sample
   }
   
-  
-  MI <- averageMIperCluster(samples, RF_size, stride)[1]
+  MI <- averageMIperClusterSampling(samples, RF_size)[1]
   
   return(MI)
   
 }
 
 
-MI_samples_for_graphing <- function(matrices, RF_size, stride, samples_per_batch, number_batches){
+MI_samples_for_graphing <- function(matrices, RF_size, samples_per_batch, number_batches){
   
   MIs <- list()
   
   for(n in 1:number_batches){
-    MIs[n] = sampling_MI_calc(matrices, RF_size, stride, n, samples_per_batch)
+    MIs[n] = sampling_MI_calc(matrices, RF_size, n, samples_per_batch)
   }
   
   return(MIs)
